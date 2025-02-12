@@ -1,0 +1,79 @@
+# Laravel vendor & dependencies
+/vendor
+/node_modules
+
+# Laravel environment & configuration
+.env
+.env.*.local
+.env.backup
+Homestead.yaml
+Homestead.json
+.vagrant
+
+# Nova & Composer specific files
+nova
+composer.lock
+
+# Storage & logs
+/storage/*.key
+/storage/*.log
+/storage/app/public
+/storage/framework/*
+/storage/logs/*
+/storage/oauth-private.key
+/storage/oauth-public.key
+
+# Database & caches
+/database/database.sqlite
+/database/database.sqlite-journal
+/bootstrap/cache/*.php
+/public/hot
+/public/storage
+
+# IDE & OS-specific files
+.idea
+.vscode
+*.DS_Store
+*.log
+*.swp
+*.swo
+*.bak
+*.tmp
+*.sql
+*.sqlite
+Thumbs.db
+
+# Laravel cache & compiled files
+/.phpunit.result.cache
+/.phpstorm.meta.php
+/.husky
+/.npm
+/node_modules/
+/public/storage
+/public/hot
+/phpunit.xml
+.phpunit.result.cache
+
+# Git hooks (optional)
+.git/hooks
+.git/info/exclude
+
+# Ignore Laravel-specific test results
+/.phpunit.result.cache
+/phpunit.xml
+
+# Nova-specific files
+/nova-components
+nova.mix.js
+nova.config.js
+
+# Ignore Laravel Mix files
+/public/mix-manifest.json
+/public/css
+/public/js
+/public/hot
+
+# Miscellaneous
+npm-debug.log*
+yarn-error.log*
+
