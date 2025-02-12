@@ -11,8 +11,7 @@ class Car extends Model
     use HasFactory;
     use Searchable;
     protected $fillable = [
-        'userId', 'brand', 'model', 'year', 'rentPrice',
-        'engineHp', 'transmission', 'location', 'status'
+        'userId', 'title', 'number', 'img', 'status', 'rating', 'seats', 'ac', 'driverName', 'brand', 'rentPrice', 'location', 'status'
     ];
 
     public function user()
