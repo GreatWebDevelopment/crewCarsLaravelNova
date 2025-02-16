@@ -29,7 +29,7 @@ return new class extends Migration {
             $table->integer('priceType');
             $table->string('fuelType', 50);
             $table->string('location', 100);
-            $table->text('carDesc');
+            $table->text('description');
             $table->string('pickAddress', 255);
             $table->decimal('pickLat', 10, 8);
             $table->decimal('pickLng', 11, 8);

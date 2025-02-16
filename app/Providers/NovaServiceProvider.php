@@ -17,7 +17,21 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     {
         parent::boot();
 
-        //
+        Nova::mainMenu(function (Request $request) {
+            return [
+                MenuSection::dashboard(Main::class)->icon('chart-bar'),
+
+                MenuSection::make('Customers', [
+                    MenuItem::resource(User::class),
+                    MenuItem::resource(License::class),
+                ])->icon('user')->collapsable(),
+
+                MenuSection::make('Content', [
+                    MenuItem::resource(Series::class),
+                    MenuItem::resource(Release::class),
+                ])->icon('document-text')->collapsable(),
+            ];
+        });
     }
 
     /**

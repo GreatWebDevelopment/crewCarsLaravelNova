@@ -9,13 +9,13 @@ return new class extends Migration {
     {
         Schema::create('coupons', function (Blueprint $table) {
             $table->id();
-            $table->text('couponImg');
+            $table->text('img');
             $table->text('title');
-            $table->text('couponCode');
+            $table->text('code');
             $table->text('subtitle');
             $table->date('expireDate');
             $table->float('minAmt');
-            $table->float('couponVal');
+            $table->float('value');
             $table->text('description');
             $table->integer('status');
             $table->timestamps();
