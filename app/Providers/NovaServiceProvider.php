@@ -2,107 +2,55 @@
 
 namespace App\Providers;
 
-use App\Models\User;
 use Illuminate\Support\Facades\Gate;
-use Laravel\Fortify\Features;
+use Illuminate\Support\ServiceProvider;
 use Laravel\Nova\Nova;
 use Laravel\Nova\NovaApplicationServiceProvider;
+use Laravel\Nova\Menu\MenuSection;
+use Laravel\Nova\Menu\MenuItem;
+use Illuminate\Http\Request;
+use Laravel\Fortify\Features;
 
 class NovaServiceProvider extends NovaApplicationServiceProvider
 {
-    /**
-     * Bootstrap any application services.
-     */
-    public function boot(): void
+    public function boot()
     {
-        parent::boot();
-
+        parent::boot(); // Ensure Nova is booted first
         Nova::mainMenu(function (Request $request) {
             return [
-                MenuSection::dashboard(Main::class)->icon('chart-bar'),
+                MenuSection::dashboard(\App\Nova\Dashboards\Main::class)->icon('chart-bar'),
 
-                MenuSection::make('Customers', [
-                    MenuItem::resource(User::class),
-                    MenuItem::resource(License::class),
-                ])->icon('user')->collapsable(),
+                MenuSection::make('Management', [
+                    MenuItem::resource(\App\Nova\Book::class),
+                    //MenuItem::resource(\App\Nova\Payment::class),
+                    MenuItem::resource(\App\Nova\PaymentMethod::class),
+                ])->icon('credit-card')->collapsable(),
 
-                MenuSection::make('Content', [
-                    MenuItem::resource(Series::class),
-                    MenuItem::resource(Release::class),
-                ])->icon('document-text')->collapsable(),
+                MenuSection::make('Cars', [
+                    //MenuItem::resource(\App\Nova\CarBrands::class),
+                   // MenuItem::resource(\App\Nova\CarTypes::class),
+                    //MenuItem::resource(\App\Nova\VehicleMake::class),
+                ])->icon('car')->collapsable(),
             ];
         });
     }
 
-    /**
-     * Register the configurations for Laravel Fortify.
-     */
-    protected function fortify(): void
+    protected function gate()
     {
-        Nova::fortify()
-            ->features([
-                Features::updatePasswords(),
-                // Features::emailVerification(),
-                // Features::twoFactorAuthentication(['confirm' => true, 'confirmPassword' => true]),
-            ])
-            ->register();
-    }
-
-    /**
-     * Register the Nova routes.
-     */
-    protected function routes(): void
-    {
-        Nova::routes()
-            ->withAuthenticationRoutes(default: true)
-            ->withPasswordResetRoutes()
-            ->withoutEmailVerificationRoutes()
-            ->register();
-    }
-
-    /**
-     * Register the Nova gate.
-     *
-     * This gate determines who can access Nova in non-local environments.
-     */
-    protected function gate(): void
-    {
-        Gate::define('viewNova', function (User $user) {
-            return in_array($user->email, [
-                //
-            ]);
+        Gate::define('viewNova', function ($user) {
+            return $user->isAdmin(); // Adjust this based on your user roles
         });
     }
 
-    /**
-     * Get the dashboards that should be listed in the Nova sidebar.
-     *
-     * @return array<int, \Laravel\Nova\Dashboard>
-     */
-    protected function dashboards(): array
+    protected function dashboards()
     {
         return [
             new \App\Nova\Dashboards\Main,
         ];
     }
 
-    /**
-     * Get the tools that should be listed in the Nova sidebar.
-     *
-     * @return array<int, \Laravel\Nova\Tool>
-     */
-    public function tools(): array
-    {
-        return [];
-    }
-
-    /**
-     * Register any application services.
-     */
-    public function register(): void
+    public function register()
     {
         parent::register();
-
-        //
     }
 }

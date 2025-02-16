@@ -38,13 +38,6 @@ class User extends Resource
     ];
 
     /**
-     * Indicates whether the resource should automatically poll for new resources.
-     *
-     * @var bool
-     */
-    public static $polling = true;
-
-    /**
      * Get the fields displayed by the resource.
      *
      * @return array<int, \Laravel\Nova\Fields\Field|\Laravel\Nova\Panel|\Laravel\Nova\ResourceTool|\Illuminate\Http\Resources\MergeValue>
@@ -111,18 +104,5 @@ class User extends Resource
     public function actions(NovaRequest $request): array
     {
         return [];
-    }
-
-    /**
-     * Get the menu that should represent the resource.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Laravel\Nova\Menu\MenuItem
-     */
-    public function menu(Request $request)
-    {
-        return parent::menu($request)->withBadge(function () {
-            return static::$model::count();
-        });
     }
 }
