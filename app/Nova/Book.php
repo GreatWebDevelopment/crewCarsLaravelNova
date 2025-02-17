@@ -47,7 +47,7 @@ class Book extends Resource
             BelongsTo::make('Car', 'car', 'App\Nova\Car'),
             Number::make('Total Price', 'oTotal')->sortable(),
             Text::make('Book Status', 'bookStatus')->sortable(),
-            Boolean::make('Is Rated', 'isRate'),
+            //Boolean::make('Is Rated', 'isRate'),
         ];
     }
 
