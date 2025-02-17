@@ -11,7 +11,8 @@ class Car extends Model
     use HasFactory;
     use Searchable;
     protected $fillable = [
-        'userId', 'title', 'number', 'img', 'status', 'rating', 'seats', 'ac', 'driverName', 'brand', 'rentPrice', 'location', 'status'
+        'userId', 'title', 'number', 'img', 'status', 'rating', 'seats', 'ac', 'driverName', 'brand', 'rentPrice',
+        'location',
     ];
 
     public function user()
@@ -23,4 +24,69 @@ class Car extends Model
     {
         return $this->hasMany(Book::class, 'carId');
     }
+
+    public function setCarNumberAttribute($value)
+    {
+        $this->attributes['number'] = $value;
+    }
+
+    public function setCarStatusAttribute($value)
+    {
+        $this->attributes['status'] = $value;
+    }
+
+    public function setCarTitleAttribute($value)
+    {
+        $this->attributes['title'] = $value;
+    }
+
+    public function setCarRatingAttribute($value)
+    {
+        $this->attributes['rating'] = $value;
+    }
+
+    public function setTotalSeatAttribute($value)
+    {
+        $this->attributes['seats'] = $value;
+    }
+
+    public function setCarAcAttribute($value)
+    {
+        $this->attributes['ac'] = $value;
+    }
+
+//    public function setAttribute($value)
+//    {
+//        $this->attributes[''] = $value;
+//    }
+//
+//    public function setAttribute($value)
+//    {
+//        $this->attributes[''] = $value;
+//    }
+//
+//    public function setAttribute($value)
+//    {
+//        $this->attributes[''] = $value;
+//    }
+//
+//    public function setAttribute($value)
+//    {
+//        $this->attributes[''] = $value;
+//    }
+//
+//    public function setAttribute($value)
+//    {
+//        $this->attributes[''] = $value;
+//    }
+//
+//    public function setAttribute($value)
+//    {
+//        $this->attributes[''] = $value;
+//    }
+//
+//    public function setAttribute($value)
+//    {
+//        $this->attributes[''] = $value;
+//    }
 }

@@ -16,7 +16,7 @@ Route::post('/api/login', [LoginController::class, 'login']);
 Route::get('/decode-vin/{vin}', [VinDecoderController::class, 'decodeVin']);
 
 // Protected Routes
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('api')->group(function () {
     Route::get('/cars', [CarController::class, 'index']);
     Route::post('/cars', [CarController::class, 'store']);
     Route::get('/cars/{id}', [CarController::class, 'show']);
