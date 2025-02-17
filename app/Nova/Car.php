@@ -52,7 +52,7 @@ class Car extends Resource
             ID::make()->sortable(),
 
             Gravatar::make()->maxWidth(50),
-
+/*
             Text::make('Title')
                 ->sortable()
                 ->rules('required', 'max:100'),
@@ -158,7 +158,7 @@ class Car extends Resource
 
             Text::make('Reject Comment', 'rejectComment'),
 
-            Number::make('Mileage')
+            Number::make('Mileage')*/
         ];
     }
 

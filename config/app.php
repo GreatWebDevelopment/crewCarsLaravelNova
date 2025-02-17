@@ -104,6 +104,18 @@ return [
             explode(',', env('APP_PREVIOUS_KEYS', ''))
         ),
     ],
+    'providers' => [
+        App\Providers\NovaServiceProvider::class,
+        Illuminate\Filesystem\FilesystemServiceProvider::class,
+        App\Providers\AuthServiceProvider::class,
+        Illuminate\Cache\CacheServiceProvider::class,
+        Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
+        Illuminate\Database\DatabaseServiceProvider::class,
+        Illuminate\Queue\QueueServiceProvider::class,
+        Illuminate\View\ViewServiceProvider::class, // ✅ Must be present
+
+
+    ],
 
     /*
     |--------------------------------------------------------------------------

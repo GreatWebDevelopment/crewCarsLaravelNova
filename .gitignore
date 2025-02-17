@@ -11,7 +11,8 @@ Homestead.json
 .vagrant
 
 # Nova & Composer specific files
-nova
+public/vendor/nova
+lang/vendor/nova
 composer.lock
 
 # Storage & logs

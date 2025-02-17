@@ -2,54 +2,73 @@
 
 namespace App\Providers;
 
+use App\Nova\CarBrand;
+use App\Nova\CarType;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\ServiceProvider;
+//use Illuminate\Support\ServiceProvider;
 use Laravel\Nova\Nova;
 use Laravel\Nova\NovaApplicationServiceProvider;
 use Laravel\Nova\Menu\MenuSection;
 use Laravel\Nova\Menu\MenuItem;
-use Illuminate\Http\Request;
-use Laravel\Fortify\Features;
+use Laravel\Nova\Menu\Menu;
+
 
 class NovaServiceProvider extends NovaApplicationServiceProvider
 {
-    public function boot()
+    /**
+     * Bootstrap any application services.
+     */
+    public function boot(): void
     {
         parent::boot(); // Ensure Nova is booted first
         Nova::mainMenu(function (Request $request) {
             return [
-                MenuSection::dashboard(\App\Nova\Dashboards\Main::class)->icon('chart-bar'),
+                MenuSection::dashboard(Main::class)->icon('chart-bar'),
 
-                MenuSection::make('Management', [
-                    MenuItem::resource(\App\Nova\Book::class),
-                    //MenuItem::resource(\App\Nova\Payment::class),
-                    MenuItem::resource(\App\Nova\PaymentMethod::class),
-                ])->icon('credit-card')->collapsable(),
+                MenuSection::make('Customers', [
+                    MenuItem::resource(User::class),
+                ])->icon('user')->collapsable(),
 
                 MenuSection::make('Cars', [
-                    //MenuItem::resource(\App\Nova\CarBrands::class),
-                   // MenuItem::resource(\App\Nova\CarTypes::class),
-                    //MenuItem::resource(\App\Nova\VehicleMake::class),
-                ])->icon('car')->collapsable(),
+                    MenuItem::resource(CarBrand::class),
+                    MenuItem::resource(CarType::class),
+                ])->icon('document-text')->collapsable(),
             ];
         });
     }
-
-    protected function gate()
+    /**
+     * Register the application's Nova resources.
+     */
+    protected function resources(): void
     {
-        Gate::define('viewNova', function ($user) {
-            return $user->isAdmin(); // Adjust this based on your user roles
-        });
+        Nova::resourcesIn(app_path('Nova'));
+    }
+    /**
+     * Register the Nova gate.
+     */
+    protected function gate(): void
+    {
+        if (app()->bound('gate')) { // Ensure Gate is registered before using it
+            Gate::define('viewNova', function ($user) {
+                return $user->role === 'admin'; // Adjust based on your user roles
+            });
+        }
     }
 
-    protected function dashboards()
+    /**
+     * Get the dashboards that should be listed in the Nova sidebar.
+    */
+    protected function dashboards(): array
     {
         return [
             new \App\Nova\Dashboards\Main,
         ];
     }
 
-    public function register()
+    /**
+     * Register any application services.
+     */
+    public function register(): void
     {
         parent::register();
     }

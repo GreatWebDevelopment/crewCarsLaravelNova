@@ -16,11 +16,15 @@ class RefreshApplication extends Command
         $this->call('optimize:clear');
         $this->call('route:clear');
         $this->call('view:clear');
+        $this->call('nova:publish');
+        $this->call('nova:cache');
+
+
 
         $this->info('Application cache and config cleared.');
 
         // Restart Laravel server (optional)
-        exec('php artisan serve');
+        exec('herd restart');
 
         return Command::SUCCESS;
     }
