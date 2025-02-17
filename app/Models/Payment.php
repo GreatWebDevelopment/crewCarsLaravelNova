@@ -14,8 +14,27 @@ class Payment extends Model
         'bookId', 'amount', 'status', 'transactionId'
     ];
 
-    public function book()
+    /**
+     * Get the user who made this payment.
+     */
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(Book::class, 'bookId');
+        return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get the booking associated with this payment.
+     */
+    public function booking(): BelongsTo
+    {
+        return $this->belongsTo(Booking::class);
+    }
+
+    /**
+     * Get the payment method used.
+     */
+    public function paymentMethod(): BelongsTo
+    {
+        return $this->belongsTo(PaymentMethod::class);
     }
 }

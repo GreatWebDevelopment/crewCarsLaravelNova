@@ -21,20 +21,6 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     public function boot(): void
     {
         parent::boot(); // Ensure Nova is booted first
-        Nova::mainMenu(function (Request $request) {
-            return [
-                MenuSection::dashboard(Main::class)->icon('chart-bar'),
-
-                MenuSection::make('Customers', [
-                    MenuItem::resource(User::class),
-                ])->icon('user')->collapsable(),
-
-                MenuSection::make('Cars', [
-                    MenuItem::resource(CarBrand::class),
-                    MenuItem::resource(CarType::class),
-                ])->icon('document-text')->collapsable(),
-            ];
-        });
     }
     /**
      * Register the Nova gate.
