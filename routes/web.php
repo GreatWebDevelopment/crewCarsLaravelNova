@@ -2,24 +2,26 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use Laravel\Nova\Nova;
+use App\Http\Controllers\UserController;
 
-Route::get('/login', function () {
-    return redirect('/nova');
+use App\Http\Controllers\BookingController;
+
+Route::resource('bookings', BookingController::class);
+Route::get('/', function () {
+    return view('welcome');
 });
-Route::middleware(['auth'])->group(function () {
+/*
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');*/
+Route::get('/nova', function () {
+    return redirect('/nova/resources/cars'); // Change to any resource
+})->name('nova.pages.home');
 
-    Nova::routes();
+Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
-Route::get('/', function () {
-    return redirect('/nova');
-});
-
-Route::get('/dashboard', function () {
-    return redirect('/nova');
-})->middleware(['auth', 'verified'])->name('dashboard');
 
 require __DIR__.'/auth.php';

@@ -4,18 +4,16 @@ namespace App\Nova;
 
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
-use Laravel\Nova\Fields\Number;
-use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
-class CarBrand extends Resource
+class Coupon extends Resource
 {
     /**
      * The model the resource corresponds to.
      *
-     * @var class-string<\App\Models\CarBrands>
+     * @var class-string<\App\Models\Coupon>
      */
-    public static $model = \App\Models\CarBrands::class;
+    public static $model = \App\Models\Coupon::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
@@ -42,17 +40,6 @@ class CarBrand extends Resource
     {
         return [
             ID::make()->sortable(),
-
-            Text::make('Title')
-                ->sortable()
-                ->rules('required', 'max:255'),
-
-            Text::make('Image', 'img')
-                ->sortable()
-                ->rules('required', 'max:255'),
-
-            Number::make('Status')
-                ->rules('required')
         ];
     }
 
@@ -95,5 +82,4 @@ class CarBrand extends Resource
     {
         return [];
     }
-
 }

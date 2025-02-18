@@ -4,11 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Car;
 
-class Book extends Model
+class Booking extends Model
 {
     use HasFactory;
-
+    protected $table = 'bookings';
     protected $fillable = [
         'userId', 'carId', 'totalDayOrHr', 'subtotal',
         'taxPer', 'taxAmt', 'oTotal', 'pMethodId',
@@ -23,11 +24,11 @@ class Book extends Model
 
     public function car()
     {
-        return $this->belongsTo(Car::class, 'carId');
+        return $this->belongsTo(Car::class, 'carId', 'id');
     }
 
     public function payment()
     {
-        return $this->hasOne(Payment::class, 'bookId');
+        return $this->hasOne(Payment::class, 'bookingId');
     }
 }

@@ -1,28 +1,24 @@
 <?php
 
 namespace App\Nova;
-
-//use Illuminate\Http\Request;
-use App\Nova\Booking;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\BelongsTo;
-use Laravel\Nova\Fields\HasMany;
+use Laravel\Nova\Resource;
 use Laravel\Nova\Http\Requests\NovaRequest;
+use Illuminate\Support\Facades\Log;
+use App\Nova\Car;
 
-
-class Car extends Resource
+class Booking extends Resource
 {
-
-
     /**
      * The model the resource corresponds to.
      *
-     * @var class-string<\App\Models\Car>
+     * @var class-string<\App\Models\Booking>
      */
-    public static $model = \App\Models\Car::class;
+    public static $model = \App\Models\Booking::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
@@ -47,48 +43,16 @@ class Car extends Resource
      */
     public function fields(NovaRequest $request): array
     {
+        $carField = BelongsTo::make('Car', 'car', Car::class);
+
         return [
             ID::make()->sortable(),
-            Text::make('Title')
-                ->sortable()
-                ->rules('required', 'max:255'),
-
-            Text::make('Number') // Car Plate or Identifier
-            ->sortable()
-                ->rules('required', 'max:50'),
-
-            BelongsTo::make('Owner', 'user', 'App\Nova\User')
-                ->sortable()
-                ->searchable()
-                ->rules('required'),
-
-            Text::make('Brand')
-                ->sortable()
-                ->rules('nullable', 'max:255'),
-
-            Number::make('Seats')
-                ->sortable()
-                ->hideFromIndex()
-                ->rules('required', 'integer', 'min:1', 'max:10'),
-
-            Boolean::make('AC')
-                ->hideFromIndex()
-                ->sortable(),
-
-            Text::make('Driver Name', 'driverName')
-                ->hideFromIndex()
-                ->rules('nullable', 'max:255'),
-
-            Number::make('Rent Price')
-                ->sortable()
-                ->rules('required', 'numeric', 'min:0'),
-
-            Text::make('Location')
-                ->sortable()
-                ->rules('nullable', 'max:255'),
-
-            HasMany::make('Bookings', 'bookings', 'App\Nova\Booking'),
-                ];
+            BelongsTo::make('User', 'user', 'App\Nova\User'),
+            $carField,
+            Number::make('Total Price', 'oTotal')->sortable(),
+            Text::make('Booking Status', 'bookingStatus')->sortable(),
+            Boolean::make('Is Rated', 'isRate'),
+        ];
     }
 
     /**

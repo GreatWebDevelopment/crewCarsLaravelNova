@@ -106,7 +106,9 @@ return [
         DispatchServingNovaEvent::class,
         BootTools::class,
     ],
-
+    'dashboards' => [
+        'default' => 'main', // ✅ Ensure 'main' is set as the default
+    ],
     'api_middleware' => [
         'nova',
         Authenticate::class,

@@ -4,18 +4,16 @@ namespace App\Nova;
 
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
-use Laravel\Nova\Fields\Text;
-use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
-class CarType extends Resource
+class Facility extends Resource
 {
     /**
      * The model the resource corresponds to.
      *
-     * @var class-string<\App\Models\CarTypes>
+     * @var class-string<\App\Models\Facility>
      */
-    public static $model = \App\Models\CarTypes::class;
+    public static $model = \App\Models\Facility::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
@@ -42,17 +40,6 @@ class CarType extends Resource
     {
         return [
             ID::make()->sortable(),
-
-            Text::make('Title')
-                ->sortable()
-                ->rules('required', 'max:255'),
-
-            Text::make('Image', 'img')
-                ->sortable()
-                ->rules('required', 'max:255'),
-
-            Number::make('Status')
-                ->rules('required')
         ];
     }
 
@@ -94,18 +81,5 @@ class CarType extends Resource
     public function actions(NovaRequest $request): array
     {
         return [];
-    }
-
-    /**
-     * Get the menu that should represent the resource.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Laravel\Nova\Menu\MenuItem
-     */
-    public function menu(Request $request)
-    {
-        return parent::menu($request)->withBadge(function () {
-            return static::$model::count();
-        });
     }
 }

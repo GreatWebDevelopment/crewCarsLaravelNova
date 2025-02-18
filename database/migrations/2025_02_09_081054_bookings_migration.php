@@ -7,10 +7,10 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up()
     {
-            Schema::create('books', function (Blueprint $table) {
+            Schema::create('bookings', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('carId')->nullable()->constrained('cars')->nullOnDelete();
-                $table->foreignId('uid')->nullable()->constrained('users')->nullOnDelete();
+                $table->foreignId('userId')->nullable()->constrained('users')->nullOnDelete();
                 $table->integer('cityId')->nullable();
                 $table->decimal('carPrice', 10, 2)->default(0.00);
                 $table->string('priceType', 50);
@@ -30,8 +30,8 @@ return new class extends Migration {
                 $table->string('transactionId', 255)->nullable();
                 $table->integer('typeId')->nullable();
                 $table->integer('brandId')->nullable();
-                $table->string('bookType', 50);
-                $table->string('bookStatus', 50)->default('pending');
+                $table->string('bookingType', 50);
+                $table->string('bookingStatus', 50)->default('pending');
                 $table->boolean('isRate')->default(0);
                 $table->decimal('totalRate', 3, 2)->default(0.00);
                 $table->text('rateText')->nullable();
@@ -49,6 +49,6 @@ return new class extends Migration {
 
     public function down()
     {
-        Schema::dropIfExists('books');
+        Schema::dropIfExists('bookings');
     }
 };

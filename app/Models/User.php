@@ -30,9 +30,9 @@ class User extends Authenticatable
         return $this->hasMany(Car::class, 'userId');
     }
 
-    public function books()
+    public function bookings()
     {
-        return $this->hasMany(Book::class, 'userId');
+        return $this->hasMany(Booking::class, 'userId');
     }
     public function hasRole($role)
     {

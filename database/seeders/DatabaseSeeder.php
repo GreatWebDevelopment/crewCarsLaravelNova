@@ -133,7 +133,7 @@ class DatabaseSeeder extends Seeder
         // Seed Users Table
         DB::table('users')->insert([
             [
-                'name' => 'Admin User',
+                'name' => 'Brandon Schatz',
                 'email' => 'admin@crewcars.com',
                 'password' => Hash::make('password123'),
                 'status' => 1,
@@ -160,6 +160,7 @@ class DatabaseSeeder extends Seeder
         DB::table('cars')->insert([
             [
                 'title' => 'Toyota Corolla',
+                'userId' => $user['id'],
                 'number' => 'ABC123',
                 'img' => 'https://example.com/images/toyota_corolla.jpg',
                 'status' => true,
@@ -193,6 +194,7 @@ class DatabaseSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
+                'userId' => $user['id'],
                 'title' => 'Honda Civic',
                 'number' => 'XYZ789',
                 'img' => 'https://example.com/images/honda_civic.jpg',
@@ -229,10 +231,10 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // Seed Bookings Table
-        DB::table('books')->insert([
+        DB::table('bookings')->insert([
             [
                 'carId' => 1,
-                'uid' => 1,
+                'userId' => 1,
                 'cityId' => 101,
                 'carPrice' => 50.00,
                 'priceType' => 'daily',
@@ -252,8 +254,8 @@ class DatabaseSeeder extends Seeder
                 'transactionId' => 'TXN123456789',
                 'typeId' => 1,
                 'brandId' => 3,
-                'bookType' => 'hourly',
-                'bookStatus' => 'confirmed',
+                'bookingType' => 'hourly',
+                'bookingStatus' => 'confirmed',
                 'isRate' => 1,
                 'totalRate' => 4.5,
                 'rateText' => 'Great service, very clean car!',
@@ -270,7 +272,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'carId' => 2,
-                'uid' => 2,
+                'userId' => 2,
                 'cityId' => 202,
                 'carPrice' => 75.00,
                 'priceType' => 'hourly',
@@ -290,8 +292,8 @@ class DatabaseSeeder extends Seeder
                 'transactionId' => 'TXN987654321',
                 'typeId' => 2,
                 'brandId' => 5,
-                'bookType' => 'daily',
-                'bookStatus' => 'pending',
+                'bookingType' => 'daily',
+                'bookingStatus' => 'pending',
                 'isRate' => 0,
                 'totalRate' => 0.0,
                 'rateText' => null,
@@ -307,7 +309,65 @@ class DatabaseSeeder extends Seeder
                 'updated_at' => now(),
             ]
         ]);
-
+        DB::table('pages')->insert([
+            [
+                'id' => 1,
+                'title' => 'Privacy Policy',
+                'status' => 1,
+                'description' => '<p>Privacy Policy</p><p>This privacy policy applies to the CarLink - Car Rental Booking App | Rent a Car | Taxi and Self Drive Car Renting | Complete Solution app (hereby referred to as "Application") for mobile devices that was created by CSCODETECH (hereby referred to as "Service Provider") as a Free service. This service is intended for use "AS IS".</p><p><br></p>...<p>If you have any questions regarding privacy while using the Application, or have questions about the practices, please contact the Service Provider via email at support@cscodetech.com.</p>',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'id' => 2,
+                'title' => 'Terms & Conditions',
+                'status' => 1,
+                'description' => '<p>Terms & Conditions</p><p>These terms and conditions apply to the CarLink - Car Rental Booking App...</p><p>Contact Us</p><p>If you have any questions or suggestions about the Terms and Conditions, please do not hesitate to contact the Service Provider at support@cscodetech.com.</p>',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'id' => 3,
+                'title' => 'Contact Us',
+                'status' => 1,
+                'description' => '<p>We’ll start with some questions and get you to the right place.</p><p>Skype: CSCODETECH</p><p>Facebook: CSCODETECH</p><p>WhatsApp: +91 7276465975</p>',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'id' => 4,
+                'title' => 'Cancellation Policy',
+                'status' => 1,
+                'description' => '<div>The cancellation policy for CarLink\'s car rental bookings typically depends on various factors such as the type of booking, duration, and specific terms and conditions agreed upon during the reservation process...</div>',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ]);
+        DB::table('settings')->insert([
+            'webname' => 'CarLink',
+            'weblogo' => 'images/website/1712638969.png',
+            'timezone' => 'Asia/Kolkata',
+            'currency' => '$',
+            'oneKey' => '****',
+            'oneHash' => '****',
+            'scredit' => 15,
+            'rcredit' => 10,
+            'showDark' => 0,
+            'tax' => 5.0,
+            'showAddCar' => 1,
+            'wlimit' => 50.0,
+            'commissionRate' => 10.0,
+            'contactNo' => '+917276465975',
+            'apiKey' => 'key',
+            'smsType' => 'Msg91',
+            'authKey' => '*****',
+            'otpId' => '*****',
+            'accId' => '*****',
+            'authToken' => '*****',
+            'twilioNumber' => '*****',
+            'otpAuth' => 'No',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
     }
 }
-*/

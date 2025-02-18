@@ -2,27 +2,18 @@
 
 namespace App\Nova;
 
-//use Illuminate\Http\Request;
-use App\Nova\Booking;
+use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
-use Laravel\Nova\Fields\Text;
-use Laravel\Nova\Fields\Number;
-use Laravel\Nova\Fields\Boolean;
-use Laravel\Nova\Fields\BelongsTo;
-use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
-
-class Car extends Resource
+class Faq extends Resource
 {
-
-
     /**
      * The model the resource corresponds to.
      *
-     * @var class-string<\App\Models\Car>
+     * @var class-string<\App\Models\Faq>
      */
-    public static $model = \App\Models\Car::class;
+    public static $model = \App\Models\Faq::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
@@ -49,46 +40,7 @@ class Car extends Resource
     {
         return [
             ID::make()->sortable(),
-            Text::make('Title')
-                ->sortable()
-                ->rules('required', 'max:255'),
-
-            Text::make('Number') // Car Plate or Identifier
-            ->sortable()
-                ->rules('required', 'max:50'),
-
-            BelongsTo::make('Owner', 'user', 'App\Nova\User')
-                ->sortable()
-                ->searchable()
-                ->rules('required'),
-
-            Text::make('Brand')
-                ->sortable()
-                ->rules('nullable', 'max:255'),
-
-            Number::make('Seats')
-                ->sortable()
-                ->hideFromIndex()
-                ->rules('required', 'integer', 'min:1', 'max:10'),
-
-            Boolean::make('AC')
-                ->hideFromIndex()
-                ->sortable(),
-
-            Text::make('Driver Name', 'driverName')
-                ->hideFromIndex()
-                ->rules('nullable', 'max:255'),
-
-            Number::make('Rent Price')
-                ->sortable()
-                ->rules('required', 'numeric', 'min:0'),
-
-            Text::make('Location')
-                ->sortable()
-                ->rules('nullable', 'max:255'),
-
-            HasMany::make('Bookings', 'bookings', 'App\Nova\Booking'),
-                ];
+        ];
     }
 
     /**
