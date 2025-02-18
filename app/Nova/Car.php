@@ -7,6 +7,7 @@ use App\Nova\Booking;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Number;
+use Laravel\Nova\Fields\Image;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\HasMany;
@@ -53,6 +54,10 @@ class Car extends Resource
                 ->sortable()
                 ->rules('required', 'max:255'),
 
+            Image::make('Image', 'img')
+                ->disk('public')
+                ->rules('required'),
+
             Text::make('Number') // Car Plate or Identifier
             ->sortable()
                 ->rules('required', 'max:50'),
@@ -79,7 +84,7 @@ class Car extends Resource
                 ->hideFromIndex()
                 ->rules('nullable', 'max:255'),
 
-            Number::make('Rent Price')
+            Number::make('Rent Price', 'rentPrice')
                 ->sortable()
                 ->rules('required', 'numeric', 'min:0'),
 
