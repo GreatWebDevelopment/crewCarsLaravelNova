@@ -1,23 +1,23 @@
 <?php
 
 namespace App\Nova;
-
-use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
-use Laravel\Nova\Http\Requests\NovaRequest;
-use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Number;
-use Laravel\Nova\Fields\Select;
-use Laravel\Nova\Fields\DateTime;
+use Laravel\Nova\Fields\Boolean;
+use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Resource;
+use Laravel\Nova\Http\Requests\NovaRequest;
 
-class Payment extends Resource
+
+class Booking extends Resource
 {
     /**
      * The model the resource corresponds to.
      *
-     * @var class-string<\App\Models\Payment>
+     * @var class-string<\App\Models\Booking>
      */
-    public static $model = \App\Models\Payment::class;
+    public static $model = \App\Models\Booking::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
@@ -44,17 +44,11 @@ class Payment extends Resource
     {
         return [
             ID::make()->sortable(),
-            BelongsTo::make('User'),
-            BelongsTo::make('Booking', 'booking', \App\Nova\Booking::class),
-            BelongsTo::make('Payment Method', 'paymentMethod', \App\Nova\PaymentMethod::class),
-            Number::make('Amount'),
-            Select::make('Status')->options([
-                'pending' => 'Pending',
-                'completed' => 'Completed',
-                'failed' => 'Failed',
-            ])->displayUsingLabels(),
-            DateTime::make('Payment Date'),
-
+            BelongsTo::make('User', 'user', 'App\Nova\User'),
+            BelongsTo::make('Car', 'car', 'App\Nova\Car'),
+            Number::make('Total Price', 'oTotal')->sortable(),
+            Text::make('Booking Status', 'bookingStatus')->sortable(),
+            Boolean::make('Is Rated', 'isRate'),
         ];
     }
 

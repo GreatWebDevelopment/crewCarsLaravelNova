@@ -5,19 +5,15 @@ namespace App\Nova;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Http\Requests\NovaRequest;
-use Laravel\Nova\Fields\BelongsTo;
-use Laravel\Nova\Fields\Number;
-use Laravel\Nova\Fields\Select;
-use Laravel\Nova\Fields\DateTime;
 
-class Payment extends Resource
+class Coupon extends Resource
 {
     /**
      * The model the resource corresponds to.
      *
-     * @var class-string<\App\Models\Payment>
+     * @var class-string<\App\Models\Coupon>
      */
-    public static $model = \App\Models\Payment::class;
+    public static $model = \App\Models\Coupon::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
@@ -44,17 +40,6 @@ class Payment extends Resource
     {
         return [
             ID::make()->sortable(),
-            BelongsTo::make('User'),
-            BelongsTo::make('Booking', 'booking', \App\Nova\Booking::class),
-            BelongsTo::make('Payment Method', 'paymentMethod', \App\Nova\PaymentMethod::class),
-            Number::make('Amount'),
-            Select::make('Status')->options([
-                'pending' => 'Pending',
-                'completed' => 'Completed',
-                'failed' => 'Failed',
-            ])->displayUsingLabels(),
-            DateTime::make('Payment Date'),
-
         ];
     }
 

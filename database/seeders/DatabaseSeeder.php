@@ -229,7 +229,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // Seed Bookings Table
-        DB::table('books')->insert([
+        DB::table('bookings')->insert([
             [
                 'carId' => 1,
                 'uid' => 1,
@@ -252,8 +252,8 @@ class DatabaseSeeder extends Seeder
                 'transactionId' => 'TXN123456789',
                 'typeId' => 1,
                 'brandId' => 3,
-                'bookType' => 'hourly',
-                'bookStatus' => 'confirmed',
+                'bookingType' => 'hourly',
+                'bookingStatus' => 'confirmed',
                 'isRate' => 1,
                 'totalRate' => 4.5,
                 'rateText' => 'Great service, very clean car!',
@@ -290,8 +290,8 @@ class DatabaseSeeder extends Seeder
                 'transactionId' => 'TXN987654321',
                 'typeId' => 2,
                 'brandId' => 5,
-                'bookType' => 'daily',
-                'bookStatus' => 'pending',
+                'bookingType' => 'daily',
+                'bookingStatus' => 'pending',
                 'isRate' => 0,
                 'totalRate' => 0.0,
                 'rateText' => null,
@@ -310,4 +310,3 @@ class DatabaseSeeder extends Seeder
 
     }
 }
-*/

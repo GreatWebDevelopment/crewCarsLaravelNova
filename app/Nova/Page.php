@@ -1,23 +1,19 @@
 <?php
 
 namespace App\Nova;
+
+use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
-use Laravel\Nova\Fields\Text;
-use Laravel\Nova\Fields\Number;
-use Laravel\Nova\Fields\Boolean;
-use Laravel\Nova\Fields\BelongsTo;
-use Laravel\Nova\Resource;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
-
-class Book extends Resource
+class Page extends Resource
 {
     /**
      * The model the resource corresponds to.
      *
-     * @var class-string<\App\Models\Book>
+     * @var class-string<\App\Models\Page>
      */
-    public static $model = \App\Models\Book::class;
+    public static $model = \App\Models\Page::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
@@ -44,11 +40,6 @@ class Book extends Resource
     {
         return [
             ID::make()->sortable(),
-            BelongsTo::make('User', 'user', 'App\Nova\User'),
-            BelongsTo::make('Car', 'car', 'App\Nova\Car'),
-            Number::make('Total Price', 'oTotal')->sortable(),
-            Text::make('Book Status', 'bookStatus')->sortable(),
-            Boolean::make('Is Rated', 'isRate'),
         ];
     }
 
