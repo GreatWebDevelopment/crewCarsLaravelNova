@@ -4,6 +4,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CarController;
+use App\Http\Controllers\CarTypeController;
+use App\Http\Controllers\CarBrandController;
+use App\Http\Controllers\CityController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Auth\LoginController;
@@ -17,11 +20,20 @@ Route::get('/decode-vin/{vin}', [VinDecoderController::class, 'decodeVin']);
 
 // Protected Routes
 Route::middleware('api')->group(function () {
-    Route::get('/cars', [CarController::class, 'index']);
+    Route::post('/cars-list', [CarController::class, 'index']);
     Route::post('/cars', [CarController::class, 'store']);
     Route::get('/cars/{id}', [CarController::class, 'show']);
     Route::put('/cars/{id}', [CarController::class, 'update']);
     Route::delete('/cars/{id}', [CarController::class, 'destroy']);
+
+    Route::get('/carType', [CarTypeController::class, 'index']);
+    Route::get('/carType/{id}', [CarTypeController::class, 'show']);
+
+    Route::get('/carBrand', [CarBrandController::class, 'index']);
+    Route::get('/carBrand/{id}', [CarBrandController::class, 'show']);
+
+    Route::get('/city', [CityController::class, 'index']);
+    Route::get('/city/{id}', [CityController::class, 'show']);
 
     Route::post('/bookings', [BookingController::class, 'store']);
     Route::get('/bookings', [BookingController::class, 'index']);

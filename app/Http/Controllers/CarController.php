@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Car;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class CarController extends Controller
 {
@@ -68,10 +69,18 @@ class CarController extends Controller
         return $update_data;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $items = Car::all();
-        return response()->json($items);
+        Log::info($request->all());
+        if ($request->has('uid')) {
+            $items = Car::where('postId', $request->input('uid'))->select([
+                'cars.*',
+                DB::raw('(SELECT COUNT(*) FROM gallerys WHERE gallerys.carId = cars.id) AS total_gallery')
+            ])->get();
+            return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Type wise Car Get Successfully!!!', 'mycarlist'=> $items], 200);
+        } else {
+            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 200);
+        }
     }
 
     public function show($id)
