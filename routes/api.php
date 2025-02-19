@@ -7,12 +7,14 @@ use App\Http\Controllers\CarController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Auth\LoginController;
-
+use App\Http\Controllers\VinDecoderController;
 
 // Public Routes
 Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
 Route::post('/api/login', [LoginController::class, 'login']);
+Route::get('/decode-vin/{vin}', [VinDecoderController::class, 'decodeVin']);
+
 // Protected Routes
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/cars', [CarController::class, 'index']);
