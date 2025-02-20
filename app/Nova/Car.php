@@ -11,6 +11,8 @@ use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Http\Requests\NovaRequest;
+use Laravel\Nova\Fields\Hidden;
+use Laravel\Nova\Panel;
 
 
 class Car extends Resource
@@ -83,9 +85,16 @@ class Car extends Resource
                 ->sortable()
                 ->rules('required', 'numeric', 'min:0'),
 
-            Text::make('Location')
-                ->sortable()
-                ->rules('nullable', 'max:255'),
+            Panel::make('Location Details', [
+                Text::make('Location', 'location')
+                    ->help('Start typing and select a location from Google Places.')
+                    ->withMeta(['extraAttributes' => [
+                        'id' => 'location-input'
+                    ]]),
+
+                Hidden::make('Latitude', 'latitude'),
+                Hidden::make('Longitude', 'longitude'),
+            ]),
 
             HasMany::make('Bookings', 'bookings', 'App\Nova\Booking'),
                 ];
