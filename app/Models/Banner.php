@@ -13,7 +13,7 @@ class Banner extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
-    public function booking()
+    public function bookings()
     {
         return $this->belongsTo(Booking::class, 'booking_id');
     }

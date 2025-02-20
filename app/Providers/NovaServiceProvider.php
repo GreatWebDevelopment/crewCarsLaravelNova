@@ -4,7 +4,10 @@ namespace App\Providers;
 
 use App\Nova\CarBrand;
 use App\Nova\CarType;
+use Illuminate\Support\Facades\Log;
+
 use Illuminate\Support\Facades\Gate;
+
 //use Illuminate\Support\ServiceProvider;
 use Laravel\Nova\Nova;
 use Laravel\Nova\NovaApplicationServiceProvider;
@@ -21,7 +24,10 @@ use App\Nova\Facility;
 use App\Nova\Payment;
 use App\Nova\Coupon;
 use App\Nova\Page;
-use App\Nova\Dashboards\Main;
+use App\Nova\Booking;
+use App\Nova\User;
+//use App\Nova\Dashboards\Main;
+use Illuminate\Support\Facades\Route;
 
 class NovaServiceProvider extends NovaApplicationServiceProvider
 {
@@ -31,48 +37,78 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     public function boot(): void
     {
         parent::boot(); // Ensure Nova is booted first
-        //$this->authorizeNova();
-        Nova::dashboards([
-            new Main(), // ✅ Ensure this exists
-        ]);
+        Nova::routes()
+            ->withAuthenticationRoutes()
+            ->withPasswordResetRoutes()
+            ->register();
         Nova::mainMenu(function ($request) {
             return [
-                //MenuSection::dashboard('Dashboard')->icon('chart-bar'),
-
-                MenuSection::make('City Management', [
-                    Banner::make(),
-                    City::make(),
-                ])->icon('building')->collapsable(),
-
                 MenuSection::make('Car Management', [
-                    Car::make(),
-                    Gallery::make(),
-                    Facility::make(),
+                    MenuItem::resource(Car::class),
+                    MenuItem::resource(Booking::class),
                 ])->icon('car')->collapsable(),
-
-                MenuSection::make('Support', [
-                    Faq::make(),
-                    Page::make(),
-                ])->icon('help-circle')->collapsable(),
-
-                MenuSection::make('Payments & Discounts', [
-                    Payment::make(),
-                    Coupon::make(),
-                ])->icon('credit-card')->collapsable(),
+                /*MenuSection::make('Bookings', [
+                    Booking::make(),
+                ])->icon('calendar')->collapsable(),*/
             ];
         });
+
+        // ✅ Force Nova Home to Redirect to a Resource Instead of the Dashboard
+        /*Nova::serving(function () {
+                     Nova::mainMenu(function ($request) {
+                          Log::info('✅ Nova mainMenu() is runng...');
+          /*
+                          return [
+                              MenuSection::make('Banner', [Banner::make()])->icon('image'),
+                              MenuSection::make('City', [City::make()])->icon('building'),
+                              MenuSection::make('Car Management', [
+                                  CarType::make(),
+                                  CarBrand::make(),
+                                  Car::make(),
+                                  Gallery::make(),
+                              ])->icon('car')->collapsable(),
+                              MenuSection::make('Support', [
+                                  Faq::make(),
+                                  Facility::make(),
+                              ])->icon('help-circle')->collapsable(),
+                              MenuSection::make('Payments', [
+                                  Payment::make(),
+                                  Coupon::make(),
+                              ])->icon('credit-card')->collapsable(),
+                              MenuSection::make('Pages', [
+                                  Page::make(),
+                              ])->icon('file')->collapsable(),
+                              MenuSection::make('Bookings', [
+                                  Booking::make(),
+                              ])->icon('calendar')->collapsable(),
+                              MenuSection::make('Users', [
+                                  \App\Nova\User::make(),
+                              ])->icon('users')->collapsable(),
+                          ];
+                      });
+
+       });
+       Log::info('🔹 NovaServiceProvider: Booting...');
+
+       Route::middleware(['web', 'nova'])->get('/nova', function () {
+           return redirect('/nova/resources/cars'); // Change 'cars' to your preferred resource
+       })->name('nova.pages.home');
+           */
     }
+
+
     /**
      * Register the Nova gate.
      */
     protected function gate(): void
     {
-        if (app()->bound('gate')) { // Ensure Gate is registered before using it
+        if (app()->bound('gate')) {
             Gate::define('viewNova', function ($user) {
-                return $user->role === 'admin'; // Adjust based on your user roles
+                return isset($user->role) && $user->role === 'admin'; // ✅ Null check added
             });
         }
     }
+
 
 
 
@@ -81,9 +117,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     */
     protected function dashboards(): array
     {
-        return [
-            new \App\Nova\Dashboards\Main,
-        ];
+        return []; // ✅ Ensures Nova does NOT load the Main dashboard
     }
 
     /**
@@ -91,6 +125,6 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
      */
     public function register(): void
     {
-        parent::register();
-    }
+        Log::info('🔹 NovaServiceProvider: Registering services...');
+        parent::register();    }
 }

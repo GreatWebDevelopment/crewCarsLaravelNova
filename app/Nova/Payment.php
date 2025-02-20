@@ -44,7 +44,7 @@ class Payment extends Resource
     {
         return [
             ID::make()->sortable(),
-            BelongsTo::make('User'),
+            BelongsTo::make('User', 'user', User::class),
             BelongsTo::make('Booking', 'booking', \App\Nova\Booking::class),
             BelongsTo::make('Payment Method', 'paymentMethod', \App\Nova\PaymentMethod::class),
             Number::make('Amount'),

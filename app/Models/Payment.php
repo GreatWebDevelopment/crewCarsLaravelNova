@@ -27,7 +27,7 @@ class Payment extends Model
     /**
      * Get the booking associated with this payment.
      */
-    public function booking(): BelongsTo
+    public function bookings(): BelongsTo
     {
         return $this->belongsTo(Booking::class);
     }

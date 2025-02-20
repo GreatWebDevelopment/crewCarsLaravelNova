@@ -8,7 +8,8 @@ use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Resource;
 use Laravel\Nova\Http\Requests\NovaRequest;
-
+use Illuminate\Support\Facades\Log;
+use App\Nova\Car;
 
 class Booking extends Resource
 {
@@ -42,10 +43,12 @@ class Booking extends Resource
      */
     public function fields(NovaRequest $request): array
     {
+        $carField = BelongsTo::make('Car', 'car', Car::class);
+
         return [
             ID::make()->sortable(),
             BelongsTo::make('User', 'user', 'App\Nova\User'),
-            BelongsTo::make('Car', 'car', 'App\Nova\Car'),
+            $carField,
             Number::make('Total Price', 'oTotal')->sortable(),
             Text::make('Booking Status', 'bookingStatus')->sortable(),
             Boolean::make('Is Rated', 'isRate'),

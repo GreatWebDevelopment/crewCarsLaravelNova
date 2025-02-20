@@ -9,7 +9,10 @@ return new class extends Migration {
     {
         Schema::create('cars', function (Blueprint $table) {
             $table->id();
-            $table->string('title', 100);
+            $table->foreignId('userId')
+                ->nullable()
+                ->constrained('users') // Assumes `users` table exists
+                ->cascadeOnDelete();            $table->string('title', 100);
             $table->string('number', 100);
             $table->string('img',255);
             $table->boolean('status');

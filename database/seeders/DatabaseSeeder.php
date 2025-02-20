@@ -133,7 +133,7 @@ class DatabaseSeeder extends Seeder
         // Seed Users Table
         DB::table('users')->insert([
             [
-                'name' => 'Admin User',
+                'name' => 'Brandon Schatz',
                 'email' => 'admin@crewcars.com',
                 'password' => Hash::make('password123'),
                 'status' => 1,
@@ -160,6 +160,7 @@ class DatabaseSeeder extends Seeder
         DB::table('cars')->insert([
             [
                 'title' => 'Toyota Corolla',
+                'userId' => $user['id'],
                 'number' => 'ABC123',
                 'img' => 'https://example.com/images/toyota_corolla.jpg',
                 'status' => true,
@@ -193,6 +194,7 @@ class DatabaseSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
+                'userId' => $user['id'],
                 'title' => 'Honda Civic',
                 'number' => 'XYZ789',
                 'img' => 'https://example.com/images/honda_civic.jpg',
@@ -232,7 +234,7 @@ class DatabaseSeeder extends Seeder
         DB::table('bookings')->insert([
             [
                 'carId' => 1,
-                'uid' => 1,
+                'userId' => 1,
                 'cityId' => 101,
                 'carPrice' => 50.00,
                 'priceType' => 'daily',
@@ -270,7 +272,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'carId' => 2,
-                'uid' => 2,
+                'userId' => 2,
                 'cityId' => 202,
                 'carPrice' => 75.00,
                 'priceType' => 'hourly',

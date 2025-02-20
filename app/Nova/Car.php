@@ -2,15 +2,21 @@
 
 namespace App\Nova;
 
-use Illuminate\Http\Request;
-use Laravel\Nova\Fields\Gravatar;
+//use Illuminate\Http\Request;
+use App\Nova\Booking;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Number;
+use Laravel\Nova\Fields\Boolean;
+use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Http\Requests\NovaRequest;
+
 
 class Car extends Resource
 {
+
+
     /**
      * The model the resource corresponds to.
      *
@@ -23,7 +29,7 @@ class Car extends Resource
      *
      * @var string
      */
-    public static $title = 'title';
+    public static $title = 'id';
 
     /**
      * The columns that should be searched.
@@ -35,13 +41,6 @@ class Car extends Resource
     ];
 
     /**
-     * Indicates whether the resource should automatically poll for new resources.
-     *
-     * @var bool
-     */
-    public static $polling = true;
-
-    /**
      * Get the fields displayed by the resource.
      *
      * @return array<int, \Laravel\Nova\Fields\Field>
@@ -50,115 +49,46 @@ class Car extends Resource
     {
         return [
             ID::make()->sortable(),
-
-            Gravatar::make()->maxWidth(50),
             Text::make('Title')
                 ->sortable()
-                ->rules('required', 'max:100'),
-
-            Text::make('Number')
-                ->sortable()
-                ->rules('required', 'max:100'),
-
-            Text::make('Image', 'img')
                 ->rules('required', 'max:255'),
 
-            Number::make('Status')
-                ->sortable()
-                ->min(-128)->max(127)
-                ->rules('required'),
-
-            Number::make('Rating')
-                ->sortable()
-                ->rules('required'),
-
-            Number::make('Seats')
-                ->sortable()
-                ->rules('required'),
-
-            Number::make('Air Conditioning', 'ac')
-                ->sortable()
-                ->min(-128)->max(127)
-                ->rules('required'),
-
-            Text::make('Driver Name', 'driverName')
-                ->sortable()
-                ->rules('required', 'max:100'),
-
-            Text::make('Driver Mobile', 'driverMobile')
-                ->rules('required', 'max:13'),
-
-            Text::make('Transmission')
-                ->sortable()
+            Text::make('Number') // Car Plate or Identifier
+            ->sortable()
                 ->rules('required', 'max:50'),
 
-            Text::make('Facility')
+            BelongsTo::make('Owner', 'user', 'App\Nova\User')
                 ->sortable()
-                ->rules('required', 'max:100'),
-
-            Text::make('Type')
-                ->sortable()
-                ->rules('required', 'max:50'),
+                ->searchable()
+                ->rules('required'),
 
             Text::make('Brand')
                 ->sortable()
-                ->rules('required', 'max:50'),
+                ->rules('nullable', 'max:255'),
 
-            Number::make('Available')
+            Number::make('Seats')
                 ->sortable()
-                ->rules('required'),
+                ->hideFromIndex()
+                ->rules('required', 'integer', 'min:1', 'max:10'),
 
-            Number::make('Rent Price', 'rentPrice')
-                ->sortable()
-                ->rules('required'),
+            Boolean::make('AC')
+                ->hideFromIndex()
+                ->sortable(),
 
-            Number::make('Rent Price Driver', 'rentPriceDriver')
-                ->sortable()
-                ->rules('required'),
+            Text::make('Driver Name', 'driverName')
+                ->hideFromIndex()
+                ->rules('nullable', 'max:255'),
 
-            Number::make('Engine Hp', 'engineHp')
+            Number::make('Rent Price')
                 ->sortable()
-                ->rules('required'),
-
-            Number::make('Price Type', 'priceType')
-                ->sortable()
-                ->rules('required'),
-
-            Text::make('Fuel Type', 'fuelType')
-                ->sortable()
-                ->rules('required', 'max:50'),
+                ->rules('required', 'numeric', 'min:0'),
 
             Text::make('Location')
-                ->rules('required', 'max:100'),
+                ->sortable()
+                ->rules('nullable', 'max:255'),
 
-            Text::make('Car Description', 'carDesc')
-                ->rules('required', 'max:255'),
-
-            Text::make('Pick Address', 'pickAddress')
-                ->rules('required', 'max:255'),
-
-            Number::make('Pick Latitude', 'pickLat')
-                ->rules('required'),
-
-            Number::make('Pick Longitude', 'pickLng')
-                ->rules('required'),
-
-            Number::make('Total Miles', 'totalMiles')
-                ->rules('required'),
-
-            Number::make('Post ID', 'postId')
-                ->rules('required'),
-
-            Number::make('Min Hrs', 'minHrs')
-                ->rules('required'),
-
-            Number::make('IsApproved', 'isApproved')
-                ->rules('required'),
-
-            Text::make('Reject Comment', 'rejectComment'),
-
-            Number::make('Mileage')
-        ];
+            HasMany::make('Bookings', 'bookings', 'App\Nova\Booking'),
+                ];
     }
 
     /**
@@ -199,18 +129,5 @@ class Car extends Resource
     public function actions(NovaRequest $request): array
     {
         return [];
-    }
-
-    /**
-     * Get the menu that should represent the resource.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Laravel\Nova\Menu\MenuItem
-     */
-    public function menu(Request $request)
-    {
-        return parent::menu($request)->withBadge(function () {
-            return static::$model::count();
-        });
     }
 }
