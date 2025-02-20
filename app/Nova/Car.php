@@ -13,6 +13,7 @@ use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Fields\Hidden;
 use Laravel\Nova\Panel;
+use App\Nova\User;
 
 
 class Car extends Resource
@@ -95,6 +96,9 @@ class Car extends Resource
                 Hidden::make('Latitude', 'latitude'),
                 Hidden::make('Longitude', 'longitude'),
             ]),
+            BelongsTo::make('User', 'user', User::class)
+                ->searchable()
+                ->sortable(),
 
             HasMany::make('Bookings', 'bookings', 'App\Nova\Booking'),
                 ];
