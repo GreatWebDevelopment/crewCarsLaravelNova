@@ -9,6 +9,10 @@ use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Password;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
+use Laravel\Nova\Fields\HasMany;
+use Laravel\Nova\Fields\Email;
+use Laravel\Nova\Fields\DateTime;
+
 
 class User extends Resource
 {
@@ -63,6 +67,10 @@ class User extends Resource
                 ->onlyOnForms()
                 ->creationRules($this->passwordRules())
                 ->updateRules($this->optionalPasswordRules()),
+            // Display the cars associated with the user
+            HasMany::make('Cars', 'cars', Car::class),
+            HasMany::make('Bookings', 'bookings', Booking::class),
+
         ];
     }
 
