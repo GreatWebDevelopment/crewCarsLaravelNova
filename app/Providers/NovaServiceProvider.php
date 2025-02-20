@@ -26,7 +26,7 @@ use App\Nova\Coupon;
 use App\Nova\Page;
 use App\Nova\Booking;
 use App\Nova\User;
-//use App\Nova\Dashboards\Main;
+use App\Nova\Dashboards\Main;
 use Illuminate\Support\Facades\Route;
 
 class NovaServiceProvider extends NovaApplicationServiceProvider
@@ -47,53 +47,30 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                     MenuItem::resource(Car::class),
                     MenuItem::resource(Booking::class),
                 ])->icon('car')->collapsable(),
-                /*MenuSection::make('Bookings', [
-                    Booking::make(),
-                ])->icon('calendar')->collapsable(),*/
+                // 🔹 User & Booking Management
+                MenuSection::make('User & Booking Management', [
+                    MenuItem::resource(User::class),
+                    MenuItem::resource(Booking::class),
+                ])->icon('users')->collapsable(),
+                // 🔹 Financials
+                MenuSection::make('Financials', [
+                    MenuItem::resource(Payment::class),
+                    MenuItem::resource(Coupon::class),
+                ])->icon('credit-card')->collapsable(),
+                // 🔹 Support & Pages
+                MenuSection::make('Support & Pages', [
+                    MenuItem::resource(Faq::class),
+                    MenuItem::resource(Page::class),
+                    MenuItem::resource(Banner::class),
+                ])->icon('life-buoy')->collapsable(),
             ];
         });
 
-        // ✅ Force Nova Home to Redirect to a Resource Instead of the Dashboard
-        /*Nova::serving(function () {
-                     Nova::mainMenu(function ($request) {
-                          Log::info('✅ Nova mainMenu() is runng...');
-          /*
-                          return [
-                              MenuSection::make('Banner', [Banner::make()])->icon('image'),
-                              MenuSection::make('City', [City::make()])->icon('building'),
-                              MenuSection::make('Car Management', [
-                                  CarType::make(),
-                                  CarBrand::make(),
-                                  Car::make(),
-                                  Gallery::make(),
-                              ])->icon('car')->collapsable(),
-                              MenuSection::make('Support', [
-                                  Faq::make(),
-                                  Facility::make(),
-                              ])->icon('help-circle')->collapsable(),
-                              MenuSection::make('Payments', [
-                                  Payment::make(),
-                                  Coupon::make(),
-                              ])->icon('credit-card')->collapsable(),
-                              MenuSection::make('Pages', [
-                                  Page::make(),
-                              ])->icon('file')->collapsable(),
-                              MenuSection::make('Bookings', [
-                                  Booking::make(),
-                              ])->icon('calendar')->collapsable(),
-                              MenuSection::make('Users', [
-                                  \App\Nova\User::make(),
-                              ])->icon('users')->collapsable(),
-                          ];
-                      });
-
-       });
-       Log::info('🔹 NovaServiceProvider: Booting...');
 
        Route::middleware(['web', 'nova'])->get('/nova', function () {
            return redirect('/nova/resources/cars'); // Change 'cars' to your preferred resource
        })->name('nova.pages.home');
-           */
+
     }
 
 
@@ -117,7 +94,9 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     */
     protected function dashboards(): array
     {
-        return []; // ✅ Ensures Nova does NOT load the Main dashboard
+        return [
+            new Main(),
+        ];
     }
 
     /**
@@ -125,6 +104,5 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
      */
     public function register(): void
     {
-        Log::info('🔹 NovaServiceProvider: Registering services...');
         parent::register();    }
 }
