@@ -13,7 +13,12 @@ class Payment extends Model
     use HasFactory;
 
     protected $fillable = [
-        'bookingId', 'amount', 'status', 'transactionId'
+        'userId',
+        'bookingId',
+        'paymentMethodId',
+        'amount',
+        'status',
+        'paymentDate'
     ];
 
     /**
@@ -21,15 +26,15 @@ class Payment extends Model
      */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'userId');
     }
 
     /**
      * Get the booking associated with this payment.
      */
-    public function bookings(): BelongsTo
+    public function booking(): BelongsTo
     {
-        return $this->belongsTo(Booking::class);
+        return $this->belongsTo(Booking::class, 'bookingId');
     }
 
     /**
@@ -37,6 +42,6 @@ class Payment extends Model
      */
     public function paymentMethod(): BelongsTo
     {
-        return $this->belongsTo(PaymentMethod::class);
+        return $this->belongsTo(PaymentMethod::class, 'paymentMethodId');
     }
 }

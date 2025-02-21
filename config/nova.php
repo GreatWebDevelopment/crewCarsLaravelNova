@@ -167,16 +167,20 @@ return [
     | the absolute path to an SVG logo within the local filesystem.
     |
     */
+        'brand' => [
+            'logo' => resource_path('/images/logo.svg'),
+            'dark_logo' => resource_path('/images/logo.svg'),
+        ],
 
-    // 'brand' => [
-    //     'logo' => resource_path('/img/example-logo.svg'),
-
-    //     'colors' => [
-    //         "400" => "24, 182, 155, 0.5",
-    //         "500" => "24, 182, 155",
-    //         "600" => "24, 182, 155, 0.75",
-    //     ]
-    // ],
+    'brand' => [
+      'logo' => resource_path('/images/logo.svg'),
+        /*
+         'colors' => [
+             "400" => "24, 182, 155, 0.5",
+            "500" => "24, 182, 155",
+            "600" => "24, 182, 155, 0.75",
+        ]*/
+     ],
 
     /*
     |--------------------------------------------------------------------------

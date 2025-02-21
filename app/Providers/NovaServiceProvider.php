@@ -37,6 +37,8 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     public function boot(): void
     {
         parent::boot(); // Ensure Nova is booted first
+        Nova::style('nova-custom', public_path('css/nova-custom.css'));
+
         Nova::serving(function () {
             // Register the Google Maps JavaScript API
             Nova::footer(function () {

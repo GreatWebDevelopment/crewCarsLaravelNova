@@ -44,16 +44,24 @@ class Payment extends Resource
     {
         return [
             ID::make()->sortable(),
-            BelongsTo::make('User', 'user', User::class),
-            BelongsTo::make('Booking', 'booking', \App\Nova\Booking::class),
-            BelongsTo::make('Payment Method', 'paymentMethod', \App\Nova\PaymentMethod::class),
+
+            BelongsTo::make('User', 'user', \App\Nova\User::class)
+                ->sortable(),
+
+            BelongsTo::make('Booking', 'booking', \App\Nova\Booking::class)
+                ->sortable(),
+
+            BelongsTo::make('Payment Method', 'paymentMethod', \App\Nova\PaymentMethod::class)
+                ->sortable(),
+
+
             Number::make('Amount'),
             Select::make('Status')->options([
                 'pending' => 'Pending',
                 'completed' => 'Completed',
                 'failed' => 'Failed',
             ])->displayUsingLabels(),
-            DateTime::make('Payment Date'),
+            DateTime::make('Payment Date', 'paymentDate'),
 
         ];
     }
