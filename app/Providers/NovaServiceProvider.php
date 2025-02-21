@@ -49,8 +49,12 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
             Nova::script('nova-google-maps', asset('js/nova-google-maps.js'));
 
         });
+       // ✅ Restrict Nova Access to Admins
+        Nova::auth(function ($request) {
+            return auth()->user() && auth()->user()->hasRole('admin');
+        });
         Nova::routes()
-            ->withAuthenticationRoutes()
+            ->withAuthenticationRoutes(default: true)
             ->withPasswordResetRoutes()
             ->register();
         Nova::mainMenu(function ($request) {

@@ -11,12 +11,12 @@
     "require": {
         "php": "^8.2",
         "algolia/algoliasearch-client-php": "^4.13",
+        "crewcars/locationfield": "@dev",
         "laravel/framework": "^11.31",
         "laravel/nova": "^5.2",
         "laravel/scout": "^10.12",
         "laravel/tinker": "^2.9",
-        "spatie/laravel-permission": "^6.13",
-        "crewcars/locationfield": "@dev"
+        "spatie/laravel-permission": "^6.15"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
