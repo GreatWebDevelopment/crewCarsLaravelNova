@@ -2,16 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Page;
 use Illuminate\Http\Request;
 
 class PageController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $items = Page::where('status', 1)->select('title', 'description')->get();
+
+        if ($items->isEmpty()) {
+            return response()->json(['pagelist'=> $items, 'ResponseCode' => '200', 'Result' => 'false',
+                'ResponseMsg' => 'Page Not Founded!'], 200);
+        } else {
+            return response()->json(['pagelist'=> $items, 'ResponseCode' => '200', 'Result' => 'true',
+                'ResponseMsg' => 'Page List Founded!'], 200);
+        }
     }
 
     /**

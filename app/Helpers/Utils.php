@@ -21,3 +21,36 @@ if (!function_exists('convertToCamelCase')) {
         return $camelCaseString;
     }
 }
+
+if (!function_exists('calculateDistance')) {
+    function calculateDistance($originLat, $originLng, $destLat, $destLng, $apiKey) {
+        $unit = "K";
+        $theta = (float)$originLng - (float)$destLng;
+        $dist = sin(deg2rad((float)$originLat)) * sin(deg2rad((float)$destLat)) + cos(deg2rad((float)$originLat)) * cos(deg2rad((float)$destLat)) * cos(deg2rad((float)$theta));
+        $dist = acos($dist);
+        $dist = rad2deg($dist);
+        $miles = $dist * 60 * 1.1515;
+        $unit = strtoupper($unit);
+
+        if ($unit == "K") {
+            $distanceInKilometers = $miles * 1.609344;
+            return round($distanceInKilometers, 2); // Rounded to 2 decimal places
+        } else if ($unit == "N") {
+            $distanceInNauticalMiles = $miles * 0.8684;
+            return round($distanceInNauticalMiles, 2); // Rounded to 2 decimal places
+        } else {
+            return round($miles, 2); // Rounded to 2 decimal places
+        }
+    }
+}
+
+if (!function_exists('checkRequestParams')) {
+    function checkRequestParams($request, $requestParams) {
+        foreach ($requestParams as $key) {
+            if (!$request->has($key) or $request->input($key) == '') {
+                return false;
+            }
+        }
+        return true;
+    }
+}

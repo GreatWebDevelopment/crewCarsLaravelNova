@@ -6,12 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Scout\Searchable;
 
-class Faq extends Model
+class Fav extends Model
 {
     use HasFactory;
     use Searchable;
 
-    protected $table = 'faqs';
+    protected $table = 'favs';
 
-    protected $fillable = ['id', 'question', 'answer', 'status'];
+    protected $fillable = ['id', 'uid', 'carId'];
 }
