@@ -47,7 +47,9 @@ Route::middleware('api')->group(function () {
     Route::post('/fav-car', [FavController::class, 'index']);
     Route::post('/fav', [FavController::class, 'update']);
 
-    Route::post('/bookings', [BookingController::class, 'store']);
+    Route::post('/booking/now', [BookingController::class, 'bookNow']);
+    Route::post('/booking/range', [BookingController::class, 'bookRange']);
+    Route::post('/booking/details', [BookingController::class, 'bookDetails']);
     Route::get('/bookings', [BookingController::class, 'index']);
     Route::get('/bookings/{id}', [BookingController::class, 'show']);
     Route::put('/bookings/{id}', [BookingController::class, 'update']);

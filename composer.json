@@ -8,6 +8,7 @@
     "require": {
         "php": "^8.2",
         "algolia/algoliasearch-client-php": "^4.13",
+        "guzzlehttp/guzzle": "^7.9",
         "laravel/framework": "^11.31",
         "laravel/nova": "^5.2",
         "laravel/scout": "^10.12",

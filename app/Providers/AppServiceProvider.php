@@ -15,6 +15,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton('apiKey', function () {
             return DB::table('settings')->first()->apiKey;
         });
+        $this->app->singleton('set', function () {
+            return DB::table('settings')->first();
+        });
     }
 
     /**
