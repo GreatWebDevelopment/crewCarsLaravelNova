@@ -4,6 +4,9 @@ namespace App\Nova;
 
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Fields\Boolean;
+use Laravel\Nova\Fields\Trix;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 class Page extends Resource
@@ -28,7 +31,7 @@ class Page extends Resource
      * @var array
      */
     public static $search = [
-        'id',
+        'title',
     ];
 
     /**
@@ -40,6 +43,19 @@ class Page extends Resource
     {
         return [
             ID::make()->sortable(),
+
+            Text::make('Title', 'title')
+                ->sortable()
+                ->rules('required', 'max:255'),
+
+            Boolean::make('Status', 'status')
+                ->trueValue(1)  // When toggled ON
+                ->falseValue(0) // When toggled OFF
+                ->sortable(),
+
+            Trix::make('Description', 'description')
+                ->rules('required')
+                ->alwaysShow(),
         ];
     }
 

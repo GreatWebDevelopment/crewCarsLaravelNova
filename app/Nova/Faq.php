@@ -4,6 +4,9 @@ namespace App\Nova;
 
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Fields\Boolean;
+use Laravel\Nova\Fields\Trix;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 class Faq extends Resource
@@ -20,7 +23,7 @@ class Faq extends Resource
      *
      * @var string
      */
-    public static $title = 'id';
+    public static $title = 'question';
 
     /**
      * The columns that should be searched.
@@ -28,7 +31,7 @@ class Faq extends Resource
      * @var array
      */
     public static $search = [
-        'id',
+        'question', 'answer',
     ];
 
     /**
@@ -40,6 +43,19 @@ class Faq extends Resource
     {
         return [
             ID::make()->sortable(),
+
+            Text::make('Question', 'question')
+                ->sortable()
+                ->rules('required', 'max:255'),
+
+            Trix::make('Answer', 'answer')
+                ->rules('required')
+                ->alwaysShow(),
+
+            Boolean::make('Status', 'status')
+                ->trueValue(1)  // When toggled ON (Active)
+                ->falseValue(0) // When toggled OFF (Inactive)
+                ->sortable(),
         ];
     }
 

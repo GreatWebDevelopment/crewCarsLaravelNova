@@ -13,6 +13,7 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, HasRoles, Notifiable;
 
+    protected $guarded = [];
     /**
      * The attributes that are mass assignable.
      *
@@ -27,7 +28,7 @@ class User extends Authenticatable
     ];
     public function cars()
     {
-        return $this->hasMany(Car::class, 'userId');
+        return $this->hasMany(Car::class, 'userId', 'id');
     }
 
     public function bookings()

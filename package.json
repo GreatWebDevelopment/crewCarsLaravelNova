@@ -3,7 +3,9 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite"
+        "dev": "vite",
+        "build-LocationField": "cd nova-components/LocationField && npm run dev",
+        "build-LocationField-prod": "cd nova-components/LocationField && npm run prod"
     },
     "devDependencies": {
         "@tailwindcss/forms": "^0.5.2",

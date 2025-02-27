@@ -35,8 +35,24 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     public function boot(): void
     {
         parent::boot(); // Ensure Nova is booted first
+        Nova::style('nova-custom', public_path('css/nova-custom.css'));
+
+        Nova::serving(function () {
+            // Register the Google Maps JavaScript API
+            Nova::footer(function () {
+                return '<script async defer src="https://maps.googleapis.com/maps/api/js?key='.env('GOOGLE_MAPS_API_KEY').'&libraries=places&callback=initAutocomplete"></script>';
+            });
+            // Register your custom script for Google Places autocomplete
+            Nova::script('nova-google-places', asset('js/nova-google-places.js'));
+            Nova::script('nova-google-maps', asset('js/nova-google-maps.js'));
+
+        });
+       // ✅ Restrict Nova Access to Admins
+        Nova::auth(function ($request) {
+            return auth()->user() && auth()->user()->hasRole('admin');
+        });
         Nova::routes()
-            ->withAuthenticationRoutes()
+            ->withAuthenticationRoutes(default: true)
             ->withPasswordResetRoutes()
             ->register();
         Nova::mainMenu(function ($request) {
