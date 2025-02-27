@@ -2,19 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\City;
+use App\Models\CarTypes;
 
-class CityController extends Controller
+class CarTypeController extends Controller
 {
     public function index()
     {
-        $items = City::where('status', 1)->get();
+        $items = CarTypes::where('status', 1)->get();
         return response()->json($items);
     }
 
     public function show($id)
     {
-        $item = City::find($id);
+        $item = CarTypes::find($id);
         if ($item) {
             return response()->json($item);
         } else {

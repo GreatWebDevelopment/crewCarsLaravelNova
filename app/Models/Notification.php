@@ -5,12 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Facility extends Model
+class Notification extends Model
 {
     use HasFactory;
-
-    protected $table = 'facility';
-    protected $fillable = [
-        'id', 'title', 'img', 'status'
-    ];
+    protected $table = 'bookings';
+    protected $fillable = ['uid', 'datetime', 'title', 'description'];
 }
