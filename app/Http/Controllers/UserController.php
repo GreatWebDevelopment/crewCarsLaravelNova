@@ -72,7 +72,7 @@ class UserController extends Controller
 
             $user = User::create([
                 'name' => $name,
-                'email' => $email,
+                'email' => $email,!
                 'mobile' => $mobile,
                 'password' => Hash::make($password),
                 'countryCode' => $countryCode,

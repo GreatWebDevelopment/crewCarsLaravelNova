@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Faq;
 use Illuminate\Http\Request;
 
 class FaqController extends Controller
@@ -11,7 +12,15 @@ class FaqController extends Controller
      */
     public function index()
     {
-        //
+        $items = Faq::where('status', 1)->get();
+
+        if ($items->isEmpty()) {
+            return response()->json(['FaqData'=> $items, 'ResponseCode' => '200', 'Result' => 'false',
+                'ResponseMsg' => 'FAQ Not Founded!'], 200);
+        } else {
+            return response()->json(['FaqData'=> $items, 'ResponseCode' => '200', 'Result' => 'true',
+                'ResponseMsg' => 'FAQ List Get Successfully!'], 200);
+        }
     }
 
     /**

@@ -5,11 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class WalletReport extends Model
+class Notification extends Model
 {
     use HasFactory;
-
-    protected $table = 'walletReports';
-
-    protected $fillable = ['uid', 'message', 'status', 'amt', 'tdate'];
+    protected $table = 'bookings';
+    protected $fillable = ['uid', 'datetime', 'title', 'description'];
 }

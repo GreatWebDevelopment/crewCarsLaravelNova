@@ -3,7 +3,6 @@
 namespace App\Providers;
 
 use App\Nova\CarBrand;
-use App\Nova\CarType;
 use Illuminate\Support\Facades\Log;
 
 use Illuminate\Support\Facades\Gate;
@@ -16,7 +15,6 @@ use Laravel\Nova\Menu\MenuItem;
 use Laravel\Nova\Menu\Menu;
 
 use App\Nova\Banner; // ✅ Ensure it's referencing Nova resource, NOT provider!
-use App\Nova\City;
 use App\Nova\Car;
 use App\Nova\Gallery;
 use App\Nova\Faq;
@@ -63,6 +61,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                 MenuSection::make('Car Management', [
                     MenuItem::resource(Car::class),
                     MenuItem::resource(Booking::class),
+                    MenuItem::resource(CarBrand::class),
                 ])->icon('car')->collapsable(),
                 // 🔹 User & Booking Management
                 MenuSection::make('User & Booking Management', [

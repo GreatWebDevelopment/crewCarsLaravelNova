@@ -11,6 +11,7 @@
     "require": {
         "php": "^8.2",
         "algolia/algoliasearch-client-php": "^4.13",
+        "guzzlehttp/guzzle": "^7.9",
         "crewcars/locationfield": "@dev",
         "laravel/framework": "^11.31",
         "laravel/nova": "^5.2",
@@ -35,7 +36,10 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
-        }
+        },
+        "files": [
+            "app/Helpers/Utils.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
