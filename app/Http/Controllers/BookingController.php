@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\City;
+use App\Models\PaymentMethod;
 use Illuminate\Http\Request;
 use App\Models\Booking;
 use App\Models\Car;
@@ -10,6 +12,7 @@ use App\Models\WalletReport;
 use App\Models\Notification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class BookingController extends Controller
 {
@@ -23,42 +26,42 @@ class BookingController extends Controller
         if (!checkRequestParams($request, ['car_id', 'uid'])) {
             return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
         }
-        $get_id = Car::where("id", $request->input('car_id'))->get();
+        $get_id = Car::find($request->input('car_id'));
         $wall_amt = strip_tags($request->input('wall_amt'));
         $uid = strip_tags($request->input('uid'));
         $booking = Booking::create([
-            'car_id' => strip_tags($request->input('car_id')),
+            'carId' => strip_tags($request->input('car_id')),
             'uid' => strip_tags($request->input('uid')),
-            'car_price' => strip_tags($request->input('car_price')),
-            'pickup_date' => strip_tags($request->input('pickup_date')),
-            'pickup_time' => strip_tags($request->input('pickup_time')),
-            'price_type' => strip_tags($request->input('price_type')),
-            'return_date' => strip_tags($request->input('return_date')),
-            'return_time' => strip_tags($request->input('return_time')),
-            'cou_id' => strip_tags($request->input('cou_id')),
-            'cou_amt' => strip_tags($request->input('cou_amt')),
-            'wall_amt' => $wall_amt,
-            'total_day_or_hr' => strip_tags($request->input('total_day_or_hr')),
+            'carPrice' => strip_tags($request->input('car_price')),
+            'pickupDate' => strip_tags($request->input('pickup_date')),
+            'pickupTime' => strip_tags($request->input('pickup_time')),
+            'priceType' => strip_tags($request->input('price_type')),
+            'returnDate' => strip_tags($request->input('return_date')),
+            'returnTime' => strip_tags($request->input('return_time')),
+            'couId' => strip_tags($request->input('cou_id')),
+            'couAmt' => strip_tags($request->input('cou_amt')),
+            'wallAmt' => $wall_amt,
+            'totalDayOrHr' => strip_tags($request->input('total_day_or_hr')),
             'subtotal' => strip_tags($request->input('subtotal')),
-            'tax_per' => strip_tags($request->input('tax_per')),
-            'tax_amt' => strip_tags($request->input('tax_amt')),
-            'o_total' => strip_tags($request->input('o_total')),
-            'p_method_id' => strip_tags($request->input('p_method_id')),
-            'transaction_id' => strip_tags($request->input('transaction_id')),
-            'type_id' => strip_tags($request->input('type_id')),
-            'brand_id' => strip_tags($request->input('brand_id')),
-            'book_type' => strip_tags($request->input('book_type')),
-            'city_id' => strip_tags($request->input('city_id')),
-            'post_id' => $get_id["post_id"],
-            'pick_otp' => rand(1111,9999),
-            'drop_otp' => rand(1111,9999),
-            'commission' => app('set')['commission_rate']
+            'taxPer' => strip_tags($request->input('tax_per')),
+            'taxAmt' => strip_tags($request->input('tax_amt')),
+            'oTotal' => strip_tags($request->input('o_total')),
+            'pMethodId' => strip_tags($request->input('p_method_id')),
+            'transactionId' => strip_tags($request->input('transaction_id')),
+            'typeId' => strip_tags($request->input('type_id')),
+            'brandId' => strip_tags($request->input('brand_id')),
+            'bookingType' => strip_tags($request->input('book_type')),
+            'cityId' => strip_tags($request->input('city_id')),
+            'postId' => $get_id["postId"],
+            'pickOtp' => rand(1111,9999),
+            'dropOtp' => rand(1111,9999),
+            'commission' => app('set')->commissionRate
         ]);
         $bookid = $booking->id;
 
         if($wall_amt != 0)
         {
-            $vp = User::where('id', $uid)->get();
+            $vp = User::find($uid);
             $mt = intval($vp['wallet'])-intval($wall_amt);
             $check = User::where('id', $uid)->update(['wallet' => $mt]);
             $tdate = date("Y-m-d");
@@ -72,7 +75,7 @@ class BookingController extends Controller
             ]);
         }
 
-        $udata = User::where('id', $uid)->get();
+        $udata = User::find('id', $uid);
         $name = $udata['name'];
         $content = array(
             "en" => $name.', Your car Book #'.$bookid.' Has Been Received.'
@@ -82,7 +85,7 @@ class BookingController extends Controller
         );
 
         $fields = array(
-            'app_id' => app('set')['one_key'],
+            'app_id' => app('set')->oneKey,
             'included_segments' =>  array("Active Users"),
             'data' => array("order_id" =>$bookid),
             'filters' => array(array('field' => 'tag', 'key' => 'user_id', 'relation' => '=', 'value' => $get_id["post_id"])),
@@ -92,7 +95,7 @@ class BookingController extends Controller
 
         $fields = json_encode($fields);
         $headers = [
-            'Authorization' => 'Basic '.app('set')['one_hash'],
+            'Authorization' => 'Basic '.app('set')->oneHash,
             'Content-Type' => 'application/json; charset=utf-8'
         ];
         Http::withHeaders($headers)->post('https://onesignal.com/api/v1/notifications', $fields);
@@ -102,7 +105,7 @@ class BookingController extends Controller
         $descriptions = $name.', Your car Book #'.$bookid.' Has Been Received.';
 
         Notification::create([
-            "uid" => $get_id["post_id"],
+            "uid" => $get_id["postId"],
             "datetime" => $timestamp,
             "title" => $title_mains,
             "description" => $descriptions
@@ -115,13 +118,13 @@ class BookingController extends Controller
         if (!checkRequestParams($request, ['car_id'])) {
             return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
         }
-        $bookings = Booking::where('car_id', $request->input('car_id'))->get();
+        $bookings = Booking::where('carId', $request->input('car_id'))->get();
         $pol = array();
         $c = array();
         foreach ($bookings as $row)
         {
-            $pol['pickup_date'] = $row['pickup_date'];
-            $pol['return_date'] = $row['return_date'];
+            $pol['pickupDate'] = $row['pickupDate'];
+            $pol['returnDate'] = $row['returnDate'];
             $c[] = $pol;
         }
         if (empty($c))
@@ -144,71 +147,65 @@ class BookingController extends Controller
         $book_id = $request->input('book_id');
 
         $sel = Booking::where('uid', $uid)->where('id', $book_id)->get();
-        $carinfo = DB::select("select tcar.car_title,tcar.car_number,tcar.car_img,tcar.id,tcar.pick_lat,tcar.pick_lng,tcar.pick_address,tcar.engine_hp,
-           tcar.fuel_type,tcar.total_seat,tcar.car_gear,(
-                SELECT 
-                    CASE 
-                        WHEN COUNT(*) != 0 THEN 
-                            FORMAT(SUM(total_rate) / COUNT(*), IF(SUM(total_rate) % COUNT(*) > 0, 2, 0))
-                        ELSE 
-                            tcar.car_rating 
-                    END 
-                FROM tbl_book 
-                WHERE car_id = tcar.id 
-                    AND book_status = 'Completed' 
-                    AND is_rate = 1
-            ) AS car_rate  from tbl_car AS tcar where tcar.id=".$sel['car_id']."");
-        $cityinfo = DB::select("select * from tbl_city where id=".$sel['city_id']."");
-        $paymentinfo = DB::select("select * from tbl_payment_list where id=".$sel['p_method_id']."");
 
-        $pol['book_id'] = $sel['id'];
-        $pol['car_id'] = $sel['car_id'];
-        $pol['car_title'] = $carinfo['car_title'];
-        $pol['car_number'] = $carinfo['car_number'];
-        $pol["car_img"] = $carinfo['car_img'];
-        $pol["pick_lat"] = $carinfo['pick_lat'];
-        $pol["pick_lng"] = $carinfo['pick_lng'];
-        $pol["pick_address"] = $carinfo['pick_address'];
-        $pol['city_title'] = $cityinfo['title'];
-        $pol['car_rating'] = $carinfo['car_rate'];
-        $pol['price_type'] = $sel['price_type'];
-        $pol['car_price'] = $sel['car_price'];
-        $pol['pickup_date'] = $sel['pickup_date'];
-        $pol['pickup_time'] = $sel['pickup_time'];
-        $pol['return_date'] = $sel['return_date'];
-        $pol['return_time'] = $sel['return_time'];
-        $pol['cou_amt'] = $sel['cou_amt'];
-        if($sel['post_id'] == 0)
+        $carinfo = Car::with(['bookings' => function ($query) {
+            $query->where('bookingStatus', 'Completed')
+                ->where('isRate', 1);
+        }])->where('id', $sel['carId'])->select(
+            'id',
+            'title',
+            'img',
+            'rating',
+            'number',
+            'seats',
+            'transmission',
+            'pickLat',
+            'pickLng',
+            'pickAddress',
+            'rentPrice',
+            'priceType',
+            'engineHp',
+            'fuelType',
+            'type'
+        )->get()->map(function ($car) {
+            $bookCount = $car->bookings->count();
+            $bookRateSum = $car->bookings->sum('totalRate');
+
+            $car_rate = $bookCount != 0
+                ? number_format($bookRateSum / $bookCount, ($bookRateSum % $bookCount > 0) ? 2 : 0)
+                : $car->rating;
+            $car->rate = $car_rate;
+
+            $im = explode('$;',$car->img);
+            $car->img = $im[0];
+
+            return $car;
+        });
+
+        $cityinfo = City::find($sel['cityId']);
+        $paymentinfo = PaymentMethod::find($sel['pMethodId']);
+
+        $pol = collect($carinfo)->merge($sel);
+        $pol['id'] = $carinfo['id'];
+        $pol['bookId'] = $sel['id'];
+        $pol['carRating'] = $carinfo['rate'];
+        if($sel['postId'] == 0)
         {
-            $pol['owner_name'] = 'admin';
-            $pol['owner_contact'] = app('set')['contact_no'];
-            $pol['owner_img'] = app('set')['weblogo'];
+            $pol['ownerName'] = 'admin';
+            $pol['ownerContact'] = app('set')->contactNo;
+            $pol['ownerImg'] = app('set')->weblogo;
         }
         else
         {
-            $userdata = DB::select("select name,mobile,ccode,profile_pic from tbl_user where id=".$sel['post_id']."");
-            $pol['owner_name'] = $userdata['name'];
-            $pol['owner_contact'] = $userdata['ccode'].$userdata['mobile'];
-            $pol['owner_img'] = $userdata['profile_pic'];
+            $userdata = User::find($sel['postId'])->select('name','mobile','countryCode','profilePicture');
+            $pol['ownerName'] = $userdata['name'];
+            $pol['ownerContact'] = $userdata['countryCode'].$userdata['mobile'];
+            $pol['ownerImg'] = $userdata['profilePicture'];
         }
-        $pol['book_type'] = $sel['book_type'];
-        $pol['wall_amt'] = $sel['wall_amt'];
-        $pol['total_day_or_hr'] = $sel['total_day_or_hr'];
-        $pol['tax_amt'] = $sel['tax_amt'];
-        $pol['tax_per'] = $sel['tax_per'];
-        $pol["engine_hp"] = $carinfo["engine_hp"];
-        $pol["fuel_type"] = $carinfo["fuel_type"];
-        $pol["total_seat"] = $carinfo["total_seat"];
-        $pol["car_gear"] = $carinfo["car_gear"];
-        $pol['cancle_reason'] = $sel['cancle_reason'];
-        $pol['is_rate'] = $sel['is_rate'];
-        $pol['subtotal'] = $sel['subtotal'];
-        $pol['o_total'] = $sel['o_total'];
-        $pol['Payment_method_name'] = $paymentinfo['title'];
-        $pol['transaction_id'] = $sel['transaction_id'];
-        $pol['book_status'] = $sel['book_status'];
-        $pol['exter_photo'] = empty($sel['exter_photo']) ? [] : explode('$;',$sel['exter_photo']);
-        $pol['inter_photo'] = empty($sel['inter_photo']) ? [] : explode('$;',$sel['inter_photo']);
+        $pol['cityTitle'] = $cityinfo['title'];
+        $pol['paymentMethodName'] = $paymentinfo['title'];
+        $pol['exterPhoto'] = empty($sel['exterPhoto']) ? [] : explode('$;',$sel['exterPhoto']);
+        $pol['interPhoto'] = empty($sel['interPhoto']) ? [] : explode('$;',$sel['interPhoto']);
         $c[] = $pol;
 
         if(empty($c))
@@ -232,51 +229,59 @@ class BookingController extends Controller
         $status = $request->input('status');
         if($status == 'Booked')
         {
-            $sel = DB::select("select * from tbl_book where uid=".$uid." and book_status!='Cancelled' and book_status!='Completed' order by id desc");
+            $sel = Booking::where([
+                ['uid', $uid],
+                ['bookingStatus', '!=', 'Cancelled'],
+                ['bookingStatus', '!=', 'Completed']
+            ])->orderBy('id', 'desc')->get();
         }
         else
         {
-            $sel = DB::select("select * from tbl_book where uid=".$uid." and (book_status='Cancelled' or book_status='Completed') order by id desc");
+            $sel = Booking::where('uid', $uid)
+                ->where(function ($query) {
+                    $query->where('bookingStatus', 'Cancelled')
+                        ->orWhere('bookingStatus', 'Completed');
+                })
+                ->orderBy('id', 'desc')
+                ->get();
         }
 
         foreach ($sel as $row)
         {
-            $car_id = $row['car_id'];
-            $carinfo = DB::select("select tcar.car_title,tcar.car_number,tcar.car_img,tcar.id,tcar.engine_hp,tcar.fuel_type,tcar.total_seat,tcar.car_gear,(
-                SELECT 
-                    CASE 
-                        WHEN COUNT(*) != 0 THEN 
-                            FORMAT(SUM(total_rate) / COUNT(*), IF(SUM(total_rate) % COUNT(*) > 0, 2, 0))
-                        ELSE 
-                            tcar.car_rating 
-                    END 
-                FROM tbl_book 
-                WHERE car_id = tcar.id 
-                    AND book_status = 'Completed' 
-                    AND is_rate = 1
-            ) AS car_rate  from tbl_car AS tcar where tcar.id=".$car_id."");
-            $cityinfo = DB::select("select * from tbl_city where id=".$row['city_id']."");
+            $car_id = $row['carId'];
+            $carinfo = Car::with(['bookings' => function ($query) {
+                $query->where('bookingStatus', 'Completed')
+                    ->where('isRate', 1);
+            }])->where('id', $car_id)->select(
+                'id',
+                'title',
+                'img',
+                'rating',
+                'number',
+                'seats',
+                'transmission',
+                'engineHp',
+                'fuelType',
+            )->get()->map(function ($car) {
+                $bookCount = $car->bookings->count();
+                $bookRateSum = $car->bookings->sum('totalRate');
+
+                $car_rate = $bookCount != 0
+                    ? number_format($bookRateSum / $bookCount, ($bookRateSum % $bookCount > 0) ? 2 : 0)
+                    : $car->rating;
+                $car->rate = $car_rate;
+
+                $im = explode('$;',$car->img);
+                $car->img = $im[0];
+
+                return $car;
+            });
+
+            $cityinfo = City::find($row['cityId']);
+            $pol = collect($carinfo)->merge($row);
+            $pol['id'] = $carinfo['id'];
             $pol['book_id'] = $row['id'];
-            $pol['car_title'] = $carinfo['car_title'];
-            $pol['car_number'] = $carinfo['car_number'];
-            $im = explode('$;',$carinfo['car_img']);
-            $pol["car_img"] = $im[0];
-            $pol['city_title'] = $cityinfo['title'];
-            $pol['car_rating'] = $carinfo['car_rate'];
-            $pol['price_type'] = $row['price_type'];
-            $pol['car_price'] = $row['car_price'];
-            $pol["engine_hp"] = $carinfo["engine_hp"];
-            $pol["fuel_type"] = $carinfo["fuel_type"];
-            $pol["total_seat"] = $carinfo["total_seat"];
-            $pol["car_gear"] = $carinfo["car_gear"];
-            $pol['wall_amt'] = $row['wall_amt'];
-            $pol['cou_amt'] = $row['cou_amt'];
-            $pol['total_day_or_hr'] = $row['total_day_or_hr'];
-            $pol['pickup_date'] = $row['pickup_date'];
-            $pol['pickup_time'] = $row['pickup_time'];
-            $pol['o_total'] = $row['o_total'];
-            $pol['return_date'] = $row['return_date'];
-            $pol['return_time'] = $row['return_time'];
+            $pol['cityTitle'] = $cityinfo['title'];
             $c[] = $pol;
         }
         if(empty($c))

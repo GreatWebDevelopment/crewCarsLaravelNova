@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Car;
 use App\Models\Fav;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -22,56 +23,47 @@ class FavController extends Controller
 
         $getfavlist = Fav::where('uid', $uid)->get();
         $navs = array();
-        $cars = array();
         foreach ($getfavlist as $row)
         {
-            $carlists = DB::select("SELECT 
-            (((acos(sin((".$lats."*pi()/180)) * sin((`pick_lat`*pi()/180))+cos((".$lats."*pi()/180)) * cos((`pick_lat`*pi()/180)) * cos(((".$longs."-`pick_lng`)*pi()/180))))*180/pi())*60*1.1515*1.609344) as distance,
-            tcar.id,
-            tcar.car_title,
-            tcar.car_img,
-            tcar.car_rating,
-            tcar.car_number,
-            tcar.total_seat,
-            tcar.car_gear,
-            tcar.pick_lat,
-            tcar.pick_lng,
-            tcar.car_rent_price,
-            tcar.price_type,
-            tcar.engine_hp,
-            tcar.fuel_type,
-            tcar.car_type,
-            (
-                SELECT 
-                    CASE 
-                        WHEN COUNT(*) != 0 THEN 
-                            FORMAT(SUM(total_rate) / COUNT(*), IF(SUM(total_rate) % COUNT(*) > 0, 2, 0))
-                        ELSE 
-                            tcar.car_rating 
-                    END 
-                FROM tbl_book 
-                WHERE car_id = tcar.id 
-                    AND book_status = 'Completed' 
-                    AND is_rate = 1
-            ) AS car_rate 
-        FROM 
-            tbl_car AS tcar
-            where tcar.car_status=1 and  tcar.id=".$row["car_id"]." and tcar.post_id !=".$uid."
-            order by distance");
+            $carlists = Car::with(['bookings' => function ($query) {
+                $query->where('bookingStatus', 'Completed')
+                    ->where('isRate', 1);
+            }])->where([
+                ['status', 1],
+                ['postId', '!=', $uid],
+                ['id', $row['carId']]
+            ])->select(
+                'id',
+                'title',
+                'img',
+                'rating',
+                'number',
+                'seats',
+                'transmission',
+                'pickLat',
+                'pickLng',
+                'rentPrice',
+                'priceType',
+                'engineHp',
+                'fuelType',
+                'type'
+            )->get()->map(function ($car) use ($lats, $longs) {
+                $bookCount = $car->bookings->count();
+                $bookRateSum = $car->bookings->sum('totalRate');
 
-            $cars["id"] = $carlists["id"];
-            $cars["car_title"] = $carlists["car_title"];
-            $cars["car_img"] = $carlists["car_img"];
-            $cars["car_rating"] = $carlists["car_rate"];
-            $cars["car_number"] = $carlists["car_number"];
-            $cars["total_seat"] = $carlists["total_seat"];
-            $cars["car_gear"] = $carlists["car_gear"];
-            $cars["price_type"] = $carlists["price_type"];
-            $cars["engine_hp"] = $carlists["engine_hp"];
-            $cars["fuel_type"] = $carlists["fuel_type"];
-            $distance = calculateDistance($lats, $longs,$carlists['pick_lat'], $carlists['pick_lng'], app('apiKey'));
-            $cars["car_distance"] = $distance.' KM';
-            $navs[] = $cars;
+                $car_rate = $bookCount != 0
+                    ? number_format($bookRateSum / $bookCount, ($bookRateSum % $bookCount > 0) ? 2 : 0)
+                    : $car->rating;
+
+                $car->rate = $car_rate;
+                $car->distance = $car->calculateDistance($lats, $longs).' KM';
+                $im = explode('$;',$car->img);
+                $car->img = $im[0];
+
+                return $car;
+            })->sortBy('distance');
+
+            $navs[] = $carlists;
         }
         return response()->json(['FeatureCar'=> $navs, 'ResponseCode' => '200', 'Result' => 'true',
             'ResponseMsg' => 'Favourite Car Get Successfully!'], 200);

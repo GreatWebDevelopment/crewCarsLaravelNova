@@ -47,7 +47,7 @@ if (!function_exists('calculateDistance')) {
 if (!function_exists('checkRequestParams')) {
     function checkRequestParams($request, $requestParams) {
         foreach ($requestParams as $key) {
-            if (!$request->has($key) or $request->input($key) == '') {
+            if (!$request->has($key)) {
                 return false;
             }
         }

@@ -27,11 +27,44 @@ class Car extends Model
         return $this->belongsTo(User::class, 'userId');
     }
 
+    public function brandData()
+    {
+        return $this->belongsTo(CarBrands::class, 'id');
+    }
+
+    public function typeData()
+    {
+        return $this->belongsTo(CarTypes::class, 'id');
+    }
 
     public function bookings()
     {
-        Log::info('Car::bookings() method was called.');
         return $this->hasMany(Booking::class, 'carId', 'id');
+    }
+
+    public function calculateDistance($lat, $lng)
+    {
+        $pick_lat = $this->pickLat;
+        $pick_lng = $this->pickLng;
+
+        // Haversine formula to calculate distance between two points (in kilometers)
+        $earth_radius = 6371; // Radius of Earth in kilometers
+
+        $lat_diff = deg2rad($lat - $pick_lat);
+        $lng_diff = deg2rad($lng - $pick_lng);
+
+        $a = sin($lat_diff / 2) * sin($lat_diff / 2) +
+            cos(deg2rad($pick_lat)) * cos(deg2rad($lat)) *
+            sin($lng_diff / 2) * sin($lng_diff / 2);
+
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+
+        $distance = $earth_radius * $c; // Distance in kilometers
+
+        // Optionally, you can convert the distance to miles if needed
+        $distance_in_miles = $distance * 0.621371;
+
+        return $distance_in_miles;  // Return distance in miles
     }
 
 }

@@ -2,28 +2,21 @@
 
 namespace App\Nova;
 
-//use Illuminate\Http\Request;
-use App\Nova\Booking;
+use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Image;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Number;
-use Laravel\Nova\Fields\Image;
-use Laravel\Nova\Fields\Boolean;
-use Laravel\Nova\Fields\BelongsTo;
-use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
-
-class Car extends Resource
+class CarBrand extends Resource
 {
-
-
     /**
      * The model the resource corresponds to.
      *
-     * @var class-string<\App\Models\Car>
+     * @var class-string<\App\Models\CarBrand>
      */
-    public static $model = \App\Models\Car::class;
+    public static $model = \App\Models\CarBrands::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
@@ -58,43 +51,10 @@ class Car extends Resource
                 ->disk('public')
                 ->rules('required'),
 
-            Text::make('Number') // Car Plate or Identifier
-            ->sortable()
-                ->rules('required', 'max:50'),
-
-            BelongsTo::make('Owner', 'user', 'App\Nova\User')
+            Number::make('Status')
                 ->sortable()
-                ->searchable()
                 ->rules('required'),
-
-            BelongsTo::make('Brand', 'brand', 'App\Nova\CarBrand')
-                ->sortable()
-                ->searchable()
-                ->rules('required'),
-
-            Number::make('Seats')
-                ->sortable()
-                ->hideFromIndex()
-                ->rules('required', 'integer', 'min:1', 'max:10'),
-
-            Boolean::make('AC')
-                ->hideFromIndex()
-                ->sortable(),
-
-            Text::make('Driver Name', 'driverName')
-                ->hideFromIndex()
-                ->rules('nullable', 'max:255'),
-
-            Number::make('Rent Price', 'rentPrice')
-                ->sortable()
-                ->rules('required', 'numeric', 'min:0'),
-
-            Text::make('Location')
-                ->sortable()
-                ->rules('nullable', 'max:255'),
-
-            HasMany::make('Bookings', 'bookings', 'App\Nova\Booking'),
-                ];
+        ];
     }
 
     /**

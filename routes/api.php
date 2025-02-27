@@ -13,6 +13,7 @@ use App\Http\Controllers\FavController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\VinDecoderController;
 
 // Public Routes
@@ -38,6 +39,8 @@ Route::middleware('api')->group(function () {
     Route::get('/carBrand', [CarBrandController::class, 'index']);
     Route::get('/carBrand/{id}', [CarBrandController::class, 'show']);
 
+    Route::post('/home', [HomeController::class, 'get']);
+
     Route::get('/city', [CityController::class, 'index']);
     Route::get('/city/{id}', [CityController::class, 'show']);
 
@@ -50,6 +53,7 @@ Route::middleware('api')->group(function () {
     Route::post('/booking/now', [BookingController::class, 'bookNow']);
     Route::post('/booking/range', [BookingController::class, 'bookRange']);
     Route::post('/booking/details', [BookingController::class, 'bookDetails']);
+    Route::post('/booking/history', [BookingController::class, 'bookHistory']);
     Route::get('/bookings', [BookingController::class, 'index']);
     Route::get('/bookings/{id}', [BookingController::class, 'show']);
     Route::put('/bookings/{id}', [BookingController::class, 'update']);

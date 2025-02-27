@@ -12,10 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('cars', function (Blueprint $table) {
-            $table->unsignedBigInteger('userId')->nullable(false);
+            $table->unsignedBigInteger('brand')->change();
+            $table->unsignedBigInteger('type')->change();
 
-            $table->foreign('userId')->references('id')->on('users')
-                ->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('brand')->references('id')->on('carBrands');
+            $table->foreign('type')->references('id')->on('carTypes');
         });
     }
 
@@ -25,9 +26,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('cars', function (Blueprint $table) {
-            $table->dropForeign('userId');
-
-            $table->dropColumn('userId');
+            $table->dropForeign(['brand', 'type']);
         });
     }
 };
