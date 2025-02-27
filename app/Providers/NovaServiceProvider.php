@@ -24,6 +24,7 @@ use App\Nova\Coupon;
 use App\Nova\Page;
 use App\Nova\Booking;
 use App\Nova\User;
+use App\Nova\DriverLicense;
 use App\Nova\Dashboards\Main;
 use Illuminate\Support\Facades\Route;
 
@@ -67,6 +68,10 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                     MenuItem::resource(User::class),
                     MenuItem::resource(Booking::class),
                 ])->icon('users')->collapsable(),
+                // 🔹 Documents
+                MenuSection::make('Documents', [
+                   MenuItem::resource(DriverLicense::class),
+                ])->icon('identification')->collapsable(),
                 // 🔹 Financials
                 MenuSection::make('Financials', [
                     MenuItem::resource(Payment::class),

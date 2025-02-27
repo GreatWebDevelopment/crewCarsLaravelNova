@@ -15,16 +15,23 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\VinDecoderController;
+use App\Http\Controllers\MobileController;
 
 // Public Routes
 Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
+Route::post('/forgot-password', [UserController::class, 'forgotPassword']);
 Route::post('/api/login', [LoginController::class, 'login']);
 Route::get('/decode-vin/{vin}', [VinDecoderController::class, 'decodeVin']);
 
 // Protected Routes
-Route::middleware('api')->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
+    Route::put('/profile/{id}', [UserController::class, 'editProfile']);
+
+    Route::post('/mobile/check', [MobileController::class, 'checkMobile']);
+
     Route::post('/cars-list', [CarController::class, 'index']);
+    Route::get('/cars', [CarController::class, 'index']);
     Route::post('/cars', [CarController::class, 'store']);
     Route::get('/cars/{id}', [CarController::class, 'show']);
     Route::put('/cars/{id}', [CarController::class, 'update']);
