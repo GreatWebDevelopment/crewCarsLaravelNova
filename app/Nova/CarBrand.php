@@ -14,7 +14,7 @@ class CarBrand extends Resource
     /**
      * The model the resource corresponds to.
      *
-     * @var class-string<\App\Models\CarBrand>
+     * @var class-string<\App\Models\CarBrands>
      */
     public static $model = \App\Models\CarBrands::class;
 

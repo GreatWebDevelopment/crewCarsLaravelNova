@@ -77,7 +77,6 @@ class CarController extends Controller
 
     public function index(Request $request)
     {
-        Log::info($request->all());
         if ($request->has('uid')) {
             $items = Car::where('postId', $request->input('uid'))->select([
                 'cars.*',
