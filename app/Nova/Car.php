@@ -70,11 +70,6 @@ class Car extends Resource
                 ->searchable()
                 ->rules('required'),
 
-            BelongsTo::make('Brand', 'brand', 'App\Nova\CarBrand')
-                ->sortable()
-                ->searchable()
-                ->rules('required'),
-
             Number::make('Seats')
                 ->sortable()
                 ->hideFromIndex()
