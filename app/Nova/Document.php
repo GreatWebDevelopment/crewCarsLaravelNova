@@ -6,14 +6,14 @@ use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
-class DriverLicense extends Resource
+class Document extends Resource
 {
     /**
      * The model the resource corresponds to.
      *
-     * @var class-string<\App\Models\DriverLicense>
+     * @var class-string<\App\Models\Document>
      */
-    public static $model = \App\Models\DriverLicense::class;
+    public static $model = \App\Models\Document::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.

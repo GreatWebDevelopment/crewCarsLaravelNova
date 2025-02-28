@@ -46,6 +46,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/carBrand', [CarBrandController::class, 'index']);
     Route::get('/carBrand/{id}', [CarBrandController::class, 'show']);
 
+    Route::get('/gallery', [GalleryController::class, 'index']);
+    Route::post('/gallery', [GalleryController::class, 'store']);
+    Route::put('/gallery/{id}', [GalleryController::class, 'update']);
+
     Route::post('/home', [HomeController::class, 'get']);
 
     Route::get('/city', [CityController::class, 'index']);

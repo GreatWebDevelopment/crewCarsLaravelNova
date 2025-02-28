@@ -22,7 +22,7 @@ return new class extends Migration
             $table->integer('engineHp')->default(0)->change();
             $table->integer('priceType')->default(0)->change();
             $table->string('fuelType')->default('')->change();
-            $table->string('carDesc')->default('')->change();
+            $table->string('carDesc')->default('');
             $table->string('pickAddress')->default('')->change();
             $table->decimal('pickLat')->default(0)->change();
             $table->decimal('pickLng')->default(0)->change();
@@ -51,7 +51,6 @@ return new class extends Migration
             $table->integer('engineHp')->default(null)->change();
             $table->integer('priceType')->default(null)->change();
             $table->string('fuelType')->default(null)->change();
-            $table->string('carDesc')->default(null)->change();
             $table->string('pickAddress')->default(null)->change();
             $table->decimal('pickLat')->default(null)->change();
             $table->decimal('pickLng')->default(null)->change();
