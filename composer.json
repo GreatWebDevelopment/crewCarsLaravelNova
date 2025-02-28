@@ -11,11 +11,11 @@
     "require": {
         "php": "^8.2",
         "algolia/algoliasearch-client-php": "^4.13",
-        "guzzlehttp/guzzle": "^7.9",
         "crewcars/locationfield": "@dev",
+        "guzzlehttp/guzzle": "^7.9",
         "laravel/framework": "^11.31",
         "laravel/nova": "^5.2",
-        "laravel/sanctum": "^4.0",
+        "laravel/sanctum": "*",
         "laravel/scout": "^10.12",
         "laravel/tinker": "^2.9",
         "spatie/laravel-permission": "^6.15"
