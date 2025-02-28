@@ -1,6 +1,8 @@
 <?php
 // app/Helpers/Utils.php
 
+use Illuminate\Support\Facades\Http;
+
 if (!function_exists('convertToCamelCase')) {
     function convertToCamelCase($string) {
         // Separate the words by underscores
@@ -52,5 +54,20 @@ if (!function_exists('checkRequestParams')) {
             }
         }
         return true;
+    }
+}
+
+if (!function_exists('sendNotification')) {
+    function sendNotification($fields)
+    {
+        $authKey = app('set')->oneHash;
+
+        // Send request using Laravel HTTP Client
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/json; charset=utf-8',
+            'Authorization' => "Basic {$authKey}"
+        ])->post("https://onesignal.com/api/v1/notifications", $fields);
+
+        return $response->json();
     }
 }

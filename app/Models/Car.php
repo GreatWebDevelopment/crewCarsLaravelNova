@@ -42,6 +42,16 @@ class Car extends Model
         return $this->hasMany(Booking::class, 'carId', 'id');
     }
 
+    public function getCarRateAttribute()
+    {
+        $rating = $this->bookings()
+            ->where('bookingStatus', 'Completed')
+            ->where('isRate', 1)
+            ->avg('totalRate');
+
+        return $rating ? number_format($rating, 2) : $this->rating;
+    }
+
     public function calculateDistance($lat, $lng)
     {
         $pick_lat = $this->pickLat;

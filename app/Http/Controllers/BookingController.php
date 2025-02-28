@@ -294,15 +294,126 @@ class BookingController extends Controller
         }
     }
 
+    public function myBookHistory(Request $request) {
+        Log::info($request->all());
+        if (checkRequestParams($request, ['uid', 'status'])) {
+            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+        }
+
+        $uid = $request->input('uid');
+        $status = $request->input('status');
+
+        $query = Booking::with(['car', 'city'])
+            ->where('postId', $uid)
+            ->orderBy('id', 'desc');
+
+        if ($status == 'Booked') {
+            $query->whereNotIn('bookingStatus', ['Cancelled', 'Completed']);
+        } else {
+            $query->whereIn('bookingStatus', ['Cancelled', 'Completed']);
+        }
+
+        $bookings = $query->get();
+        $c = [];
+        $pol = [];
+
+        foreach ($bookings as $row) {
+            if (!$row->car) continue; // Skip if car info is missing
+
+            $car = $row->car;
+            $city = $row->city;
+
+            $pol[] = collect($car)->merge($row);
+            $pol['bookId'] = $row->id;
+            $pol['img'] = explode('$;', $car->img)[0];
+            $pol['city_title'] = optional($city)->title;
+            $c[] = $pol;
+        }
+
+        return response()->json([
+            "book_history" => $c,
+            "ResponseCode" => "200",
+            "Result" => !empty($c) ? "true" : "false",
+            "ResponseMsg" => !empty($c) ? "Book History List Founded!" : "Book History Not Founded!"
+        ]);
+
+    }
+
+    public function myBookDetails(Request $request) {
+        if (checkRequestParams($request, ['uid', 'book_id'])) {
+            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+        }
+
+        $uid = $request->input('uid');
+        $book_id = $request->input('book_id');
+
+        $bookings = Booking::with(['car', 'city'])
+            ->where('postId', $uid)->where('id', $book_id)
+            ->orderBy('id', 'desc')->first();
+
+        $c = [];
+        $pol = [];
+
+        $car = $bookings->car;
+        $user = $bookings->user;
+
+        $pol[] = collect($car)->merge($bookings);
+        $pol['bookId'] = $bookings->id;
+        $pol['img'] = explode('$;', $car->img)[0];
+        $pol['cityTitle'] = optional($bookings->city)->title;
+        $pol['paymentMethodName'] = optional($bookings->paymentMethod)->title;
+        $pol['customerName'] = $user['name'];
+        $pol['customerContact'] = $user['countryCode'].$user['mobile'];
+        $pol['customerImg'] = $user['profilePicture'];
+        $pol['exterPhoto'] = empty($bookings['exter_photo']) ? [] : explode('$;',$bookings['exter_photo']);
+        $pol['interPhoto'] = empty($bookings['inter_photo']) ? [] : explode('$;',$bookings['inter_photo']);
+
+        $c[] = $pol;
+
+        return response()->json([
+            "book_details" => $c,
+            "ResponseCode" => "200",
+            "Result" => !empty($c) ? "true" : "false",
+            "ResponseMsg" => !empty($c) ? "Book Details Founded!" : "Book Details Not Founded!"
+        ]);
+    }
+
     public function show(Booking $booking)
     {
         return response()->json($booking);
     }
 
-    public function update(Request $request, Booking $booking)
+    public function update(Request $request)
     {
-        $booking->update($request->all());
-        return response()->json($booking);
+        if (checkRequestParams($request, ['book_id'])) {
+            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+        }
+
+        $book_id = $request->input('book_id');
+
+        $booking = Booking::find($book_id);
+        $booking->bookingStatus = 'Completed';
+        $booking->save();
+
+        $user = $booking->user;
+
+        $fields = [
+            'app_id' => app('set')->oneKey,
+            'included_segments' => ["Active Users"],
+            'data' => ["order_id" => $book_id],
+            'filters' => [
+                ['field' => 'tag', 'key' => 'user_id', 'relation' => '=', 'value' => $booking->uid]
+            ],
+            'contents' => [
+                "en" => "{$user->name}, Your Book #{$book_id} Has Been Completed."
+            ],
+            'headings' => [
+                "en" => "Book Completed!!"
+            ]
+        ];
+        sendNotification($fields);
+
+        return response()->json(["ResponseCode" => "200", "Result" => "true", "ResponseMsg" => "Book Complete Successfully!"]);
     }
 
     public function destroy(Booking $booking)

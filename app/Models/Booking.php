@@ -19,7 +19,7 @@ class Booking extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'userId');
+        return $this->belongsTo(User::class, 'uid');
     }
 
     public function car()
@@ -30,5 +30,15 @@ class Booking extends Model
     public function payment()
     {
         return $this->hasOne(Payment::class, 'bookingId');
+    }
+
+    public function city()
+    {
+        return $this->belongsTo(City::class, 'cityId');
+    }
+
+    public function paymentMethod()
+    {
+        return $this->belongsTo(PaymentMethod::class, 'pMethodId');
     }
 }

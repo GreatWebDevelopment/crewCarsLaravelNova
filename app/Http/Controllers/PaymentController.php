@@ -2,10 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PaymentMethod;
 use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     */
+    public function gateway()
+    {
+        $paymentMethods = PaymentMethod::where('status', 1)->get();
+        return response()->json(["paymentdata"=>$paymentMethods, 'ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Payment Gateway List Founded!'], 200);
+    }
+
     /**
      * Display a listing of the resource.
      */

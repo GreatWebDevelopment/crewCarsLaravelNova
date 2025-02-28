@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\WalletController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
@@ -54,11 +55,18 @@ Route::middleware('api')->group(function () {
     Route::post('/booking/range', [BookingController::class, 'bookRange']);
     Route::post('/booking/details', [BookingController::class, 'bookDetails']);
     Route::post('/booking/history', [BookingController::class, 'bookHistory']);
+    Route::post('/booking/myHistory', [BookingController::class, 'myBookHistory']);
+    Route::post('/booking/myDetails', [BookingController::class, 'myBookDetails']);
+    Route::post('/booking/complete', [BookingController::class, 'update']);
     Route::get('/bookings', [BookingController::class, 'index']);
     Route::get('/bookings/{id}', [BookingController::class, 'show']);
-    Route::put('/bookings/{id}', [BookingController::class, 'update']);
     Route::delete('/bookings/{id}', [BookingController::class, 'destroy']);
 
+    Route::get('/payments/gateway', [PaymentController::class, 'gateway']);
     Route::post('/payments', [PaymentController::class, 'processPayment']);
+
+    Route::post('/walletUp', [WalletController::class, 'walletUp']);
+    Route::post('/walletReport', [WalletController::class, 'walletReport']);
+
     Route::post('/logout', [UserController::class, 'logout']);
 });
