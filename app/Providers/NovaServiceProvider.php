@@ -61,8 +61,12 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                 MenuSection::make('Car Management', [
                     MenuItem::resource(Car::class),
                     MenuItem::resource(Booking::class),
+<<<<<<< Updated upstream
                     MenuItem::resource(CarBrand::class),
                 ])->icon('car')->collapsable(),
+=======
+                ])->icon('key')->collapsable(),
+>>>>>>> Stashed changes
                 // 🔹 User & Booking Management
                 MenuSection::make('User & Booking Management', [
                     MenuItem::resource(User::class),
@@ -82,7 +86,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                     MenuItem::resource(Faq::class),
                     MenuItem::resource(Page::class),
                     MenuItem::resource(Banner::class),
-                ])->icon('life-buoy')->collapsable(),
+                ])->icon('lifebuoy')->collapsable(),
             ];
         });
 
