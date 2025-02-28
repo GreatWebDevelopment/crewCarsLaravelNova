@@ -18,7 +18,9 @@
         "laravel/sanctum": "*",
         "laravel/scout": "^10.12",
         "laravel/tinker": "^2.9",
-        "spatie/laravel-permission": "^6.15"
+        "spatie/laravel-permission": "^6.15",
+        "CrewCars/LocationField": "@dev",
+        "crewcars/LocationField": "@dev"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
@@ -91,6 +93,18 @@
         "0": {
             "type": "path",
             "url": "./nova-components/LocationField"
+        },
+        "1": {
+            "type": "path",
+            "url": "./nova-components/LocationField"
+        },
+        "2": {
+            "type": "path",
+            "url": "./nova-components/LocationField"
+        },
+        "3": {
+            "type": "path",
+            "url": "./nova-components/Locationfield"
         }
     }
 }

@@ -8,4 +8,9 @@ export default defineConfig({
             refresh: true,
         }),
     ],
+    define: {
+        'process.env': {
+            GOOGLE_API_KEY: `'${process.env.GOOGLE_MAPS_API_KEY}'`,
+        },
+    },
 });
