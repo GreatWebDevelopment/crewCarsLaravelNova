@@ -62,8 +62,12 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                     MenuItem::resource(Car::class),
                     MenuItem::resource(Booking::class),
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                     MenuItem::resource(CarBrand::class),
                 ])->icon('car')->collapsable(),
+=======
+                ])->icon('key')->collapsable(),
+>>>>>>> Stashed changes
 =======
                 ])->icon('key')->collapsable(),
 >>>>>>> Stashed changes
