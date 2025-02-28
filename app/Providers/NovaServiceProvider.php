@@ -24,6 +24,7 @@ use App\Nova\Coupon;
 use App\Nova\Page;
 use App\Nova\Booking;
 use App\Nova\User;
+use App\Nova\Document;
 use App\Nova\Dashboards\Main;
 use Illuminate\Support\Facades\Route;
 
@@ -61,12 +62,16 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                     MenuItem::resource(Car::class),
                     MenuItem::resource(Booking::class),
                     MenuItem::resource(CarBrand::class),
-                ])->icon('car')->collapsable(),
+                ])->icon('key')->collapsable(),
                 // 🔹 User & Booking Management
                 MenuSection::make('User & Booking Management', [
                     MenuItem::resource(User::class),
                     MenuItem::resource(Booking::class),
                 ])->icon('users')->collapsable(),
+                // 🔹 Documents
+                MenuSection::make('Documents', [
+                   MenuItem::resource(Document::class),
+                ])->icon('identification'),
                 // 🔹 Financials
                 MenuSection::make('Financials', [
                     MenuItem::resource(Payment::class),
@@ -77,7 +82,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                     MenuItem::resource(Faq::class),
                     MenuItem::resource(Page::class),
                     MenuItem::resource(Banner::class),
-                ])->icon('life-buoy')->collapsable(),
+                ])->icon('lifebuoy')->collapsable(),
             ];
         });
 

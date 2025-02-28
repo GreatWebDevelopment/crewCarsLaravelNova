@@ -65,8 +65,7 @@ class Car extends Resource
                 ->rules('required', 'max:255'),
 
             Image::make('Image', 'img')
-                ->disk('public')
-                ->rules('required'),
+                ->disk('public'),
 
             Text::make('Number') // Car Plate or Identifier
             ->sortable()
@@ -77,15 +76,10 @@ class Car extends Resource
                 ->searchable()
                 ->rules('required'),
 
-            BelongsTo::make('Brand', 'brand', 'App\Nova\CarBrand')
-                ->sortable()
-                ->searchable()
-                ->rules('required'),
-
             Number::make('Seats')
                 ->sortable()
                 ->hideFromIndex()
-                ->rules('required', 'integer', 'min:1', 'max:10'),
+                ->rules('integer', 'min:1', 'max:10'),
 
             Boolean::make('AC')
                 ->hideFromIndex()
@@ -105,13 +99,10 @@ class Car extends Resource
                     ->withMeta(['extraAttributes' => [
                         'id' => 'location-input'
                     ]]),
-
+/*
                 Hidden::make('Latitude', 'latitude'),
-                Hidden::make('Longitude', 'longitude'),
+                Hidden::make('Longitude', 'longitude'),*/
             ]),
-            BelongsTo::make('User', 'user', User::class)
-                ->searchable()
-                ->sortable(),
 
             HasMany::make('Bookings', 'bookings', 'App\Nova\Booking'),
                 ];

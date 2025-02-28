@@ -6,12 +6,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, HasRoles, Notifiable;
+    use HasFactory, HasRoles, HasApiTokens, Notifiable;
 
     protected $guarded = [];
     /**
@@ -35,6 +36,22 @@ class User extends Authenticatable
     {
         return $this->hasMany(Booking::class, 'userId');
     }
+
+    public function driverLicense()
+    {
+        return $this->hasOne(DriverLicense::class);
+    }
+
+    public function pilotCertificate()
+    {
+        return $this->hasOne(PilotCertificate::class);
+    }
+
+    public function insurance()
+    {
+        return $this->hasOne(Insurance::class);
+    }
+
     public function hasRole($role)
     {
         return $this->role === $role;

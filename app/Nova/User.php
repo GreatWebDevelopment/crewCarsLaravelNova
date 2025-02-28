@@ -9,12 +9,9 @@ use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Password;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
-<<<<<<< Updated upstream
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\BelongsToMany;
-=======
 use Laravel\Nova\Fields\HasMany;
->>>>>>> Stashed changes
 
 
 class User extends Resource
@@ -70,7 +67,6 @@ class User extends Resource
                 ->onlyOnForms()
                 ->creationRules($this->passwordRules())
                 ->updateRules($this->optionalPasswordRules()),
-<<<<<<< Updated upstream
             Select::make('Role')
                 ->options(\Spatie\Permission\Models\Role::pluck('name', 'name')->toArray()) // ✅ Get roles from DB
                 ->displayUsingLabels()
@@ -82,10 +78,8 @@ class User extends Resource
 
             // ✅ Fix: Use Nova Role Resource, Not the Eloquent Model
             BelongsToMany::make('Roles', 'roles', Role::class),
-=======
             HasMany::make('Bookings', 'bookings', Booking::class),
             HasMany::make('Cars', 'cars', Car::class),
->>>>>>> Stashed changes
         ];
 
     }
