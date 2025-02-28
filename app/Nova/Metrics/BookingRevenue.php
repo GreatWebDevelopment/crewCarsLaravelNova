@@ -4,38 +4,39 @@ namespace App\Nova\Metrics;
 
 use DateTimeInterface;
 use Laravel\Nova\Http\Requests\NovaRequest;
-use Laravel\Nova\Metrics\Trend;
-use Laravel\Nova\Metrics\TrendResult;
+use Laravel\Nova\Metrics\Value;
+use Laravel\Nova\Metrics\ValueResult;
 use Laravel\Nova\Nova;
-use App\Models\Car;
+use App\Models\Booking;
 
-class CarsAddedTrend extends Trend
+
+class BookingRevenue extends Value
 {
-    public function name()
-    {
-        return 'Cars Added Over Time';
-    }
-
     /**
      * Calculate the value of the metric.
      */
     public function calculate(NovaRequest $request)
     {
-        return $this->countByMonths($request, Car::class);
+        $totalRevenue = Booking::sum('oTotal');
+        return $this->result($totalRevenue);
+
     }
 
     /**
      * Get the ranges available for the metric.
      *
-     * @return array<int, string>
+     * @return array<int|string, string>
      */
     public function ranges(): array
     {
         return [
-            7 => 'Last 7 Days',
-            30 => 'Last 30 Days',
-            60 => 'Last 60 Days',
-            365 => 'Last Year',
+            30 => Nova::__('30 Days'),
+            60 => Nova::__('60 Days'),
+            365 => Nova::__('365 Days'),
+            'TODAY' => Nova::__('Today'),
+            'MTD' => Nova::__('Month To Date'),
+            'QTD' => Nova::__('Quarter To Date'),
+            'YTD' => Nova::__('Year To Date'),
         ];
     }
 
@@ -47,13 +48,5 @@ class CarsAddedTrend extends Trend
         // return now()->addMinutes(5);
 
         return null;
-    }
-
-    /**
-     * Get the URI key for the metric.
-     */
-    public function uriKey(): string
-    {
-        return 'cars-added-trend';
     }
 }

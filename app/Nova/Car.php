@@ -12,9 +12,16 @@ use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Http\Requests\NovaRequest;
+<<<<<<< Updated upstream
 use Laravel\Nova\Fields\Hidden;
 use Laravel\Nova\Panel;
 use App\Nova\User;
+=======
+use App\Nova\Metrics\CarsAddedTrend;
+use App\Nova\Metrics\TotalCars;
+use App\Nova\Metrics\CarsByBrand;
+use App\Nova\Metrics\CarsAvailability;
+>>>>>>> Stashed changes
 
 
 class Car extends Resource
@@ -117,7 +124,12 @@ class Car extends Resource
      */
     public function cards(NovaRequest $request): array
     {
-        return [];
+        return [
+            new CarsAddedTrend(),
+            new TotalCars(),
+            //new CarsByBrand(),
+            //new CarsAvailability(),
+        ];
     }
 
     /**
