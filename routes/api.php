@@ -27,7 +27,7 @@ Route::get('/decode-vin/{vin}', [VinDecoderController::class, 'decodeVin']);
 
 // Protected Routes
 Route::middleware('auth:sanctum')->group(function () {
-    Route::put('/user/{id}', [UserController::class, 'update']);
+    Route::post('/user/{id}', [UserController::class, 'update']);
     Route::delete('/user/{id}', [UserController::class, 'destroy']);
     Route::post('/user/picture', [UserController::class, 'uploadPicture']);
 

@@ -10,6 +10,7 @@ use App\Models\Gallery;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Car;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use function Symfony\Component\Translation\t;
@@ -290,11 +291,7 @@ class CarController extends Controller
 
     public function featureList(Request $request)
     {
-        if (!checkRequestParams($request, ['uid'])) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
-        }
-
-        $userId = $request->input('uid');
+        $userId = Auth::user()->id;
         $lats = $request->input('lats');
         $longs = $request->input('longs');
         $cityId = $request->input('cityid');
@@ -347,11 +344,7 @@ class CarController extends Controller
 
     public function popularList(Request $request)
     {
-        if (!checkRequestParams($request, ['uid'])) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
-        }
-
-        $userId = $request->input('uid');
+        $userId = Auth::user()->id;
         $lats = $request->input('lats');
         $longs = $request->input('longs');
         $cityId = $request->input('cityid');

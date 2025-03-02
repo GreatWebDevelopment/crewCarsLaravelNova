@@ -13,33 +13,47 @@ abstract class Controller
         $this->apiGatewayService = $apiGatewayService;
     }
 
-    protected function extractDataFromDocument($documents)
+    protected function extractDataFromDocuments($documents)
     {
-        foreach ($documents as $document) {
-            $s3Key = str_replace(env('AWS_URL') . '/', '', $document['s3Key']);
-            $data = json_encode([
-                'detect_mode' => $document['mode'],
-                's3_key' => $s3Key,
-            ]);
+        $documents = collect($documents)
+            ->map(function ($document) {
+                $data = json_encode([
+                    'detect_mode' => $document['type'],
+                    's3_key' => $document['s3Key'],
+                ]);
 
-            $result = [];
-            $response = $this->apiGatewayService->postToApiGateway('/extract', $data);
-            if ($response) {
-                $result[$document['type']] = $response['body'];
-            }
+                $result = [];
+                $response = $this->apiGatewayService->postToApiGateway('/extract', $data);
+                if ($response) {
+                    $body = $response['body'];
 
-            return $result;
-        }
+                    switch ($document['type']) {
+                        case 'DL':
+                            $result = [
+                                'name' => $body['FIRST_NAME'] . ' ' . $body['MIDDLE_NAME'] . ' ' . $body['LAST_NAME'],
+                                'number' => $body['DOCUMENT_NUMBER'],
+                                'issueDate' => $body['DATE_OF_ISSUE'],
+                                'expireDate' => $body['EXPIRATION_DATE'],
+                                'type' => $document['type'],
+                                'data' => $body,
+                            ];
+                            break;
+                        default:
+                            $result = getDataFromDocument($body, $document['type']);
+                    }
+                }
+
+                return $result;
+            });
+
+        return $documents;
     }
 
     protected function facialRecognize($photoUrl, $driverLicenseUrl)
     {
-        $photoS3Key = str_replace(env('AWS_URL') . '/', '', $photoUrl);
-        $driverLicenseKey = str_replace(env('AWS_URL') . '/', '', $driverLicenseUrl);
-
         $data = json_encode([
-            'self_face_s3_key' => $photoS3Key,
-            'dl_s3_key' => $driverLicenseKey
+            'self_face_s3_key' => $photoUrl,
+            'dl_s3_key' => $driverLicenseUrl
         ]);
 
         $response = $this->apiGatewayService->postToApiGateway('/recognize', $data);
