@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\App;
 
+use App\Services\ApiGatewayService;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -16,8 +18,13 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton('apiKey', function () {
             return DB::table('settings')->first()->apiKey;
         });
+
         $this->app->singleton('set', function () {
             return DB::table('settings')->first();
+        });
+
+        $this->app->singleton(ApiGatewayService::class, function () {
+            return new ApiGatewayService();
         });
     }
 
