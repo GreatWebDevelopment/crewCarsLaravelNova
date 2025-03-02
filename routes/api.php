@@ -19,15 +19,15 @@ use App\Http\Controllers\MobileController;
 use App\Http\Controllers\GalleryController;
 
 // Public Routes
-Route::post('/register', [UserController::class, 'register']);
-Route::post('/login', [UserController::class, 'login']);
-Route::post('/forgot-password', [UserController::class, 'forgotPassword']);
+Route::post('/auth/register', [UserController::class, 'register']);
+Route::post('/auth/login', [UserController::class, 'login']);
+Route::post('/auth/forgot-password', [UserController::class, 'forgotPassword']);
 Route::post('/api/login', [LoginController::class, 'login']);
 Route::get('/decode-vin/{vin}', [VinDecoderController::class, 'decodeVin']);
 
 // Protected Routes
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/user/{id}', [UserController::class, 'update']);
+    Route::put('/user/{id}', [UserController::class, 'update']);
     Route::delete('/user/{id}', [UserController::class, 'destroy']);
     Route::post('/user/picture', [UserController::class, 'uploadPicture']);
 
@@ -81,5 +81,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/bookings/{id}', [BookingController::class, 'destroy']);
 
     Route::post('/payments', [PaymentController::class, 'processPayment']);
-    Route::post('/logout', [UserController::class, 'logout']);
+    Route::post('/auth/logout', [UserController::class, 'logout']);
 });

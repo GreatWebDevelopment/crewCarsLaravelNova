@@ -1,6 +1,8 @@
 <?php
 // app/Helpers/Utils.php
 
+use Carbon\Carbon;
+
 if (!function_exists('convertToCamelCase')) {
     function convertToCamelCase($string) {
         // Separate the words by underscores
@@ -107,17 +109,16 @@ if (!function_exists("getExpireDateFieldFromDoc")) {
 }
 
 if (!function_exists("getDataFromDocument")) {
-    function getDataFromDocument($document, $type) {
+    function getDataFromDocument($document) {
         $result = [
             'name' => '',
             'number' => '',
-            'issueDate' => '',
-            'expireDate' => '',
-            'type' => $type,
+            'issueDate' => null,
+            'expireDate' => null,
             'data' => $document,
         ];
 
-        collect($document)->each(function ($item, $key) {
+        collect($document)->each(function ($item, $key) use (&$result) {
             $key = strtolower($key);
             if (str_contains($key, 'name')) {
                 $result['name'] = $item;
@@ -132,12 +133,12 @@ if (!function_exists("getDataFromDocument")) {
             }
 
             if (str_contains($key, 'issue') || str_contains($key, 'effect')) {
-                $result['issueDate'] = $item;
+                $result['issueDate'] = empty($item) ? null : Carbon::parse($item)->format('Y-m-d');
                 return;
             }
 
-            if (str_contains($key, 'expire')) {
-                $result['expireDate'] = $item;
+            if (str_contains($key, 'expire') || str_contains($key, 'expiration')) {
+                $result['expireDate'] = empty($item) ? null : Carbon::parse($item)->format('Y-m-d');
             }
         });
 
