@@ -24,6 +24,13 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'mobile',
+        'countryCode',
+        'verificationCode',
+        'referralCode',
+        'registeredAt',
+        'walletBalance',
+        'profilePicture',
         'role',
         'status'
     ];
@@ -37,19 +44,9 @@ class User extends Authenticatable
         return $this->hasMany(Booking::class, 'userId');
     }
 
-    public function driverLicense()
+    public function documents()
     {
-        return $this->hasOne(DriverLicense::class);
-    }
-
-    public function pilotCertificate()
-    {
-        return $this->hasOne(PilotCertificate::class);
-    }
-
-    public function insurance()
-    {
-        return $this->hasOne(Insurance::class);
+        return $this->hasMany(Document::class, 'userId');
     }
 
     public function hasRole($role)

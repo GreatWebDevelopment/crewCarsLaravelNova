@@ -16,6 +16,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\VinDecoderController;
 use App\Http\Controllers\MobileController;
+use App\Http\Controllers\GalleryController;
 
 // Public Routes
 Route::post('/register', [UserController::class, 'register']);
@@ -26,7 +27,9 @@ Route::get('/decode-vin/{vin}', [VinDecoderController::class, 'decodeVin']);
 
 // Protected Routes
 Route::middleware('auth:sanctum')->group(function () {
-    Route::put('/profile/{id}', [UserController::class, 'editProfile']);
+    Route::put('/user/{id}', [UserController::class, 'update']);
+    Route::delete('/user/{id}', [UserController::class, 'destroy']);
+    Route::post('/user/picture', [UserController::class, 'uploadPicture']);
 
     Route::post('/mobile/check', [MobileController::class, 'checkMobile']);
 
@@ -39,6 +42,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/car/info', [CarController::class, 'info']);
     Route::post('/car/brandwise', [CarController::class, 'brandWise']);
     Route::post('/car/typewise', [CarController::class, 'typeWise']);
+    Route::get('/car/features', [CarController::class, 'featureList']);
+    Route::get('/car/popular', [CarController::class, 'popularList']);
 
     Route::get('/carType', [CarTypeController::class, 'index']);
     Route::get('/carType/{id}', [CarTypeController::class, 'show']);
@@ -65,6 +70,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/booking/range', [BookingController::class, 'bookRange']);
     Route::post('/booking/details', [BookingController::class, 'bookDetails']);
     Route::post('/booking/history', [BookingController::class, 'bookHistory']);
+    Route::get('/booking/rate/{id}', [BookingController::class, 'rateList']);
+    Route::put('/booking/rate/{id}', [BookingController::class, 'updateRate']);
+    Route::post('/booking/drop', [BookingController::class, 'bookDrop']);
+    Route::post('/booking/cancel', [BookingController::class, 'bookCancel']);
+    Route::post('/bookings/verify-otp', [BookingController::class, 'verifyOTP']);
     Route::get('/bookings', [BookingController::class, 'index']);
     Route::get('/bookings/{id}', [BookingController::class, 'show']);
     Route::put('/bookings/{id}', [BookingController::class, 'update']);
