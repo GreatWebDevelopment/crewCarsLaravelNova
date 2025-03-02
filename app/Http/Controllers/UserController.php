@@ -118,7 +118,13 @@ class UserController extends Controller
 
     public function login(Request $request)
     {
-        if (!checkRequestParams($request, ['mobile', 'password', 'ccode'])) {
+        $validator = Validator::make($request->all(), [
+            'mobile' => 'required',
+            'password' => 'required',
+            'ccode' => 'required',
+        ]);
+
+        if ($validator->fails()) {
             return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
         }
 
@@ -159,11 +165,17 @@ class UserController extends Controller
 
     public function forgotPassword(Request $request)
     {
-        if (!checkRequestParams($request, ['email', 'password', 'ccode'])) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went wrong  try again!'], 401);
+        $validator = Validator::make($request->all(), [
+            'mobile' => 'required',
+            'password' => 'required',
+            'ccode' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went wrong!'], 401);
         }
 
-        $mobile = strip_tags($request->input('email'));
+        $mobile = strip_tags($request->input('mobile'));
         $password = strip_tags($request->input('password'));
         $countryCode = strip_tags($request->input('ccode'));
 
@@ -190,7 +202,12 @@ class UserController extends Controller
 
     public function update(Request $request, $id)
     {
-        if (!checkRequestParams($request, ['name', 'email'])) {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'email' => 'required',
+        ]);
+
+        if ($validator->fails()) {
             return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
         }
 
@@ -213,7 +230,11 @@ class UserController extends Controller
 
     public function uploadPicture(Request $request)
     {
-        if (!$request->hasFile('image')) {
+        $validator = Validator::make($request->all(), [
+           'image' => 'required|file|mimes:jpeg,png,jpg',
+        ]);
+
+        if ($validator->fails()) {
             return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
         }
 

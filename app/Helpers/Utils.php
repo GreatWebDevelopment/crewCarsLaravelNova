@@ -109,13 +109,12 @@ if (!function_exists("getExpireDateFieldFromDoc")) {
 }
 
 if (!function_exists("getDataFromDocument")) {
-    function getDataFromDocument($document, $type) {
+    function getDataFromDocument($document) {
         $result = [
             'name' => '',
             'number' => '',
             'issueDate' => null,
             'expireDate' => null,
-            'type' => $type,
             'data' => $document,
         ];
 

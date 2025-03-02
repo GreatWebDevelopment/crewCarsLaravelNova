@@ -34,6 +34,7 @@ abstract class Controller
                             $result = [
                                 'name' => $body['FIRST_NAME'] . ' ' . $body['MIDDLE_NAME'] . ' ' . $body['LAST_NAME'],
                                 'number' => $body['DOCUMENT_NUMBER'],
+                                'path' => $document['s3Key'],
                                 'issueDate' => empty($body['DATE_OF_ISSUE']) ? null : Carbon::parse($body['DATE_OF_ISSUE'])->format('Y-m-d'),
                                 'expireDate' => empty($body['EXPIRATION_DATE']) ? null : Carbon::parse($body['EXPIRATION_DATE'])->format('Y-m-d'),
                                 'type' => $document['type'],
@@ -41,7 +42,9 @@ abstract class Controller
                             ];
                             break;
                         default:
-                            $result = getDataFromDocument($body, $document['type']);
+                            $result = getDataFromDocument($body);
+                            $result['type'] = $document['type'];
+                            $result['path'] = $document['s3Key'];
                             break;
                     }
                 }

@@ -27,7 +27,7 @@ Route::get('/decode-vin/{vin}', [VinDecoderController::class, 'decodeVin']);
 
 // Protected Routes
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/user/{id}', [UserController::class, 'update']);
+    Route::put('/user/{id}', [UserController::class, 'update']);
     Route::delete('/user/{id}', [UserController::class, 'destroy']);
     Route::post('/user/picture', [UserController::class, 'uploadPicture']);
 
@@ -81,5 +81,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/bookings/{id}', [BookingController::class, 'destroy']);
 
     Route::post('/payments', [PaymentController::class, 'processPayment']);
-    Route::post('auth/logout', [UserController::class, 'logout']);
+    Route::post('/auth/logout', [UserController::class, 'logout']);
 });

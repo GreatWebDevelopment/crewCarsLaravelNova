@@ -16,6 +16,7 @@ class Document extends Model
         'name',
         'number',
         'type',
+        'path',
         'data',
         'issueDate',
         'expireDate',
