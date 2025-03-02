@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -18,12 +19,18 @@ class UserController extends Controller
 
     public function register(Request $request)
     {
-        if (
-            !checkRequestParams($request, ['name', 'email', 'mobile', 'password', 'ccode'])
-            && !$request->hasFile('driverLicense')
-            && !$request->hasFile('insurance')
-            && !$request->hasFile('pilotCertificate')
-        ) {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'email' => 'required|email',
+            'mobile' => 'required',
+            'password' => 'required',
+            'ccode' => 'required',
+            'driverLicense' => 'required|file|mimes:png,jpg,jpeg',
+            'insurance' => 'required|file|mimes:png,jpg,jpeg',
+            'pilotCertificate' => 'required|file|mimes:png,jpg,jpeg',
+        ]);
+
+        if ($validator->fails()) {
             return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
         }
 
@@ -50,14 +57,14 @@ class UserController extends Controller
                 $timestamps = date('Y-m-d H:i:s');
 
                 $driverLicenseUrl = $this->uploadFile($request->file('driverLicense'), env('DRIVER_LICESE_S3_PATH'));
-                $pilotCertificate = $this->uploadFile($request->file('driverLicense'), env('PILOT_CERTIFICATE_S3_PATH'));
-                $insurance = $this->uploadFile($request->file('driverLicense'), env('INSURANCE_S3_PATH'));
+                $pilotCertificate = $this->uploadFile($request->file('pilotCertificate'), env('PILOT_CERTIFICATE_S3_PATH'));
+                $insurance = $this->uploadFile($request->file('insurance'), env('INSURANCE_S3_PATH'));
 
                 if (empty($driverLicenseUrl) || empty($pilotCertificate) || empty($insurance)) {
                     return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
                 }
 
-                $documents = $this->extractDataFromDocument([
+                $documents = $this->extractDataFromDocuments([
                    ['type' => 'DL', 's3Key' => $driverLicenseUrl],
                    ['type' => 'Insurance', 's3Key' => $insurance],
                    ['type' => 'Certificate', 's3Key' => $pilotCertificate],
@@ -71,7 +78,7 @@ class UserController extends Controller
                     'countryCode' => $countryCode,
                     'referralCode' => $referralCode,
                     'verificationCode' => $nonce,
-                    'walletBalance' => app('set')['scredit'],
+                    'walletBalance' => app('set')->scredit,
                     'registeredAt' => $timestamps,
                 ]);
 
@@ -83,11 +90,11 @@ class UserController extends Controller
                     'uid' => $user->id,
                     'message' => 'Sign up Credit Added',
                     'status' => 'Credit',
-                    'amt' => app('set')['scredit'],
+                    'amt' => app('set')->scredit,
                     'tdate' => $timestamps,
                 ]);
 
-                return response()->json(['UserLogin' => $user, 'currency' => app('set')['currency'], 'ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Sign Up Done Successfully!']);
+                return response()->json(['UserLogin' => $user, 'currency' => app('set')->currency, 'ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Sign Up Done Successfully!']);
             } else {
                 return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Refer Code Not Found Please Try Again!'], 401);
             }
@@ -97,7 +104,7 @@ class UserController extends Controller
 
             $user = User::create([
                 'name' => $name,
-                'email' => $email, !
+                'email' => $email,
                 'mobile' => $mobile,
                 'password' => Hash::make($password),
                 'countryCode' => $countryCode,
@@ -105,7 +112,7 @@ class UserController extends Controller
                 'registeredAt' => $timestamps,
             ]);
 
-            return response()->json(['UserLogin' => $user, 'currency' => app('set')['currency'], 'ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Sign Up Done Successfully!']);
+            return response()->json(['UserLogin' => $user, 'currency' => app('set')->currency, 'ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Sign Up Done Successfully!']);
         }
     }
 
@@ -254,7 +261,7 @@ class UserController extends Controller
         $url = '';
         $filename = uniqid() . time() . mt_rand() . '.' . $file->getClientOriginalExtension();
         $path = $rootPath . $filename;
-        $s3 = Storage::disk('s3')->put($path, file_get_contents($file));
+        $s3 = Storage::disk('s3')->put($path, file_get_contents($file), 'public');
         if ($s3) {
             $url = $path;
         }
