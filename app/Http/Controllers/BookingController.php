@@ -10,6 +10,7 @@ use App\Models\Car;
 use App\Models\User;
 use App\Models\WalletReport;
 use App\Models\Notification;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -296,11 +297,11 @@ class BookingController extends Controller
 
     public function bookDrop(Request $request)
     {
-        if (!checkRequestParams($request, ['uid', 'book_id'])) {
+        if (!checkRequestParams($request, ['book_id'])) {
             return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
         }
 
-        $userId = $request->input('uid');
+        $userId = Auth::user()->id;
         $bookId = $request->input('book_id');
 
         $user = User::find($userId);
@@ -340,11 +341,11 @@ class BookingController extends Controller
 
     public function bookCancel(Request $request)
     {
-        if (!checkRequestParams($request, ['uid', 'book_id'])) {
+        if (!checkRequestParams($request, ['book_id'])) {
             return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
         }
 
-        $userId = $request->input('uid');
+        $userId = Auth::user()->id;
         $bookId = $request->input('book_id');
         $reason = $request->input('cancel_reason');
 
@@ -359,12 +360,12 @@ class BookingController extends Controller
 
     public function verifyOTP(Request $request)
     {
-        if (!checkRequestParams($request, ['uid', 'status', 'otp', 'book_id'])) {
+        if (!checkRequestParams($request, ['status', 'otp', 'book_id'])) {
             return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
         }
 
+        $userId = Auth::user()->id;
         $bookId = $request->input('book_id');
-        $userId = $request->input('uid');
         $status = $request->input('status');
         $otp = $request->input('otp');
 

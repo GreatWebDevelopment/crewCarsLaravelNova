@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\WalletReport;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
@@ -56,6 +57,12 @@ class UserController extends Controller
                     return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
                 }
 
+                $documents = $this->extractDataFromDocument([
+                   ['type' => 'DL', 's3Key' => $driverLicenseUrl],
+                   ['type' => 'Insurance', 's3Key' => $insurance],
+                   ['type' => 'Certificate', 's3Key' => $pilotCertificate],
+                ]);
+
                 $user = User::create([
                     'name' => $name,
                     'email' => $email,
@@ -68,14 +75,9 @@ class UserController extends Controller
                     'registeredAt' => $timestamps,
                 ]);
 
-//                $user->documents()->create([
-//                    'name' => '',
-//                    'number' => '',
-//                    'type' => '',
-//                    'data' => '',
-//                    'issueDate' => '',
-//                    'expireDate' => '',
-//                ]);
+                foreach ($documents as $document) {
+                    $user->documents()->create($document);
+                }
 
                 WalletReport::create([
                     'uid' => $user->id,
@@ -181,7 +183,7 @@ class UserController extends Controller
 
     public function update(Request $request, $id)
     {
-        if (!checkRequestParams($request, ['name', 'email', 'uid'])) {
+        if (!checkRequestParams($request, ['name', 'email'])) {
             return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
         }
 
@@ -204,11 +206,11 @@ class UserController extends Controller
 
     public function uploadPicture(Request $request)
     {
-        if (!checkRequestParams($request, ['uid']) || !$request->hasFile('image')) {
+        if (!$request->hasFile('image')) {
             return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
         }
 
-        $userId = $request->input('uid');
+        $userId = Auth::user()->id;
         $image = $request->file('image');
 
         $url = $this->uploadFile($image, env('PHOTO_S3_PATH'));
@@ -254,7 +256,7 @@ class UserController extends Controller
         $path = $rootPath . $filename;
         $s3 = Storage::disk('s3')->put($path, file_get_contents($file));
         if ($s3) {
-            $url = Storage::disk('s3')->url($path);
+            $url = $path;
         }
 
         return $url;

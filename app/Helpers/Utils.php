@@ -55,3 +55,92 @@ if (!function_exists("checkRequestParams")) {
         return true;
     }
 }
+
+if (!function_exists("getNameFieldFromDoc")) {
+    function getNameFieldFromDoc($document) {
+        foreach ($document as $key => $value) {
+            $key = strtolower($key);
+            if (str_contains($key, 'name')) {
+                return $value;
+            }
+        }
+        return '';
+    }
+}
+
+if (!function_exists("getNumberFieldFromDoc")) {
+    function getNumberFieldFromDoc($document) {
+        foreach ($document as $key => $value) {
+            $key = strtolower($key);
+            if (str_contains($key, 'number')) {
+                if (str_contains($key, 'policy') || str_contains($key, 'document') || str_contains($key, 'certificate')) {
+                    return $value;
+                }
+            }
+        }
+        return '';
+    }
+}
+
+if (!function_exists("getIssueDateFieldFromDoc")) {
+    function getIssueDateFieldFromDoc($document) {
+        foreach ($document as $key => $value) {
+            $key = strtolower($key);
+            if (str_contains($key, 'issue') || str_contains($key, 'effect')) {
+                return $value;
+            }
+        }
+        return '';
+    }
+}
+
+if (!function_exists("getExpireDateFieldFromDoc")) {
+    function getExpireDateFieldFromDoc($document) {
+        foreach ($document as $key => $value) {
+            $key = strtolower($key);
+            if (str_contains($key, 'expire')) {
+                return $value;
+            }
+        }
+        return '';
+    }
+}
+
+if (!function_exists("getDataFromDocument")) {
+    function getDataFromDocument($document, $type) {
+        $result = [
+            'name' => '',
+            'number' => '',
+            'issueDate' => '',
+            'expireDate' => '',
+            'type' => $type,
+            'data' => $document,
+        ];
+
+        collect($document)->each(function ($item, $key) {
+            $key = strtolower($key);
+            if (str_contains($key, 'name')) {
+                $result['name'] = $item;
+                return;
+            }
+
+            if (str_contains($key, 'number')) {
+                if (str_contains($key, 'policy') || str_contains($key, 'document') || str_contains($key, 'certificate')) {
+                    $result['number'] = $item;
+                    return;
+                }
+            }
+
+            if (str_contains($key, 'issue') || str_contains($key, 'effect')) {
+                $result['issueDate'] = $item;
+                return;
+            }
+
+            if (str_contains($key, 'expire')) {
+                $result['expireDate'] = $item;
+            }
+        });
+
+        return $result;
+    }
+}
