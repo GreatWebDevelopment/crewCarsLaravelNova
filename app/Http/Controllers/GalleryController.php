@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Gallery;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class GalleryController extends Controller
@@ -13,15 +14,11 @@ class GalleryController extends Controller
      */
     public function index(Request $request)
     {
-        if (!checkRequestParams($request, ['uid'])) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
-        }
-
         $userId = $request->input('uid');
         $carId = $request->input('car_id');
         $galleries = Gallery::with('car')
             ->where('carId', $carId)
-            ->where('uid', $userId)
+            ->where('uid', Auth::user()->id)
             ->select('id', 'img')
             ->get();
 
@@ -45,7 +42,7 @@ class GalleryController extends Controller
             return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
         }
 
-        $userId = $request->input('uid');
+        $userId = Auth::user()->id;
         $carId = $request->input('car_id');
 
         $galleries = Gallery::where('carId', $carId)->where('uid', $userId)->get();
@@ -99,9 +96,7 @@ class GalleryController extends Controller
         }
 
         $gallery = Gallery::find($id);
-        $oldS3Keys = array_column($gallery->img, 's3Key');
-        $newS3Keys = array_column($existingImages, 's3Key');
-        $imagesToDelete = array_diff($oldS3Keys, $newS3Keys);
+        $imagesToDelete = array_diff($gallery->img, $existingImages);
 
         if (count($imagesToDelete) > 0) {
             foreach ($imagesToDelete as $image) {
@@ -132,8 +127,7 @@ class GalleryController extends Controller
             $path = env('GALLERY_S3_PATH') . $filename;
             $s3 = Storage::disk('s3')->put($path, file_get_contents($file), 'public');
             if ($s3) {
-                $url = Storage::disk('s3')->url($path);
-                $images[] = ['s3Key' => $path, 'url' => $url];
+                $images[] = $path;
             }
         }
 

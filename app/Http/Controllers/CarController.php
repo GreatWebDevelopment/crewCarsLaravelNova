@@ -7,8 +7,10 @@ use App\Models\CarTypes;
 use App\Models\Facility;
 use App\Models\Fav;
 use App\Models\Gallery;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Car;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use function Symfony\Component\Translation\t;
@@ -285,5 +287,111 @@ class CarController extends Controller
         })->sortBy('distance')->take(5);
 
         return response()->json(['FeatureCar'=>$carlists, 'ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Type Wise Get Successfully!!!'], 200);
+    }
+
+    public function featureList(Request $request)
+    {
+        $userId = Auth::user()->id;
+        $lats = $request->input('lats');
+        $longs = $request->input('longs');
+        $cityId = $request->input('cityid');
+
+        $user = User::find($userId);
+        $isBlock = empty($user->status) ? '1' : ($user->status == 1 ? '0' : '1');
+
+        $cars = Car::with(['bookings' => function ($query) {
+            $query->where('bookingStatus', 'Completed')
+                ->where('isRate', 1);
+        }])->when($cityId, function ($query) use ($cityId) {
+            return $query->where('available', $cityId);
+        })->where([
+            ['status', 1],
+            ['postId', '!=', $userId],
+            ['isApproved', 1]
+        ])->select([
+            'id',
+            'title',
+            'img',
+            'rating',
+            'number',
+            'seats',
+            'transmission',
+            'pickLat',
+            'pickLng',
+            'rentPrice',
+            'priceType',
+            'engineHp',
+            'fuelType',
+            'type'
+        ])->get()->map(function ($car) use ($lats, $longs) {
+            $bookCount = $car->bookings->count();
+            $bookRateSum = $car->bookings->sum('totalRate');
+
+            $car_rate = $bookCount != 0
+                ? number_format($bookRateSum / $bookCount, ($bookRateSum % $bookCount > 0) ? 2 : 0)
+                : $car->rating;
+
+            $car->rate = $car_rate;
+            $car->distance = $car->calculateDistance($lats, $longs) . ' KM';
+            $img = explode('$;',$car->img);
+            $car->img = $img[0];
+
+            return $car;
+        })->sortBy('distance');
+
+        return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Home Data Get Successfully!', 'is_block' => $isBlock, "tax" => app('set')['tax'], 'currency' => app('set')['currency'], 'FeatureCar' => $cars]);
+    }
+
+    public function popularList(Request $request)
+    {
+        $userId = Auth::user()->id;
+        $lats = $request->input('lats');
+        $longs = $request->input('longs');
+        $cityId = $request->input('cityid');
+
+        $user = User::find($userId);
+        $isBlock = empty($user->status) ? '1' : ($user->status == 1 ? '0' : '1');
+
+        $cars = Car::with(['bookings' => function ($query) {
+            $query->where('bookingStatus', 'Completed')
+                ->where('isRate', 1);
+        }])->when($cityId, function ($query) use ($cityId) {
+            return $query->where('available', $cityId);
+        })->where([
+            ['status', 1],
+            ['postId', '!=', $userId],
+            ['isApproved', 1]
+        ])->select([
+            'id',
+            'title',
+            'img',
+            'rating',
+            'number',
+            'seats',
+            'transmission',
+            'pickLat',
+            'pickLng',
+            'rentPrice',
+            'priceType',
+            'engineHp',
+            'fuelType',
+            'type'
+        ])->get()->map(function ($car) use ($lats, $longs) {
+            $bookCount = $car->bookings->count();
+            $bookRateSum = $car->bookings->sum('totalRate');
+
+            $car_rate = $bookCount != 0
+                ? number_format($bookRateSum / $bookCount, ($bookRateSum % $bookCount > 0) ? 2 : 0)
+                : $car->rating;
+
+            $car->rate = $car_rate;
+            $car->distance = $car->calculateDistance($lats, $longs) . ' KM';
+            $img = explode('$;',$car->img);
+            $car->img = $img[0];
+
+            return $car;
+        })->sortBy('rating');
+
+        return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Home Data Get Successfully!', 'is_block' => $isBlock, "tax" => app('set')['tax'], 'currency' => app('set')['currency'], 'Recommend_car' => $cars]);
     }
 }

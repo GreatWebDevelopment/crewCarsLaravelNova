@@ -10,6 +10,7 @@ use App\Models\Car;
 use App\Models\User;
 use App\Models\WalletReport;
 use App\Models\Notification;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -376,6 +377,148 @@ class BookingController extends Controller
             "Result" => !empty($c) ? "true" : "false",
             "ResponseMsg" => !empty($c) ? "Book Details Founded!" : "Book Details Not Founded!"
         ]);
+    public function bookDrop(Request $request)
+    {
+        if (!checkRequestParams($request, ['book_id'])) {
+            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+        }
+
+        $userId = Auth::user()->id;
+        $bookId = $request->input('book_id');
+
+        $user = User::find($userId);
+        $booking = Booking::find($bookId);
+        $booking->bookingStatus = 'Drop';
+        $booking->userId = $userId;
+        $booking->save();
+
+
+        $fields = json_encode([
+            'app_id' => app('set')['oneKey'],
+            'included_segments' => ['Active Users'],
+            'data' => ['order_id' => $bookId],
+            'filters' => [['field' => 'tag', 'key' => 'user_id', 'relation' => '=', 'value' => $booking->postId]],
+        ]);
+
+        $headers = [
+            'Content-Type' => 'application/json; charset=utf-8',
+            'Authorization' => 'Bearer ' . app('set')['oneHash']
+        ];
+
+        Http::withHeaders($headers)->post('https://onesignal.com/api/v1/notifications', $fields);
+
+        $title = 'Car Drop!';
+        $description = $user->name . ', Your Car Drop.';
+        $timestamps = date('Y-m-d H:i:s');
+
+        Notification::create([
+            "uid" => $booking->postId,
+            "datetime" => $timestamps,
+            "title" => $title,
+            "description" => $description
+        ]);
+
+        return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Car Drop Successfully!']);
+    }
+
+    public function bookCancel(Request $request)
+    {
+        if (!checkRequestParams($request, ['book_id'])) {
+            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+        }
+
+        $userId = Auth::user()->id;
+        $bookId = $request->input('book_id');
+        $reason = $request->input('cancel_reason');
+
+        $booking = Booking::find($bookId);
+        $booking->userId = $userId;
+        $booking->bookingStatus = 'Cancelled';
+        $booking->cancelReason = $reason;
+        $booking->save();
+
+        return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Car Booking Cancelled Successfully!']);
+    }
+
+    public function verifyOTP(Request $request)
+    {
+        if (!checkRequestParams($request, ['status', 'otp', 'book_id'])) {
+            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+        }
+
+        $userId = Auth::user()->id;
+        $bookId = $request->input('book_id');
+        $status = $request->input('status');
+        $otp = $request->input('otp');
+
+        if ($status == 'Pickup') {
+            $bookings = Booking::where('id', $bookId)
+                ->where('userId', $userId)
+                ->where('pickOtp', $otp)
+                ->get();
+
+            if (count($bookings) > 0) {
+                return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Otp Matched!']);
+            } else {
+                return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Otp Not Matched!'], 401);
+            }
+        } else {
+            $bookings = Booking::where('id', $bookId)
+                ->where('userId', $userId)
+                ->where('dropOtp', $otp)
+                ->get();
+
+            if (count($bookings) > 0) {
+                return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Otp Matched!']);
+            } else {
+                return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Otp Not Matched!'], 401);
+            }
+        }
+    }
+
+    public function rateList($id)
+    {
+        $bookings = Booking::where('carId', $id)
+            ->where('bookingStatus', 'Completed')
+            ->where('isRate', 1)
+            ->orderBy('id', 'desc')
+            ->get()
+            ->map(function ($booking) {
+                $user = User::find($booking->userId);
+                return [
+                    'user_img' => empty($user->profilePicture) ? '' : $user->profilePicture,
+                    'user_title' => $booking->name,
+                    'user_rate' => $booking->totalRate,
+                    'review_date' => $booking->reviewDate,
+                    'user_desc' => $booking->rateText,
+                ];
+            });
+
+        return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Review Data Get Successfully!', 'reviewdata' => $bookings]);
+    }
+
+    public function updateRate(Request $request, $id)
+    {
+        if (!checkRequestParams($request, ['total_rate', 'rate_text'])) {
+            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+        }
+
+        $totalRate = $request->input('total_rate');
+        $rateText = $request->input('rate_text');
+        $timestamps = date('Y-m-d H:i:s');
+
+        $booking = Booking::find($id);
+        if (!empty($booking) && $booking->bookingStatus == 'Completed') {
+            $booking->totalRate = $totalRate;
+            $booking->rateText = $rateText;
+            $booking->isRate = 1;
+            $booking->reviewDate = $timestamps;
+            $booking->save();
+
+            return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Rate Updated Successfully!']);
+        } else {
+            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Car Not Drop Original Locations'], 401);
+        }
     }
 
     public function show(Booking $booking)
