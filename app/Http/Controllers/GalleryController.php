@@ -6,6 +6,7 @@ use App\Models\Gallery;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class GalleryController extends Controller
 {
@@ -14,15 +15,26 @@ class GalleryController extends Controller
      */
     public function index(Request $request)
     {
-        $userId = $request->input('uid');
+        $validator = Validator::make($request->all(), [
+            'car_id' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+        }
+
+        $userId = Auth::user()->id;
         $carId = $request->input('car_id');
-        $galleries = Gallery::with('car')
+        $galleries = Gallery::with(['car' => function ($query) {
+            $query->without('bookings')
+                ->select(['id', 'title']);
+        }])
             ->where('carId', $carId)
-            ->where('uid', Auth::user()->id)
-            ->select('id', 'img')
+            ->where('uid', $userId)
+            ->select(['id', 'img', 'carId'])
             ->get();
 
-        return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Car Gallery Get Successfully!!!', 'gallerylist' => $galleries], 200);
+        return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Car Gallery Get Successfully!', 'gallerylist' => $galleries]);
     }
 
     /**
@@ -38,7 +50,11 @@ class GalleryController extends Controller
      */
     public function store(Request $request)
     {
-        if (!checkRequestParams($request, ['car_id'])) {
+        $validator = Validator::make($request->all(), [
+            'car_id' => 'required',
+        ]);
+
+        if ($validator->fails()) {
             return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
         }
 
@@ -47,7 +63,7 @@ class GalleryController extends Controller
 
         $galleries = Gallery::where('carId', $carId)->where('uid', $userId)->get();
         if (count($galleries) > 0) {
-            return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Car Gallery Already Added!'], 200);
+            return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Car Gallery Already Added!']);
         }
 
         if ($request->hasFile('images')) {
@@ -60,7 +76,7 @@ class GalleryController extends Controller
             'img' => $images,
         ]);
 
-        return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Car Gallery Add Successfully!'], 200);
+        return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Car Gallery Add Successfully!']);
     }
 
     /**
@@ -84,7 +100,11 @@ class GalleryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (!checkRequestParams($request, ['car_id'])) {
+        $validator = Validator::make($request->all(), [
+            'car_id' => 'required',
+        ]);
+
+        if ($validator->fails()) {
             return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
         }
 
@@ -108,7 +128,7 @@ class GalleryController extends Controller
         $gallery->img = array_merge($existingImages, $images);
         $gallery->save();
 
-        return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Car Gallery Update Successfully!'], 200);
+        return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Car Gallery Update Successfully!']);
     }
 
     /**
