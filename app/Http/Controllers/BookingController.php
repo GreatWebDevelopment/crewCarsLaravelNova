@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class BookingController extends Controller
 {
@@ -340,7 +342,8 @@ class BookingController extends Controller
 
     }
 
-    public function myBookDetails(Request $request) {
+    public function myBookDetails(Request $request)
+    {
         if (checkRequestParams($request, ['uid', 'book_id'])) {
             return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
         }
@@ -364,10 +367,10 @@ class BookingController extends Controller
         $pol['cityTitle'] = optional($bookings->city)->title;
         $pol['paymentMethodName'] = optional($bookings->paymentMethod)->title;
         $pol['customerName'] = $user['name'];
-        $pol['customerContact'] = $user['countryCode'].$user['mobile'];
+        $pol['customerContact'] = $user['countryCode'] . $user['mobile'];
         $pol['customerImg'] = $user['profilePicture'];
-        $pol['exterPhoto'] = empty($bookings['exter_photo']) ? [] : explode('$;',$bookings['exter_photo']);
-        $pol['interPhoto'] = empty($bookings['inter_photo']) ? [] : explode('$;',$bookings['inter_photo']);
+        $pol['exterPhoto'] = empty($bookings['exter_photo']) ? [] : explode('$;', $bookings['exter_photo']);
+        $pol['interPhoto'] = empty($bookings['inter_photo']) ? [] : explode('$;', $bookings['inter_photo']);
 
         $c[] = $pol;
 
@@ -377,9 +380,15 @@ class BookingController extends Controller
             "Result" => !empty($c) ? "true" : "false",
             "ResponseMsg" => !empty($c) ? "Book Details Founded!" : "Book Details Not Founded!"
         ]);
+    }
+
     public function bookDrop(Request $request)
     {
-        if (!checkRequestParams($request, ['book_id'])) {
+        $validator = Validator::make($request->all(), [
+            'book_id' => 'required',
+        ]);
+
+        if ($validator->fails()) {
             return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
         }
 
@@ -392,9 +401,8 @@ class BookingController extends Controller
         $booking->userId = $userId;
         $booking->save();
 
-
         $fields = json_encode([
-            'app_id' => app('set')['oneKey'],
+            'app_id' => app('set')->oneKey,
             'included_segments' => ['Active Users'],
             'data' => ['order_id' => $bookId],
             'filters' => [['field' => 'tag', 'key' => 'user_id', 'relation' => '=', 'value' => $booking->postId]],
@@ -402,7 +410,7 @@ class BookingController extends Controller
 
         $headers = [
             'Content-Type' => 'application/json; charset=utf-8',
-            'Authorization' => 'Bearer ' . app('set')['oneHash']
+            'Authorization' => 'Bearer ' . app('set')->oneHash,
         ];
 
         Http::withHeaders($headers)->post('https://onesignal.com/api/v1/notifications', $fields);
@@ -412,10 +420,10 @@ class BookingController extends Controller
         $timestamps = date('Y-m-d H:i:s');
 
         Notification::create([
-            "uid" => $booking->postId,
-            "datetime" => $timestamps,
-            "title" => $title,
-            "description" => $description
+            'uid' => $booking->postId,
+            'datetime' => $timestamps,
+            'title' => $title,
+            'description' => $description
         ]);
 
         return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Car Drop Successfully!']);
@@ -423,7 +431,11 @@ class BookingController extends Controller
 
     public function bookCancel(Request $request)
     {
-        if (!checkRequestParams($request, ['book_id'])) {
+        $validator = Validator::make($request->all(), [
+            'book_id' => 'required',
+        ]);
+
+        if ($validator->fails()) {
             return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
         }
 
@@ -440,9 +452,73 @@ class BookingController extends Controller
         return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Car Booking Cancelled Successfully!']);
     }
 
+    public function pickUp(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'book_id' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+        }
+
+        $userId = Auth::user()->id;
+        $bookId = $request->input('book_id');
+
+        if ($request->hasFile('inter_photo')) {
+            $image = $this->uploadFile($request->file('inter_photo'), env('INTER_CAR_IMAGE_S3_PATH'));
+        }
+
+        if ($request->hasFile('outer_photos')) {
+            $images = $this->uploadFiles($request->file('outer_photos'), env('OUTER_CAR_IMAGES_S3_PATH'));
+        }
+
+        $user = User::find($userId);
+        $booking = Booking::find($bookId);
+        $booking->userId = $userId;
+        $booking->interPhoto = $image;
+        $booking->outerPhoto = $images;
+        $booking->save();
+
+        $fields = json_encode([
+            'app_id' => app('set')->oneKey,
+            'included_segments' =>  ['Active Users'],
+            'data' => ['order_id' => $bookId],
+            'filters' => [['field' => 'tag', 'key' => 'user_id', 'relation' => '=', 'value' => $booking->postId]],
+            'contents' => ['en' => $user->name . ', Your Car Pickup.'],
+            'headings' => ['en' => 'Car Pickup!']
+        ]);
+
+        $headers = [
+            'Content-Type' => 'application/json; charset=utf-8',
+            'Authorization' => 'Bearer ' . app('set')->oneHash
+        ];
+
+        Http::withHeaders($headers)->post('https://onesignal.com/api/v1/notifications', $fields);
+
+        $title = 'Car Pickup!';
+        $description = $user->name . ', Your Car Pickup.';
+        $timestamps = date('Y-m-d H:i:s');
+
+        Notification::create([
+            'uid' => $booking->postId,
+            'datetime' => $timestamps,
+            'title' => $title,
+            'description' => $description
+        ]);
+
+        return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Car Pickup Successfully!']);
+    }
+
     public function verifyOTP(Request $request)
     {
-        if (!checkRequestParams($request, ['status', 'otp', 'book_id'])) {
+        $validator = Validator::make($request->all(), [
+            'status' => 'required',
+            'otp' => 'required',
+            'book_id' => 'required',
+        ]);
+
+        if ($validator->fails()) {
             return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
         }
 
@@ -486,7 +562,7 @@ class BookingController extends Controller
             ->map(function ($booking) {
                 $user = User::find($booking->userId);
                 return [
-                    'user_img' => empty($user->profilePicture) ? '' : $user->profilePicture,
+                    'user_img' => $user->profilePicture,
                     'user_title' => $booking->name,
                     'user_rate' => $booking->totalRate,
                     'review_date' => $booking->reviewDate,
@@ -563,5 +639,33 @@ class BookingController extends Controller
     {
         $booking->delete();
         return response()->json(null, 204);
+    }
+
+    private function uploadFiles($files, $rootPath)
+    {
+        $images = [];
+        foreach ($files as $file) {
+            $filename = uniqid() . time() . mt_rand() . '.' . $file->getClientOriginalExtension();
+            $path = $rootPath . $filename;
+            $s3 = Storage::disk('s3')->put($path, file_get_contents($file), 'public');
+            if ($s3) {
+                $images[] = $path;
+            }
+        }
+
+        return $images;
+    }
+
+    private function uploadFile($file, $rootPath)
+    {
+        $url = '';
+        $filename = uniqid() . time() . mt_rand() . '.' . $file->getClientOriginalExtension();
+        $path = $rootPath . $filename;
+        $s3 = Storage::disk('s3')->put($path, file_get_contents($file), 'public');
+        if ($s3) {
+            $url = $path;
+        }
+
+        return $url;
     }
 }
