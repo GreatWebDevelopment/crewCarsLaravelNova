@@ -12,6 +12,10 @@ use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Http\Requests\NovaRequest;
+use App\Nova\Metrics\CarsAddedTrend;
+use App\Nova\Metrics\TotalCars;
+use App\Nova\Metrics\CarsByBrand;
+use App\Nova\Metrics\CarsAvailability;
 
 use Laravel\Nova\Fields\Hidden;
 use Laravel\Nova\Panel;
