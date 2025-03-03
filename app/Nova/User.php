@@ -75,10 +75,11 @@ class User extends Resource
                 ->fillUsing(function ($request, $model, $attribute, $requestAttribute) {
                     $model->syncRoles($request->input($attribute)); // ✅ Assign role
                 }),
-            HasMany::make('Cars', 'cars', Car::class),
 
             // ✅ Fix: Use Nova Role Resource, Not the Eloquent Model
             BelongsToMany::make('Roles', 'roles', Role::class),
+            HasMany::make('Bookings', 'bookings', Booking::class),
+            HasMany::make('Cars', 'cars', Car::class),
         ];
 
     }

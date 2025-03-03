@@ -1,6 +1,7 @@
 <?php
 // app/Helpers/Utils.php
 
+use Illuminate\Support\Facades\Http;
 use Carbon\Carbon;
 
 if (!function_exists('convertToCamelCase')) {
@@ -58,6 +59,18 @@ if (!function_exists("checkRequestParams")) {
     }
 }
 
+if (!function_exists('sendNotification')) {
+    function sendNotification($fields)
+    {
+        $authKey = app('set')->oneHash;
+
+        // Send request using Laravel HTTP Client
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/json; charset=utf-8',
+            'Authorization' => "Basic {$authKey}"
+        ])->post("https://onesignal.com/api/v1/notifications", $fields);
+
+        return $response->json();
 if (!function_exists("getNameFieldFromDoc")) {
     function getNameFieldFromDoc($document) {
         foreach ($document as $key => $value) {

@@ -10,6 +10,10 @@ use Laravel\Nova\Resource;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Illuminate\Support\Facades\Log;
 use App\Nova\Car;
+use App\Nova\Metrics\TotalBookings;
+use App\Nova\Metrics\BookingsOverTime;
+use App\Nova\Metrics\BookingsByStatus;
+use App\Nova\Metrics\BookingRevenue;
 
 class Booking extends Resource
 {
@@ -62,7 +66,12 @@ class Booking extends Resource
      */
     public function cards(NovaRequest $request): array
     {
-        return [];
+        return [
+            new TotalBookings(),
+            new BookingsOverTime(),
+            new BookingsByStatus(),
+            new BookingRevenue(),
+        ];
     }
 
     /**

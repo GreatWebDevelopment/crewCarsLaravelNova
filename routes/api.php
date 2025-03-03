@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\WalletController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
@@ -50,26 +51,24 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/carBrand', [CarBrandController::class, 'index']);
     Route::get('/carBrand/{id}', [CarBrandController::class, 'show']);
-
+  
     Route::get('/gallery', [GalleryController::class, 'index']);
     Route::post('/gallery', [GalleryController::class, 'store']);
     Route::put('/gallery/{id}', [GalleryController::class, 'update']);
-
     Route::post('/home', [HomeController::class, 'get']);
-
     Route::get('/city', [CityController::class, 'index']);
     Route::get('/city/{id}', [CityController::class, 'show']);
-
     Route::get('/pagelist', [PageController::class, 'index']);
     Route::get('/faq', [FaqController::class, 'index']);
-
     Route::post('/fav-car', [FavController::class, 'index']);
     Route::post('/fav', [FavController::class, 'update']);
-
     Route::post('/booking/now', [BookingController::class, 'bookNow']);
     Route::post('/booking/range', [BookingController::class, 'bookRange']);
     Route::post('/booking/details', [BookingController::class, 'bookDetails']);
     Route::post('/booking/history', [BookingController::class, 'bookHistory']);
+    Route::post('/booking/myHistory', [BookingController::class, 'myBookHistory']);
+    Route::post('/booking/myDetails', [BookingController::class, 'myBookDetails']);
+    Route::post('/booking/complete', [BookingController::class, 'update']);
     Route::get('/booking/rate/{id}', [BookingController::class, 'rateList']);
     Route::put('/booking/rate/{id}', [BookingController::class, 'updateRate']);
     Route::post('/booking/drop', [BookingController::class, 'bookDrop']);
@@ -77,9 +76,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/bookings/verify-otp', [BookingController::class, 'verifyOTP']);
     Route::get('/bookings', [BookingController::class, 'index']);
     Route::get('/bookings/{id}', [BookingController::class, 'show']);
-    Route::put('/bookings/{id}', [BookingController::class, 'update']);
     Route::delete('/bookings/{id}', [BookingController::class, 'destroy']);
-
+    Route::get('/payments/gateway', [PaymentController::class, 'gateway']);
     Route::post('/payments', [PaymentController::class, 'processPayment']);
+    Route::post('/walletUp', [WalletController::class, 'walletUp']);
+    Route::post('/walletReport', [WalletController::class, 'walletReport']);
+    Route::post('/logout', [UserController::class, 'logout']);
     Route::post('/auth/logout', [UserController::class, 'logout']);
 });

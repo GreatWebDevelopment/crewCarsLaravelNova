@@ -7,21 +7,21 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Metrics\Trend;
 use Laravel\Nova\Metrics\TrendResult;
 use Laravel\Nova\Nova;
-use App\Models\Car;
+use App\Models\Booking;
 
-class CarsAddedTrend extends Trend
+
+class BookingsOverTime extends Trend
 {
     public function name()
     {
-        return 'Cars Added Over Time';
+        return 'Bookings Over Time';
     }
-
     /**
      * Calculate the value of the metric.
      */
-    public function calculate(NovaRequest $request)
+    public function calculate(NovaRequest $request): TrendResult
     {
-        return $this->countByMonths($request, Car::class);
+        return $this->countByDays($request, Booking::class);
     }
 
     /**
@@ -33,9 +33,9 @@ class CarsAddedTrend extends Trend
     {
         return [
             7 => 'Last 7 Days',
-            30 => 'Last 30 Days',
-            60 => 'Last 60 Days',
-            365 => 'Last Year',
+            30 => Nova::__('30 Days'),
+            60 => Nova::__('60 Days'),
+            90 => Nova::__('90 Days'),
         ];
     }
 
@@ -54,6 +54,6 @@ class CarsAddedTrend extends Trend
      */
     public function uriKey(): string
     {
-        return 'cars-added-trend';
+        return 'bookings-over-time';
     }
 }
