@@ -16,16 +16,9 @@ use App\Nova\Metrics\CarsAddedTrend;
 use App\Nova\Metrics\TotalCars;
 use App\Nova\Metrics\CarsByBrand;
 use App\Nova\Metrics\CarsAvailability;
-
 use Laravel\Nova\Fields\Hidden;
 use Laravel\Nova\Panel;
 use App\Nova\User;
-use App\Nova\Metrics\CarsAddedTrend;
-use App\Nova\Metrics\TotalCars;
-use App\Nova\Metrics\CarsByBrand;
-use App\Nova\Metrics\CarsAvailability;
-
-
 class Car extends Resource
 {
 
