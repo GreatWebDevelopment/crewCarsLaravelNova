@@ -71,6 +71,9 @@ if (!function_exists('sendNotification')) {
         ])->post("https://onesignal.com/api/v1/notifications", $fields);
 
         return $response->json();
+    }
+}
+
 if (!function_exists("getNameFieldFromDoc")) {
     function getNameFieldFromDoc($document) {
         foreach ($document as $key => $value) {
