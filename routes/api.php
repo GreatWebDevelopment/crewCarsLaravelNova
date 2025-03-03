@@ -17,6 +17,9 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\VinDecoderController;
 use App\Http\Controllers\MobileController;
+use App\Http\Controllers\CouponController;
+use App\Http\Controllers\FacilityController;
+use App\Http\Controllers\DashboardController;
 
 // Public Routes
 Route::post('/register', [UserController::class, 'register']);
@@ -73,8 +76,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/bookings/{id}', [BookingController::class, 'show']);
     Route::delete('/bookings/{id}', [BookingController::class, 'destroy']);
 
+    Route::post('/coupon/list', [CouponController::class, 'index']);
+    Route::post('/coupon/check', [CouponController::class, 'check']);
+
+    Route::post('/facility/list', [FacilityController::class, 'index']);
+
+    Route::post('/dashboard', [DashboardController::class, 'index']);
+
     Route::get('/payments/gateway', [PaymentController::class, 'gateway']);
     Route::post('/payments', [PaymentController::class, 'processPayment']);
+    Route::post('/requestWithdraw', [PaymentController::class, 'requestWithdraw']);
+    Route::post('/payout/list', [PaymentController::class, 'payoutSettingsList']);
 
     Route::post('/walletUp', [WalletController::class, 'walletUp']);
     Route::post('/walletReport', [WalletController::class, 'walletReport']);

@@ -9,7 +9,7 @@ class MobileController extends Controller
 {
     public function checkMobile(Request $request)
     {
-        if (checkRequestParams($request, ['mobile', 'ccode'])) {
+        if (!checkRequestParams($request, ['mobile', 'ccode'])) {
             return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
         }
 
