@@ -55,6 +55,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/gallery', [GalleryController::class, 'index']);
     Route::post('/gallery', [GalleryController::class, 'store']);
     Route::put('/gallery/{id}', [GalleryController::class, 'update']);
+
     Route::post('/home', [HomeController::class, 'get']);
     Route::get('/city', [CityController::class, 'index']);
     Route::get('/city/{id}', [CityController::class, 'show']);
@@ -73,7 +74,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/booking/rate/{id}', [BookingController::class, 'updateRate']);
     Route::post('/booking/drop', [BookingController::class, 'bookDrop']);
     Route::post('/booking/cancel', [BookingController::class, 'bookCancel']);
-    Route::post('/bookings/verify-otp', [BookingController::class, 'verifyOTP']);
+    Route::post('/booking/pickup', [BookingController::class, 'pickUp']);
+    Route::post('/booking/verify-otp', [BookingController::class, 'verifyOTP']);
     Route::get('/bookings', [BookingController::class, 'index']);
     Route::get('/bookings/{id}', [BookingController::class, 'show']);
     Route::delete('/bookings/{id}', [BookingController::class, 'destroy']);
@@ -81,6 +83,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/payments', [PaymentController::class, 'processPayment']);
     Route::post('/walletUp', [WalletController::class, 'walletUp']);
     Route::post('/walletReport', [WalletController::class, 'walletReport']);
-    Route::post('/logout', [UserController::class, 'logout']);
     Route::post('/auth/logout', [UserController::class, 'logout']);
 });
