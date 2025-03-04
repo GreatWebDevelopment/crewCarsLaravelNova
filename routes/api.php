@@ -20,6 +20,7 @@ use App\Http\Controllers\MobileController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\FacilityController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\NotificationController;
 
 // Public Routes
 Route::post('/register', [UserController::class, 'register']);
@@ -35,7 +36,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/mobile/check', [MobileController::class, 'checkMobile']);
 
     Route::post('/cars-list', [CarController::class, 'index']);
-    Route::get('/cars', [CarController::class, 'index']);
     Route::post('/cars', [CarController::class, 'store']);
     Route::get('/cars/{id}', [CarController::class, 'show']);
     Route::put('/cars/{id}', [CarController::class, 'update']);
@@ -85,11 +85,14 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/payments/gateway', [PaymentController::class, 'gateway']);
     Route::post('/payments', [PaymentController::class, 'processPayment']);
-    Route::post('/requestWithdraw', [PaymentController::class, 'requestWithdraw']);
+    Route::post('/request-withdraw', [PaymentController::class, 'requestWithdraw']);
     Route::post('/payout/list', [PaymentController::class, 'payoutSettingsList']);
 
     Route::post('/walletUp', [WalletController::class, 'walletUp']);
     Route::post('/walletReport', [WalletController::class, 'walletReport']);
 
+    Route::post('/notification', [NotificationController::class, 'index']);
+
+    Route::post('/refer-data', [UserController::class, 'referData']);
     Route::post('/logout', [UserController::class, 'logout']);
 });

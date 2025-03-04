@@ -179,6 +179,31 @@ class UserController extends Controller
         return response()->json(['UserLogin' => $user, 'ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Profile Update successfully!'], 200);
     }
 
+    public function referData(Request $request)
+    {
+        if (!checkRequestParams($request, ['uid'])) {
+            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+        }
+        $user = User::where('id', $request->input('uid'))->get();
+        if (empty($user)) {
+            return response()->json([
+                "ResponseCode" => "401",
+                "Result" => "false",
+                "ResponseMsg" => "Not Exist User!",
+            ]);
+        } else {
+            return response()->json([
+                "ResponseCode" => "200",
+                "Result" => "true",
+                "ResponseMsg" => "Wallet Balance Get Successfully!",
+                "code" => $user[0]->verificationCode,
+                "signupcredit" => app('set')->scredit,
+                "refercredit" => app('set')->rcredit,
+            ]);
+        }
+
+    }
+
     private function generateNonce()
     {
         $nonce = mt_rand(100000, 999999);
@@ -189,5 +214,4 @@ class UserController extends Controller
             return $nonce;
         }
     }
-
 }

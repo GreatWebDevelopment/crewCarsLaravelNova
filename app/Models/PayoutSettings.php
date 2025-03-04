@@ -10,4 +10,20 @@ class PayoutSettings extends Model
     use HasFactory;
 
     protected $table = 'payoutSettings';
+
+    protected $attributes = ['proof' => ''];
+
+    protected $fillable = [
+        'uid',
+        'amt',
+        'status',
+        'rDate',
+        'rType',
+        'accNumber',
+        'bankName',
+        'accName',
+        'ifscCode',
+        'upiId',
+        'paypalId',
+    ];
 }

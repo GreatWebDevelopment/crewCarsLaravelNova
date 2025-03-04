@@ -80,7 +80,7 @@ class CarController extends Controller
         if ($request->has('uid')) {
             $items = Car::where('postId', $request->input('uid'))->select([
                 'cars.*',
-                DB::raw('(SELECT COUNT(*) FROM gallerys WHERE gallerys.carId = cars.id) AS total_gallery')
+                DB::raw('(SELECT COUNT(*) FROM gallerys WHERE gallerys.carId = cars.id) AS totalGallery')
             ])->get();
             return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Type wise Car Get Successfully!!!', 'mycarlist'=> $items], 200);
         } else {

@@ -8,6 +8,7 @@ use App\Models\PayoutSettings;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class PaymentController extends Controller
 {
@@ -37,7 +38,6 @@ class PaymentController extends Controller
         $finalpayout = $finalpayout ?: 0;
 
         $available_balance = number_format((float)($without_cod - $finalpayout), 2, '.', '');
-
         $minWithdrawLimit = app('set')->wlimit;
         $currency = app('set')->currency;
 
@@ -65,12 +65,12 @@ class PaymentController extends Controller
                 'status'      => 'pending',
                 'rDate'      => Carbon::now(),
                 'rType'      => $r_type,
-                'accNumber'  => $request->acc_number,
-                'bankName'   => $request->bank_name,
-                'accName'    => $request->acc_name,
-                'ifscCode'   => $request->ifsc_code,
-                'upiId'      => $request->upi_id,
-                'paypalId'   => $request->paypal_id,
+                'accNumber'  => $request->input('acc_number'),
+                'bankName'   => $request->input('bank_name'),
+                'accName'    => $request->input('acc_name'),
+                'ifscCode'   => $request->input('ifsc_code'),
+                'upiId'      => $request->input('upi_id'),
+                'paypalId'   => $request->input('paypal_id'),
             ]);
             DB::commit();
 
