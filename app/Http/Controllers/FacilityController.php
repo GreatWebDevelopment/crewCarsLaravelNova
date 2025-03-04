@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Facility;
 use Illuminate\Http\Request;
 
 class FacilityController extends Controller
@@ -11,7 +12,16 @@ class FacilityController extends Controller
      */
     public function index()
     {
-        //
+        $c = [];
+
+        Facility::where('status', 1)->get();
+
+        return response()->json([
+            "facilitylist" => $c,
+            "ResponseCode" => "200",
+            "Result" => !empty($c) ? "true" : "false",
+            "ResponseMsg" => !empty($c) ? "Facility List Founded!" : "Facility Not Founded!"
+        ]);
     }
 
     /**

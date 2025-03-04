@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Coupon;
 use Illuminate\Http\Request;
 
 class CouponController extends Controller
@@ -11,7 +12,38 @@ class CouponController extends Controller
      */
     public function index()
     {
-        //
+        $timestamp = date("Y-m-d");
+        $c = [];
+
+        Coupon::where('status', 1)->get()->each(function ($coupon) use ($timestamp, $c) {
+            if ($coupon['expireDate'] < $timestamp) {
+                $coupon->status = 0;
+                $coupon->save();
+            } else {
+                $c[] = $coupon;
+            }
+        });
+
+        return response()->json([
+            "couponlist" => $c,
+            "ResponseCode" => "200",
+            "Result" => !empty($c) ? "true" : "false",
+            "ResponseMsg" => !empty($c) ? "Coupon List Founded!" : "Coupon Not Founded!"
+        ]);
+    }
+
+    public function check(Request $request)
+    {
+        if (!checkRequestParams($request, ['cid'])) {
+            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+        }
+        $coupon_exists = Coupon::where('id', $request->input('cid'))->exits();
+
+        return response()->json([
+            "ResponseCode" => "200",
+            "Result" => $coupon_exists ? "true" : "false",
+            "ResponseMsg" => $coupon_exists ? "Coupon Applied Successfully!!" : "Coupon Not Exist!!"
+        ]);
     }
 
     /**

@@ -17,6 +17,10 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\VinDecoderController;
 use App\Http\Controllers\MobileController;
+use App\Http\Controllers\CouponController;
+use App\Http\Controllers\FacilityController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\GalleryController;
 
 // Public Routes
@@ -35,7 +39,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/mobile/check', [MobileController::class, 'checkMobile']);
 
     Route::post('/cars-list', [CarController::class, 'index']);
-    Route::get('/cars', [CarController::class, 'index']);
     Route::post('/cars', [CarController::class, 'store']);
     Route::get('/cars/{id}', [CarController::class, 'show']);
     Route::put('/cars/{id}', [CarController::class, 'update']);
@@ -51,7 +54,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/carBrand', [CarBrandController::class, 'index']);
     Route::get('/carBrand/{id}', [CarBrandController::class, 'show']);
-  
+
     Route::get('/gallery', [GalleryController::class, 'index']);
     Route::post('/gallery', [GalleryController::class, 'store']);
     Route::put('/gallery/{id}', [GalleryController::class, 'update']);
@@ -63,6 +66,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/faq', [FaqController::class, 'index']);
     Route::post('/fav-car', [FavController::class, 'index']);
     Route::post('/fav', [FavController::class, 'update']);
+
     Route::post('/booking/now', [BookingController::class, 'bookNow']);
     Route::post('/booking/range', [BookingController::class, 'bookRange']);
     Route::post('/booking/details', [BookingController::class, 'bookDetails']);
@@ -79,9 +83,25 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/bookings', [BookingController::class, 'index']);
     Route::get('/bookings/{id}', [BookingController::class, 'show']);
     Route::delete('/bookings/{id}', [BookingController::class, 'destroy']);
+
+    Route::post('/coupon/list', [CouponController::class, 'index']);
+    Route::post('/coupon/check', [CouponController::class, 'check']);
+
+    Route::post('/facility/list', [FacilityController::class, 'index']);
+
+    Route::post('/dashboard', [DashboardController::class, 'index']);
+
     Route::get('/payments/gateway', [PaymentController::class, 'gateway']);
     Route::post('/payments', [PaymentController::class, 'processPayment']);
+    Route::post('/request-withdraw', [PaymentController::class, 'requestWithdraw']);
+    Route::post('/payout/list', [PaymentController::class, 'payoutSettingsList']);
+
     Route::post('/walletUp', [WalletController::class, 'walletUp']);
     Route::post('/walletReport', [WalletController::class, 'walletReport']);
+
+    Route::post('/notification', [NotificationController::class, 'index']);
+
+    Route::post('/refer-data', [UserController::class, 'referData']);
+    Route::post('/logout', [UserController::class, 'logout']);
     Route::post('/auth/logout', [UserController::class, 'logout']);
 });

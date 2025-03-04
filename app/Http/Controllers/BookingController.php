@@ -141,7 +141,7 @@ class BookingController extends Controller
     }
 
     public function bookDetails(Request $request) {
-        if (checkRequestParams($request, ['uid', 'book_id'])) {
+        if (!checkRequestParams($request, ['uid', 'book_id'])) {
             return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
         }
         $pol = array();
@@ -223,7 +223,7 @@ class BookingController extends Controller
 
     public function bookHistory(Request $request)
     {
-        if (checkRequestParams($request, ['uid', 'status'])) {
+        if (!checkRequestParams($request, ['uid', 'status'])) {
             return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
         }
         $pol = array();
@@ -299,7 +299,7 @@ class BookingController extends Controller
 
     public function myBookHistory(Request $request) {
         Log::info($request->all());
-        if (checkRequestParams($request, ['uid', 'status'])) {
+        if (!checkRequestParams($request, ['uid', 'status'])) {
             return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
         }
 
@@ -342,9 +342,8 @@ class BookingController extends Controller
 
     }
 
-    public function myBookDetails(Request $request)
-    {
-        if (checkRequestParams($request, ['uid', 'book_id'])) {
+    public function myBookDetails(Request $request) {
+        if (!checkRequestParams($request, ['uid', 'book_id'])) {
             return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
         }
 
@@ -367,10 +366,10 @@ class BookingController extends Controller
         $pol['cityTitle'] = optional($bookings->city)->title;
         $pol['paymentMethodName'] = optional($bookings->paymentMethod)->title;
         $pol['customerName'] = $user['name'];
-        $pol['customerContact'] = $user['countryCode'] . $user['mobile'];
+        $pol['customerContact'] = $user['countryCode'].$user['mobile'];
         $pol['customerImg'] = $user['profilePicture'];
-        $pol['exterPhoto'] = empty($bookings['exter_photo']) ? [] : explode('$;', $bookings['exter_photo']);
-        $pol['interPhoto'] = empty($bookings['inter_photo']) ? [] : explode('$;', $bookings['inter_photo']);
+        $pol['exterPhoto'] = empty($bookings['exter_photo']) ? [] : explode('$;',$bookings['exter_photo']);
+        $pol['interPhoto'] = empty($bookings['inter_photo']) ? [] : explode('$;',$bookings['inter_photo']);
 
         $c[] = $pol;
 
@@ -609,7 +608,7 @@ class BookingController extends Controller
 
     public function update(Request $request)
     {
-        if (checkRequestParams($request, ['book_id'])) {
+        if (!checkRequestParams($request, ['book_id'])) {
             return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
         }
 

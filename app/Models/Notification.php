@@ -8,6 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class Notification extends Model
 {
     use HasFactory;
-    protected $table = 'bookings';
+    protected $table = 'notifications';
     protected $fillable = ['uid', 'datetime', 'title', 'description'];
 }
