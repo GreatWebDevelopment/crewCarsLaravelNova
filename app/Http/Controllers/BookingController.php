@@ -574,7 +574,12 @@ class BookingController extends Controller
 
     public function updateRate(Request $request, $id)
     {
-        if (!checkRequestParams($request, ['total_rate', 'rate_text'])) {
+        $validator = Validator::make($request->all(), [
+            'total_rate' => 'required',
+            'rate_text' => 'required',
+        ]);
+
+        if ($validator->fails()) {
             return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
         }
 
