@@ -4,12 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class MobileController extends Controller
 {
     public function checkMobile(Request $request)
     {
-        if (checkRequestParams($request, ['mobile', 'ccode'])) {
+        $validator = Validator::make($request->all(), [
+            'mobile' => 'required',
+            'ccode' => 'required',
+        ]);
+
+        if ($validator->fails()) {
             return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
         }
 
@@ -29,6 +35,6 @@ class MobileController extends Controller
             return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Already Exist Mobile Number!'], 401);
         }
 
-        return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'New Number!'], 200);
+        return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'New Number!']);
     }
 }

@@ -294,7 +294,7 @@ class CarController extends Controller
         $userId = Auth::user()->id;
         $lats = $request->input('lats');
         $longs = $request->input('longs');
-        $cityId = $request->input('cityid');
+        $cityId = $request->input('city_id');
 
         $user = User::find($userId);
         $isBlock = empty($user->status) ? '1' : ($user->status == 1 ? '0' : '1');
@@ -347,7 +347,7 @@ class CarController extends Controller
         $userId = Auth::user()->id;
         $lats = $request->input('lats');
         $longs = $request->input('longs');
-        $cityId = $request->input('cityid');
+        $cityId = $request->input('city_id');
 
         $user = User::find($userId);
         $isBlock = empty($user->status) ? '1' : ($user->status == 1 ? '0' : '1');
