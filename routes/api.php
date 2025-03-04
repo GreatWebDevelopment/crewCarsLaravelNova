@@ -21,17 +21,20 @@ use App\Http\Controllers\CouponController;
 use App\Http\Controllers\FacilityController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\GalleryController;
 
 // Public Routes
-Route::post('/register', [UserController::class, 'register']);
-Route::post('/login', [UserController::class, 'login']);
-Route::post('/forgot-password', [UserController::class, 'forgotPassword']);
+Route::post('/auth/register', [UserController::class, 'register']);
+Route::post('/auth/login', [UserController::class, 'login']);
+Route::post('/auth/forgot-password', [UserController::class, 'forgotPassword']);
 Route::post('/api/login', [LoginController::class, 'login']);
 Route::get('/decode-vin/{vin}', [VinDecoderController::class, 'decodeVin']);
 
 // Protected Routes
 Route::middleware('auth:sanctum')->group(function () {
-    Route::put('/profile/{id}', [UserController::class, 'editProfile']);
+    Route::put('/user/{id}', [UserController::class, 'update']);
+    Route::delete('/user/{id}', [UserController::class, 'destroy']);
+    Route::post('/user/picture', [UserController::class, 'uploadPicture']);
 
     Route::post('/mobile/check', [MobileController::class, 'checkMobile']);
 
@@ -43,6 +46,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/car/info', [CarController::class, 'info']);
     Route::post('/car/brandwise', [CarController::class, 'brandWise']);
     Route::post('/car/typewise', [CarController::class, 'typeWise']);
+    Route::get('/car/features', [CarController::class, 'featureList']);
+    Route::get('/car/popular', [CarController::class, 'popularList']);
 
     Route::get('/carType', [CarTypeController::class, 'index']);
     Route::get('/carType/{id}', [CarTypeController::class, 'show']);
@@ -55,13 +60,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/gallery/{id}', [GalleryController::class, 'update']);
 
     Route::post('/home', [HomeController::class, 'get']);
-
     Route::get('/city', [CityController::class, 'index']);
     Route::get('/city/{id}', [CityController::class, 'show']);
-
     Route::get('/pagelist', [PageController::class, 'index']);
     Route::get('/faq', [FaqController::class, 'index']);
-
     Route::post('/fav-car', [FavController::class, 'index']);
     Route::post('/fav', [FavController::class, 'update']);
 
@@ -72,6 +74,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/booking/myHistory', [BookingController::class, 'myBookHistory']);
     Route::post('/booking/myDetails', [BookingController::class, 'myBookDetails']);
     Route::post('/booking/complete', [BookingController::class, 'update']);
+    Route::get('/booking/rate/{id}', [BookingController::class, 'rateList']);
+    Route::put('/booking/rate/{id}', [BookingController::class, 'updateRate']);
+    Route::post('/booking/drop', [BookingController::class, 'bookDrop']);
+    Route::post('/booking/cancel', [BookingController::class, 'bookCancel']);
+    Route::post('/booking/pickup', [BookingController::class, 'pickUp']);
+    Route::post('/booking/verify-otp', [BookingController::class, 'verifyOTP']);
     Route::get('/bookings', [BookingController::class, 'index']);
     Route::get('/bookings/{id}', [BookingController::class, 'show']);
     Route::delete('/bookings/{id}', [BookingController::class, 'destroy']);
@@ -95,4 +103,5 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/refer-data', [UserController::class, 'referData']);
     Route::post('/logout', [UserController::class, 'logout']);
+    Route::post('/auth/logout', [UserController::class, 'logout']);
 });

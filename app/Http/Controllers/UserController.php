@@ -5,7 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\WalletReport;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -16,7 +19,18 @@ class UserController extends Controller
 
     public function register(Request $request)
     {
-        if (!checkRequestParams($request, ['name', 'email', 'mobile', 'password', 'ccode'])) {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'email' => 'required|email',
+            'mobile' => 'required',
+            'password' => 'required',
+            'ccode' => 'required',
+            'driverLicense' => 'required|file|mimes:png,jpg,jpeg',
+            'insurance' => 'required|file|mimes:png,jpg,jpeg',
+            'pilotCertificate' => 'required|file|mimes:png,jpg,jpeg',
+        ]);
+
+        if ($validator->fails()) {
             return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
         }
 
@@ -42,6 +56,20 @@ class UserController extends Controller
                 $nonce = $this->generateNonce();
                 $timestamps = date('Y-m-d H:i:s');
 
+                $driverLicenseUrl = $this->uploadFile($request->file('driverLicense'), env('DRIVER_LICESE_S3_PATH'));
+                $pilotCertificate = $this->uploadFile($request->file('pilotCertificate'), env('PILOT_CERTIFICATE_S3_PATH'));
+                $insurance = $this->uploadFile($request->file('insurance'), env('INSURANCE_S3_PATH'));
+
+                if (empty($driverLicenseUrl) || empty($pilotCertificate) || empty($insurance)) {
+                    return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+                }
+
+                $documents = $this->extractDataFromDocuments([
+                   ['type' => 'DL', 's3Key' => $driverLicenseUrl],
+                   ['type' => 'Insurance', 's3Key' => $insurance],
+                   ['type' => 'Certificate', 's3Key' => $pilotCertificate],
+                ]);
+
                 $user = User::create([
                     'name' => $name,
                     'email' => $email,
@@ -50,21 +78,25 @@ class UserController extends Controller
                     'countryCode' => $countryCode,
                     'referralCode' => $referralCode,
                     'verificationCode' => $nonce,
-                    'walletBalance' => app('set')['scredit'],
+                    'walletBalance' => app('set')->scredit,
                     'registeredAt' => $timestamps,
                 ]);
+
+                foreach ($documents as $document) {
+                    $user->documents()->create($document);
+                }
 
                 WalletReport::create([
                     'uid' => $user->id,
                     'message' => 'Sign up Credit Added',
                     'status' => 'Credit',
-                    'amt' => app('set')['scredit'],
+                    'amt' => app('set')->scredit,
                     'tdate' => $timestamps,
                 ]);
 
-                return response()->json(['UserLogin' => $user, 'currency' => app('set')['currency'], 'ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Sign Up Done Successfully!'], 200);
+                return response()->json(['UserLogin' => $user, 'currency' => app('set')->currency, 'ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Sign Up Done Successfully!']);
             } else {
-                return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Refer Code Not Found Please Try Again!!'], 401);
+                return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Refer Code Not Found Please Try Again!'], 401);
             }
         } else {
             $nonce = $this->generateNonce();
@@ -72,7 +104,7 @@ class UserController extends Controller
 
             $user = User::create([
                 'name' => $name,
-                'email' => $email,!
+                'email' => $email,
                 'mobile' => $mobile,
                 'password' => Hash::make($password),
                 'countryCode' => $countryCode,
@@ -80,13 +112,19 @@ class UserController extends Controller
                 'registeredAt' => $timestamps,
             ]);
 
-            return response()->json(['UserLogin' => $user, 'currency' => app('set')['currency'], 'ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Sign Up Done Successfully!'], 200);
+            return response()->json(['UserLogin' => $user, 'currency' => app('set')->currency, 'ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Sign Up Done Successfully!']);
         }
     }
 
     public function login(Request $request)
     {
-        if (!checkRequestParams($request, ['mobile', 'password', 'ccode'])) {
+        $validator = Validator::make($request->all(), [
+            'mobile' => 'required',
+            'password' => 'required',
+            'ccode' => 'required',
+        ]);
+
+        if ($validator->fails()) {
             return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
         }
 
@@ -104,9 +142,9 @@ class UserController extends Controller
 
         if (!empty($user) && Hash::check($password, $user->password)) {
             if ($user->status === 1) {
-                $token = $user->createToken('crewcars')->plainTextToken;
+                $token = $user->createToken(env('APP_NAME'))->plainTextToken;
 
-                return response()->json(['UserLogin' => $user, 'Token' => $token, 'ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Login successfully!', 'type' => 'USER'], 200);
+                return response()->json(['UserLogin' => $user, 'Token' => $token, 'ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Login successfully!', 'type' => 'USER']);
             } else {
                 return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Your profile has been blocked by the administrator, preventing you from using our app as a regular user.'], 401);
             }
@@ -117,9 +155,9 @@ class UserController extends Controller
             ->first();
 
         if (!empty($admin) && Hash::check($password, $admin->password)) {
-            $token = $admin->createToken('crewcars')->plainTextToken;
+            $token = $admin->createToken(env('APP_NAME'))->plainTextToken;
 
-            return response()->json(['AdminLogin' => $admin, 'Token' => $token, 'ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Login successfully!', 'type' => 'ADMIN'], 200);
+            return response()->json(['AdminLogin' => $admin, 'Token' => $token, 'ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Login successfully!', 'type' => 'ADMIN']);
         } else {
             return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Account Not Found!!!'], 401);
         }
@@ -127,11 +165,17 @@ class UserController extends Controller
 
     public function forgotPassword(Request $request)
     {
-        if (!checkRequestParams($request, ['email', 'password', 'ccode'])) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went wrong  try again !'], 401);
+        $validator = Validator::make($request->all(), [
+            'mobile' => 'required',
+            'password' => 'required',
+            'ccode' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went wrong!'], 401);
         }
 
-        $mobile = strip_tags($request->input('email'));
+        $mobile = strip_tags($request->input('mobile'));
         $password = strip_tags($request->input('password'));
         $countryCode = strip_tags($request->input('ccode'));
 
@@ -143,9 +187,9 @@ class UserController extends Controller
             $user->password = Hash::make($password);
             $user->save();
 
-            return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Password Changed Successfully!!!!!'], 200);
+            return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Password Changed Successfully!']);
         } else {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Mobile Not Matched!!!!'], 401);
+            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Mobile Not Matched!'], 401);
         }
     }
 
@@ -153,12 +197,18 @@ class UserController extends Controller
     {
         $request->user()->currentAccessToken()->delete();
 
-        return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Logged Out'], 200);
+        return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Logged Out']);
     }
 
-    public function editProfile(Request $request, $id)
+    public function update(Request $request, $id)
     {
-        if (!checkRequestParams($request, ['name', 'email', 'uid'])) {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        if ($validator->fails()) {
             return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
         }
 
@@ -167,8 +217,8 @@ class UserController extends Controller
         $password = strip_tags($request->input('password'));
 
         $user = User::find($id);
-        if (!empty($user)) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'User Not Exist!!!!'], 401);
+        if (empty($user)) {
+            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'User Not Exist!'], 401);
         }
 
         $user->name = $name;
@@ -176,7 +226,45 @@ class UserController extends Controller
         $user->password = Hash::make($password);
         $user->save();
 
-        return response()->json(['UserLogin' => $user, 'ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Profile Update successfully!'], 200);
+        return response()->json(['UserLogin' => $user, 'ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Profile Update successfully!']);
+    }
+
+    public function uploadPicture(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+           'image' => 'required|file|mimes:jpeg,png,jpg',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+        }
+
+        $userId = Auth::user()->id;
+        $image = $request->file('image');
+
+        $url = $this->uploadFile($image, env('PHOTO_S3_PATH'));
+        if (empty($url)) {
+            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+        }
+
+        $user = User::find($userId);
+        $user->profilePicture = $url;
+        $user->save();
+
+        return response()->json(['UserLogin' => $user, 'ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Profile Image Upload Successfully!']);
+    }
+
+    public function destroy($id)
+    {
+        $user = User::find($id);
+        if (empty($user)) {
+            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'User Not Exist!'], 401);
+        }
+
+        $user->status = 0;
+        $user->save();
+
+        return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Account Delete Successfully!']);
     }
 
     public function referData(Request $request)
@@ -213,5 +301,18 @@ class UserController extends Controller
         } else {
             return $nonce;
         }
+    }
+
+    private function uploadFile($file, $rootPath)
+    {
+        $url = '';
+        $filename = uniqid() . time() . mt_rand() . '.' . $file->getClientOriginalExtension();
+        $path = $rootPath . $filename;
+        $s3 = Storage::disk('s3')->put($path, file_get_contents($file), 'public');
+        if ($s3) {
+            $url = $path;
+        }
+
+        return $url;
     }
 }

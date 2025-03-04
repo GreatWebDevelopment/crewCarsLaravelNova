@@ -2,6 +2,7 @@
 // app/Helpers/Utils.php
 
 use Illuminate\Support\Facades\Http;
+use Carbon\Carbon;
 
 if (!function_exists('convertToCamelCase')) {
     function convertToCamelCase($string) {
@@ -70,5 +71,93 @@ if (!function_exists('sendNotification')) {
         ])->post("https://onesignal.com/api/v1/notifications", $fields);
 
         return $response->json();
+    }
+}
+
+if (!function_exists("getNameFieldFromDoc")) {
+    function getNameFieldFromDoc($document) {
+        foreach ($document as $key => $value) {
+            $key = strtolower($key);
+            if (str_contains($key, 'name')) {
+                return $value;
+            }
+        }
+        return '';
+    }
+}
+
+if (!function_exists("getNumberFieldFromDoc")) {
+    function getNumberFieldFromDoc($document) {
+        foreach ($document as $key => $value) {
+            $key = strtolower($key);
+            if (str_contains($key, 'number')) {
+                if (str_contains($key, 'policy') || str_contains($key, 'document') || str_contains($key, 'certificate')) {
+                    return $value;
+                }
+            }
+        }
+        return '';
+    }
+}
+
+if (!function_exists("getIssueDateFieldFromDoc")) {
+    function getIssueDateFieldFromDoc($document) {
+        foreach ($document as $key => $value) {
+            $key = strtolower($key);
+            if (str_contains($key, 'issue') || str_contains($key, 'effect')) {
+                return $value;
+            }
+        }
+        return '';
+    }
+}
+
+if (!function_exists("getExpireDateFieldFromDoc")) {
+    function getExpireDateFieldFromDoc($document) {
+        foreach ($document as $key => $value) {
+            $key = strtolower($key);
+            if (str_contains($key, 'expire')) {
+                return $value;
+            }
+        }
+        return '';
+    }
+}
+
+if (!function_exists("getDataFromDocument")) {
+    function getDataFromDocument($document) {
+        $result = [
+            'name' => '',
+            'number' => '',
+            'issueDate' => null,
+            'expireDate' => null,
+            'data' => $document,
+        ];
+
+        collect($document)->each(function ($item, $key) use (&$result) {
+            $key = strtolower($key);
+            if (str_contains($key, 'name')) {
+                $result['name'] = $item;
+                return;
+            }
+
+            if (str_contains($key, 'number')) {
+                if (str_contains($key, 'policy') || str_contains($key, 'document') || str_contains($key, 'certificate')) {
+                    $result['number'] = $item;
+                    return;
+                }
+            }
+
+            if (str_contains($key, 'issue') || str_contains($key, 'effect')) {
+                $result['issueDate'] = empty($item) ? null : Carbon::parse($item)->format('Y-m-d');
+                return;
+            }
+
+            if (str_contains($key, 'expire') || str_contains($key, 'expiration')) {
+                $result['expireDate'] = empty($item) ? null : Carbon::parse($item)->format('Y-m-d');
+            }
+        });
+
+        return $result;
     }
 }

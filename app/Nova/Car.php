@@ -2,7 +2,7 @@
 
 namespace App\Nova;
 
-//use Illuminate\Http\Request;
+use Illuminate\Http\Request;
 use App\Nova\Booking;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
@@ -12,15 +12,13 @@ use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Http\Requests\NovaRequest;
-use Laravel\Nova\Fields\Hidden;
-use Laravel\Nova\Panel;
-use App\Nova\User;
 use App\Nova\Metrics\CarsAddedTrend;
 use App\Nova\Metrics\TotalCars;
 use App\Nova\Metrics\CarsByBrand;
 use App\Nova\Metrics\CarsAvailability;
-
-
+use Laravel\Nova\Fields\Hidden;
+use Laravel\Nova\Panel;
+use App\Nova\User;
 class Car extends Resource
 {
 
@@ -96,9 +94,9 @@ class Car extends Resource
                     ->withMeta(['extraAttributes' => [
                         'id' => 'location-input'
                     ]]),
-/*
+
                 Hidden::make('Latitude', 'latitude'),
-                Hidden::make('Longitude', 'longitude'),*/
+                Hidden::make('Longitude', 'longitude'),
             ]),
 
             HasMany::make('Bookings', 'bookings', 'App\Nova\Booking'),
