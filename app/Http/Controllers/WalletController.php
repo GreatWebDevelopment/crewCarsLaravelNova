@@ -22,7 +22,7 @@ class WalletController extends Controller
         if ($userExists) {
             $vp = User::find($uid);
 
-            $vp->walletBallance += $wallet;
+            $vp->walletBalance += $wallet;
             $vp->save();
 
             WalletReport::create([
@@ -50,7 +50,6 @@ class WalletController extends Controller
         if ($userExists) {
             $wallet = User::find($uid)->walletBalance;
 
-            // Fetch the wallet report for the user, ordered by ID descending
             $walletReports = WalletReport::where('uid', $uid)
                 ->orderBy('id', 'desc')
                 ->get();
@@ -59,20 +58,17 @@ class WalletController extends Controller
             $l = 0;
             $k = 0;
 
-            // Process each wallet report
             foreach ($walletReports as $row) {
                 if ($row->status == 'Credit') {
                     $l += $row->amt;
                 } else {
                     $k += $row->amt;
                 }
-
                 $p = [
                     'message' => $row->message,
                     'status' => $row->status,
                     'amt' => $row->amt,
                 ];
-
                 $myarray[] = $p;
             }
 

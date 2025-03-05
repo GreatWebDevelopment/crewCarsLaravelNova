@@ -25,12 +25,12 @@ class DashboardController extends Controller
 
         // Get past bookings (Completed or Cancelled)
         $past_booking = Booking::where('postId', $uid)
-            ->whereIn('bookStatus', ['Completed', 'Cancelled'])
+            ->whereIn('bookingStatus', ['Completed', 'Cancelled'])
             ->count();
 
         // Calculate total earnings
         $earn = Booking::where('postId', $uid)
-            ->where('bookStatus', 'Completed')
+            ->where('bookingStatus', 'Completed')
             ->select(DB::raw('SUM((subtotal - couAmt) - ((subtotal - couAmt) * commission / 100)) as total_earning'))
             ->first();
 

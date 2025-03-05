@@ -45,6 +45,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/car/info', [CarController::class, 'info']);
     Route::post('/car/brandwise', [CarController::class, 'brandWise']);
     Route::post('/car/typewise', [CarController::class, 'typeWise']);
+    Route::post('/car/citywise', [CarController::class, 'cityWise']);
     Route::get('/car/features', [CarController::class, 'featureList']);
     Route::get('/car/popular', [CarController::class, 'popularList']);
 
@@ -95,8 +96,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/request-withdraw', [PaymentController::class, 'requestWithdraw']);
     Route::post('/payout/list', [PaymentController::class, 'payoutSettingsList']);
 
-    Route::post('/walletUp', [WalletController::class, 'walletUp']);
-    Route::post('/walletReport', [WalletController::class, 'walletReport']);
+    Route::post('/wallet-up', [WalletController::class, 'walletUp']);
+    Route::post('/wallet-report', [WalletController::class, 'walletReport']);
 
     Route::post('/notification', [NotificationController::class, 'index']);
 
