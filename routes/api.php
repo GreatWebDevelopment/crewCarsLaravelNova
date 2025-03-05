@@ -28,6 +28,7 @@ Route::post('/auth/register', [UserController::class, 'register']);
 Route::post('/auth/login', [UserController::class, 'login']);
 Route::post('/auth/forgot-password', [UserController::class, 'forgotPassword']);
 Route::post('/api/login', [LoginController::class, 'login']);
+Route::post('/mobile/check', [MobileController::class, 'checkMobile']);
 Route::get('/decode-vin/{vin}', [VinDecoderController::class, 'decodeVin']);
 
 // Protected Routes
@@ -35,8 +36,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/user/{id}', [UserController::class, 'update']);
     Route::delete('/user/{id}', [UserController::class, 'destroy']);
     Route::post('/user/picture', [UserController::class, 'uploadPicture']);
-
-    Route::post('/mobile/check', [MobileController::class, 'checkMobile']);
 
     Route::post('/cars-list', [CarController::class, 'index']);
     Route::post('/cars', [CarController::class, 'store']);

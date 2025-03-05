@@ -25,9 +25,9 @@ class UserController extends Controller
             'mobile' => 'required',
             'password' => 'required',
             'ccode' => 'required',
-            'driverLicense' => 'required|file|mimes:png,jpg,jpeg',
-            'insurance' => 'required|file|mimes:png,jpg,jpeg',
-            'pilotCertificate' => 'required|file|mimes:png,jpg,jpeg',
+            'driverLicense' => 'required|file|mimes:png,jpg,jpeg|max:10240',
+            'insurance' => 'required|file|mimes:png,jpg,jpeg|max:10240',
+            'pilotCertificate' => 'required|file|mimes:png,jpg,jpeg|max:10240',
         ]);
 
         if ($validator->fails()) {
@@ -232,7 +232,7 @@ class UserController extends Controller
     public function uploadPicture(Request $request)
     {
         $validator = Validator::make($request->all(), [
-           'image' => 'required|file|mimes:jpeg,png,jpg',
+           'image' => 'required|file|mimes:jpeg,png,jpg|max:10240',
         ]);
 
         if ($validator->fails()) {

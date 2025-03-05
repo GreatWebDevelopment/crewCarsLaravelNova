@@ -346,7 +346,7 @@ class CarController extends Controller
         $userId = Auth::user()->id;
         $lats = $request->input('lats');
         $longs = $request->input('longs');
-        $cityId = $request->input('cityid');
+        $cityId = $request->input('city_id');
 
         $user = User::find($userId);
         $isBlock = empty($user->status) ? '1' : ($user->status == 1 ? '0' : '1');
@@ -385,13 +385,12 @@ class CarController extends Controller
 
             $car->rate = $car_rate;
             $car->distance = $car->calculateDistance($lats, $longs) . ' KM';
-            $img = explode(';',$car->img);
-            $car->img = $img[0];
+            $car->img = $car->img[0];
 
             return $car;
         })->sortBy('distance');
 
-        return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Home Data Get Successfully!', 'is_block' => $isBlock, "tax" => app('set')['tax'], 'currency' => app('set')['currency'], 'FeatureCar' => $cars]);
+        return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Home Data Get Successfully!', 'is_block' => $isBlock, "tax" => app('set')->tax, 'currency' => app('set')->currency, 'FeatureCar' => $cars]);
     }
 
     public function popularList(Request $request)
@@ -399,7 +398,7 @@ class CarController extends Controller
         $userId = Auth::user()->id;
         $lats = $request->input('lats');
         $longs = $request->input('longs');
-        $cityId = $request->input('cityid');
+        $cityId = $request->input('city_id');
 
         $user = User::find($userId);
         $isBlock = empty($user->status) ? '1' : ($user->status == 1 ? '0' : '1');
@@ -438,12 +437,11 @@ class CarController extends Controller
 
             $car->rate = $car_rate;
             $car->distance = $car->calculateDistance($lats, $longs) . ' KM';
-            $img = explode(';',$car->img);
-            $car->img = $img[0];
+            $car->img = $car->img[0];
 
             return $car;
         })->sortBy('rating');
 
-        return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Home Data Get Successfully!', 'is_block' => $isBlock, "tax" => app('set')['tax'], 'currency' => app('set')['currency'], 'Recommend_car' => $cars]);
+        return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Home Data Get Successfully!', 'is_block' => $isBlock, "tax" => app('set')->tax, 'currency' => app('set')->currency, 'Recommend_car' => $cars]);
     }
 }
