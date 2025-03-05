@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Coupon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class CouponController extends Controller
 {
@@ -12,23 +14,14 @@ class CouponController extends Controller
      */
     public function index()
     {
-        $timestamp = date("Y-m-d");
-        $c = [];
-
-        Coupon::where('status', 1)->get()->each(function ($coupon) use ($timestamp, $c) {
-            if ($coupon['expireDate'] < $timestamp) {
-                $coupon->status = 0;
-                $coupon->save();
-            } else {
-                $c[] = $coupon;
-            }
-        });
+        $c = Coupon::where('status', 1)->where('expireDate',  '>=', Carbon::now())->get();
+        Coupon::where('status', 1)->where('expireDate',  '<', Carbon::now())->update(['status' => 0]);
 
         return response()->json([
             "couponlist" => $c,
             "ResponseCode" => "200",
-            "Result" => !empty($c) ? "true" : "false",
-            "ResponseMsg" => !empty($c) ? "Coupon List Founded!" : "Coupon Not Founded!"
+            "Result" => !$c->isEmpty() ? "true" : "false",
+            "ResponseMsg" => !$c->isEmpty() ? "Coupon List Founded!" : "Coupon Not Founded!"
         ]);
     }
 
@@ -37,7 +30,7 @@ class CouponController extends Controller
         if (!checkRequestParams($request, ['cid'])) {
             return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
         }
-        $coupon_exists = Coupon::where('id', $request->input('cid'))->exits();
+        $coupon_exists = Coupon::where('id', $request->input('cid'))->exists();
 
         return response()->json([
             "ResponseCode" => "200",

@@ -70,7 +70,7 @@ class HomeController extends Controller
 
             $car->rate = $car_rate;
             $car->distance = $car->calculateDistance($lats, $longs).' KM';
-            $im = explode('$;',$car->img);
+            $im = explode(';',$car->img);
             $car->img = $im[0];
             $car->typeTitle = $car->typeData->title;
 

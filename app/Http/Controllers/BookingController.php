@@ -149,49 +149,19 @@ class BookingController extends Controller
         $uid = $request->input('uid');
         $book_id = $request->input('book_id');
 
-        $sel = Booking::where('uid', $uid)->where('id', $book_id)->get();
+        $sel = Booking::where('uid', $uid)->where('id', $book_id)->first()->makeHidden(['car']);
 
-        $carinfo = Car::with(['bookings' => function ($query) {
-            $query->where('bookingStatus', 'Completed')
-                ->where('isRate', 1);
-        }])->where('id', $sel['carId'])->select(
-            'id',
-            'title',
-            'img',
-            'rating',
-            'number',
-            'seats',
-            'transmission',
-            'pickLat',
-            'pickLng',
-            'pickAddress',
-            'rentPrice',
-            'priceType',
-            'engineHp',
-            'fuelType',
-            'type'
-        )->get()->map(function ($car) {
-            $bookCount = $car->bookings->count();
-            $bookRateSum = $car->bookings->sum('totalRate');
+        $car_rate = $sel->car->car_rate;
+        $carinfo = $sel->car->only(['title', 'number', 'img', 'id', 'pickLat', 'pickLng', 'pickAddress', 'engineHp', 'fuelType', 'totalSeats', 'transmission']);
 
-            $car_rate = $bookCount != 0
-                ? number_format($bookRateSum / $bookCount, ($bookRateSum % $bookCount > 0) ? 2 : 0)
-                : $car->rating;
-            $car->rate = $car_rate;
-
-            $im = explode('$;',$car->img);
-            $car->img = $im[0];
-
-            return $car;
-        });
-
-        $cityinfo = City::find($sel['cityId']);
         $paymentinfo = PaymentMethod::find($sel['pMethodId']);
+        $cityinfo = City::find($sel['cityId']);
 
         $pol = collect($carinfo)->merge($sel);
+        $pol['img'] = explode(';', $carinfo['img'])[0];
+        $pol['carRating'] = $car_rate;
         $pol['id'] = $carinfo['id'];
         $pol['bookId'] = $sel['id'];
-        $pol['carRating'] = $carinfo['rate'];
         if($sel['postId'] == 0)
         {
             $pol['ownerName'] = 'admin';
@@ -200,15 +170,15 @@ class BookingController extends Controller
         }
         else
         {
-            $userdata = User::find($sel['postId'])->select('name','mobile','countryCode','profilePicture');
+            $userdata = User::where('id', $sel['postId'])->select('name','mobile','countryCode','profilePicture')->first();
             $pol['ownerName'] = $userdata['name'];
             $pol['ownerContact'] = $userdata['countryCode'].$userdata['mobile'];
             $pol['ownerImg'] = $userdata['profilePicture'];
         }
         $pol['cityTitle'] = $cityinfo['title'];
         $pol['paymentMethodName'] = $paymentinfo['title'];
-        $pol['exterPhoto'] = empty($sel['exterPhoto']) ? [] : explode('$;',$sel['exterPhoto']);
-        $pol['interPhoto'] = empty($sel['interPhoto']) ? [] : explode('$;',$sel['interPhoto']);
+        $pol['exterPhoto'] = empty($sel['exterPhoto']) ? [] : explode(';',$sel['exterPhoto']);
+        $pol['interPhoto'] = empty($sel['interPhoto']) ? [] : explode(';',$sel['interPhoto']);
         $c[] = $pol;
 
         if(empty($c))
@@ -230,58 +200,23 @@ class BookingController extends Controller
         $c = array();
         $uid = $request->input('uid');
         $status = $request->input('status');
-        if($status == 'Booked')
-        {
-            $sel = Booking::where([
-                ['uid', $uid],
-                ['bookingStatus', '!=', 'Cancelled'],
-                ['bookingStatus', '!=', 'Completed']
-            ])->orderBy('id', 'desc')->get();
+        $query = Booking::where('uid', $uid)->orderBy('id', 'desc');
+        if ($status == 'Booked') {
+            $query->whereNotIn('bookingStatus', ['Cancelled', 'Completed']);
+        } else {
+            $query->whereIn('bookingStatus', ['Cancelled', 'Completed']);
         }
-        else
-        {
-            $sel = Booking::where('uid', $uid)
-                ->where(function ($query) {
-                    $query->where('bookingStatus', 'Cancelled')
-                        ->orWhere('bookingStatus', 'Completed');
-                })
-                ->orderBy('id', 'desc')
-                ->get();
-        }
+        $sel = $query->get()->makeHidden(['car']);
 
         foreach ($sel as $row)
         {
-            $car_id = $row['carId'];
-            $carinfo = Car::with(['bookings' => function ($query) {
-                $query->where('bookingStatus', 'Completed')
-                    ->where('isRate', 1);
-            }])->where('id', $car_id)->select(
-                'id',
-                'title',
-                'img',
-                'rating',
-                'number',
-                'seats',
-                'transmission',
-                'engineHp',
-                'fuelType',
-            )->get()->map(function ($car) {
-                $bookCount = $car->bookings->count();
-                $bookRateSum = $car->bookings->sum('totalRate');
-
-                $car_rate = $bookCount != 0
-                    ? number_format($bookRateSum / $bookCount, ($bookRateSum % $bookCount > 0) ? 2 : 0)
-                    : $car->rating;
-                $car->rate = $car_rate;
-
-                $im = explode('$;',$car->img);
-                $car->img = $im[0];
-
-                return $car;
-            });
+            $car_rate = $row->car->car_rate;
+            $carinfo = $row->car->only(['title', 'number', 'img', 'id', 'engineHp', 'fuelType', 'totalSeats', 'transmission']);
 
             $cityinfo = City::find($row['cityId']);
             $pol = collect($carinfo)->merge($row);
+            $pol['img'] = explode(';', $carinfo['img'])[0];
+            $pol['carRating'] = $car_rate;
             $pol['id'] = $carinfo['id'];
             $pol['book_id'] = $row['id'];
             $pol['cityTitle'] = $cityinfo['title'];
@@ -318,18 +253,19 @@ class BookingController extends Controller
 
         $bookings = $query->get();
         $c = [];
-        $pol = [];
 
         foreach ($bookings as $row) {
-            if (!$row->car) continue; // Skip if car info is missing
+            if (!$row->car) continue;
 
-            $car = $row->car;
+            $car_rate = $row->car->car_rate;
+            $car = $row->car->only(['title', 'number', 'img', 'id', 'engineHp', 'fuelType', 'totalSeats', 'transmission']);
             $city = $row->city;
 
-            $pol[] = collect($car)->merge($row);
+            $pol = collect($car)->merge($row->makeHidden(['car', 'city', 'user', 'paymentMethod']));
+            $pol['carRating'] = $car_rate;
             $pol['bookId'] = $row->id;
-            $pol['img'] = explode('$;', $car->img)[0];
-            $pol['city_title'] = optional($city)->title;
+            $pol['img'] = explode(';', $car['img'])[0];
+            $pol['cityTitle'] = optional($city)->title;
             $c[] = $pol;
         }
 
@@ -350,34 +286,29 @@ class BookingController extends Controller
         $uid = $request->input('uid');
         $book_id = $request->input('book_id');
 
-        $bookings = Booking::with(['car', 'city'])
-            ->where('postId', $uid)->where('id', $book_id)
-            ->orderBy('id', 'desc')->first();
-
-        $c = [];
-        $pol = [];
-
-        $car = $bookings->car;
+        $bookings = Booking::where('postId', $uid)->where('id', $book_id)
+            ->orderBy('id', 'desc')->first()->makeHidden(['car', 'city', 'user', 'paymentMethod']);
+        $car_rate = $bookings->car->car_rate;
+        $car = $bookings->car->only(['title', 'number', 'img', 'id', 'pickLat', 'pickLng', 'pickAddress', 'engineHp', 'fuelType', 'totalSeats', 'transmission']);
         $user = $bookings->user;
 
-        $pol[] = collect($car)->merge($bookings);
+        $pol = collect($car)->merge($bookings);
         $pol['bookId'] = $bookings->id;
-        $pol['img'] = explode('$;', $car->img)[0];
+        $pol['carRating'] = $car_rate;
+        $pol['img'] = explode(';', $car['img'])[0];
         $pol['cityTitle'] = optional($bookings->city)->title;
         $pol['paymentMethodName'] = optional($bookings->paymentMethod)->title;
         $pol['customerName'] = $user['name'];
         $pol['customerContact'] = $user['countryCode'].$user['mobile'];
         $pol['customerImg'] = $user['profilePicture'];
-        $pol['exterPhoto'] = empty($bookings['exter_photo']) ? [] : explode('$;',$bookings['exter_photo']);
-        $pol['interPhoto'] = empty($bookings['inter_photo']) ? [] : explode('$;',$bookings['inter_photo']);
-
-        $c[] = $pol;
+        $pol['exterPhoto'] = empty($bookings['exter_photo']) ? [] : explode(';',$bookings['exter_photo']);
+        $pol['interPhoto'] = empty($bookings['inter_photo']) ? [] : explode(';',$bookings['inter_photo']);
 
         return response()->json([
-            "book_details" => $c,
+            "book_details" => $pol,
             "ResponseCode" => "200",
-            "Result" => !empty($c) ? "true" : "false",
-            "ResponseMsg" => !empty($c) ? "Book Details Founded!" : "Book Details Not Founded!"
+            "Result" => !empty($p) ? "true" : "false",
+            "ResponseMsg" => !empty($p) ? "Book Details Founded!" : "Book Details Not Founded!"
         ]);
     }
 

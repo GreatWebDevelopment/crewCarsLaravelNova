@@ -83,8 +83,8 @@ class CarController extends Controller
             $items = Car::where('postId', $request->input('uid'))->select([
                 'cars.*',
                 DB::raw('(SELECT COUNT(*) FROM gallerys WHERE gallerys.carId = cars.id) AS totalGallery')
-            ])->get();
-            return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Type wise Car Get Successfully!!!', 'mycarlist'=> $items], 200);
+            ])->get()->makeHidden(['bookings']);
+            return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Cars List Get Successfully!!!', 'mycarlist'=> $items], 200);
         } else {
             return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
         }
@@ -164,7 +164,7 @@ class CarController extends Controller
         $t = CarTypes::where('id', $car['type'])->select('img', 'title')->first();
         $b = CarBrands::where('id', $car['brand'])->select('img', 'title')->first();
         Log::info($car);
-        $car["img"] = explode('$;',$car["img"]);
+        $car["img"] = explode(';',$car["img"]);
         $car["facility"] = $facilityResult["facility"];
         $car["facilityImg"] = $facilityResult["facility_img"];
         $car['typeTitle'] = $t["title"];
@@ -176,7 +176,7 @@ class CarController extends Controller
         $gallery = Gallery::where('carId', $car_id)->select('img')->get();
         foreach ($gallery as $rk)
         {
-            $gal = explode('$;',$rk->img);
+            $gal = explode(';',$rk->img);
         }
         return response()->json(['carinfo'=> $car, 'Gallery_images'=>$gal, 'ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Car info get successfully!'], 200);
     }
@@ -226,7 +226,7 @@ class CarController extends Controller
 
             $car->rate = $car_rate;
             $car->distance = $car->calculateDistance($lats, $longs).' KM';
-            $im = explode('$;',$car->img);
+            $im = explode(';',$car->img);
             $car->img = $im[0];
 
             return $car;
@@ -280,13 +280,65 @@ class CarController extends Controller
 
             $car->rate = $car_rate;
             $car->distance = $car->calculateDistance($lats, $longs).' KM';
-            $im = explode('$;',$car->img);
+            $im = explode(';',$car->img);
             $car->img = $im[0];
 
             return $car;
         })->sortBy('distance')->take(5);
 
         return response()->json(['FeatureCar'=>$carlists, 'ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Type Wise Get Successfully!!!'], 200);
+    }
+
+    public function cityWise(Request $request) {
+        if (!checkRequestParams($request, ['uid'])) {
+            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+        }
+        $lats = $request->input('lats');
+        $longs = $request->input('longs');
+        $cityid = $request->input('cityid');
+        $uid = $request->input('uid');
+
+        $carlists = Car::with(['bookings' => function ($query) {
+            $query->where('bookingStatus', 'Completed')
+                ->where('isRate', 1);
+        }])->when($cityid, function ($query) use ($cityid) {
+            return $query->where('available', $cityid);
+        })->where([
+            ['status', 1],
+            ['postId', '!=', $uid],
+            ['isApproved', 1]
+        ])->select(
+            'id',
+            'title',
+            'img',
+            'rating',
+            'number',
+            'seats',
+            'transmission',
+            'pickLat',
+            'pickLng',
+            'rentPrice',
+            'priceType',
+            'engineHp',
+            'fuelType',
+            'type'
+        )->get()->map(function ($car) use ($lats, $longs) {
+            $bookCount = $car->bookings->count();
+            $bookRateSum = $car->bookings->sum('totalRate');
+
+            $car_rate = $bookCount != 0
+                ? number_format($bookRateSum / $bookCount, ($bookRateSum % $bookCount > 0) ? 2 : 0)
+                : $car->rating;
+
+            $car->rate = $car_rate;
+            $car->distance = $car->calculateDistance($lats, $longs).' KM';
+            $im = explode(';',$car->img);
+            $car->img = $im[0];
+
+            return $car;
+        })->sortBy('distance')->take(5);
+
+        return response()->json(['FeatureCar'=>$carlists, 'ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'City Wise Car Get Successfully!!!'], 200);
     }
 
     public function featureList(Request $request)
@@ -333,7 +385,7 @@ class CarController extends Controller
 
             $car->rate = $car_rate;
             $car->distance = $car->calculateDistance($lats, $longs) . ' KM';
-            $img = explode('$;',$car->img);
+            $img = explode(';',$car->img);
             $car->img = $img[0];
 
             return $car;
@@ -386,7 +438,7 @@ class CarController extends Controller
 
             $car->rate = $car_rate;
             $car->distance = $car->calculateDistance($lats, $longs) . ' KM';
-            $img = explode('$;',$car->img);
+            $img = explode(';',$car->img);
             $car->img = $img[0];
 
             return $car;

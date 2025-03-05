@@ -12,9 +12,7 @@ class FacilityController extends Controller
      */
     public function index()
     {
-        $c = [];
-
-        Facility::where('status', 1)->get();
+        $c = Facility::where('status', 1)->get();
 
         return response()->json([
             "facilitylist" => $c,
