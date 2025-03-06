@@ -61,4 +61,8 @@ class Car extends Model
         return $distance_in_miles;  // Return distance in miles
     }
 
+    protected $casts = [
+        'img' => 'array',
+    ];
+
 }

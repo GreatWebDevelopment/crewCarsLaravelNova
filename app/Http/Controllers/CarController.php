@@ -206,14 +206,11 @@ class CarController extends Controller
     }
 
     public function brandWise(Request $request) {
-        if (!checkRequestParams($request, ['uid'])) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
-        }
         $lats = $request->input('lats');
         $longs = $request->input('longs');
         $brand_id = $request->input('brand_id');
         $cityid = $request->input('cityid');
-        $uid = $request->input('uid');
+        $uid = Auth::user()->id;
 
         $carlists = Car::with(['bookings' => function ($query) {
             $query->where('bookingStatus', 'Completed')
@@ -259,14 +256,11 @@ class CarController extends Controller
     }
 
     public function typeWise(Request $request) {
-        if (!checkRequestParams($request, ['uid'])) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
-        }
         $lats = $request->input('lats');
         $longs = $request->input('longs');
         $type_id = $request->input('type_id');
         $cityid = $request->input('cityid');
-        $uid = $request->input('uid');
+        $uid = Auth::user()->id;
 
         $carlists = Car::with(['bookings' => function ($query) {
             $query->where('bookingStatus', 'Completed')
@@ -313,13 +307,10 @@ class CarController extends Controller
     }
 
     public function cityWise(Request $request) {
-        if (!checkRequestParams($request, ['uid'])) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
-        }
         $lats = $request->input('lats');
         $longs = $request->input('longs');
         $cityid = $request->input('cityid');
-        $uid = $request->input('uid');
+        $uid = Auth::user()->id;
 
         $carlists = Car::with(['bookings' => function ($query) {
             $query->where('bookingStatus', 'Completed')

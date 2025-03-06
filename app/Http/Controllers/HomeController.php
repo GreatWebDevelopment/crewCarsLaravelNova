@@ -8,6 +8,7 @@ use App\Models\Banner;
 use App\Models\CarTypes;
 use App\Models\CarBrands;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\App;
@@ -16,10 +17,7 @@ class HomeController extends Controller
 {
     public function get(Request $request)
     {
-        if (!$request->has('uid') or $request->input('uid') == '') {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
-        }
-        $uid = $request->input('uid');
+        $uid = Auth::user()->id;
         $lats = $request->input('lats');
         $longs = $request->input('longs');
         $cityid = $request->input('cityid');

@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Car;
 use App\Models\Fav;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class FavController extends Controller
 {
@@ -13,13 +15,7 @@ class FavController extends Controller
     {
         $lats = $request->input('lats');
         $longs = $request->input('longs');
-        $uid = $request->input('uid');
-
-        if($uid == '')
-        {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false',
-                'ResponseMsg' => 'Something Went wrong!'], 401);
-        }
+        $uid = Auth::user()->id;
 
         $getfavlist = Fav::where('uid', $uid)->get();
         $navs = array();
@@ -74,13 +70,16 @@ class FavController extends Controller
      */
     public function update(Request $request)
     {
-        $uid = $request->input('uid');
-        $car_id = $request->input('carId');
-        if($uid == '' or $car_id == '')
-        {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false',
-                'ResponseMsg' => 'Something Went wrong, try again!'], 401);
+        $validator = Validator::make($request->all(), [
+            'carId' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went wrong, try again!'], 401);
         }
+
+        $uid = Auth::user()->id;
+        $car_id = $request->input('carId');
         $check = Fav::where('uid', $uid)->where('carId', $car_id)->count();
         if ($check != 0)
         {
