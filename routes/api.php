@@ -49,11 +49,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/car/features', [CarController::class, 'featureList']);
     Route::get('/car/popular', [CarController::class, 'popularList']);
 
-    Route::get('/carType', [CarTypeController::class, 'index']);
-    Route::get('/carType/{id}', [CarTypeController::class, 'show']);
+    Route::get('/car-type', [CarTypeController::class, 'index']);
+    Route::get('/car-type/{id}', [CarTypeController::class, 'show']);
 
-    Route::get('/carBrand', [CarBrandController::class, 'index']);
-    Route::get('/carBrand/{id}', [CarBrandController::class, 'show']);
+    Route::get('/car-brand', [CarBrandController::class, 'index']);
+    Route::get('/car-brand/{id}', [CarBrandController::class, 'show']);
 
     Route::get('/gallery', [GalleryController::class, 'index']);
     Route::post('/gallery', [GalleryController::class, 'store']);
@@ -71,8 +71,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/booking/range', [BookingController::class, 'bookRange']);
     Route::post('/booking/details', [BookingController::class, 'bookDetails']);
     Route::post('/booking/history', [BookingController::class, 'bookHistory']);
-    Route::post('/booking/myHistory', [BookingController::class, 'myBookHistory']);
-    Route::post('/booking/myDetails', [BookingController::class, 'myBookDetails']);
+    Route::post('/booking/my-history', [BookingController::class, 'myBookHistory']);
+    Route::post('/booking/my-details', [BookingController::class, 'myBookDetails']);
     Route::post('/booking/complete', [BookingController::class, 'update']);
     Route::get('/booking/rate/{id}', [BookingController::class, 'rateList']);
     Route::put('/booking/rate/{id}', [BookingController::class, 'updateRate']);
