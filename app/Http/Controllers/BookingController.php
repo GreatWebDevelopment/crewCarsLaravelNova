@@ -140,7 +140,7 @@ class BookingController extends Controller
         $cityinfo = City::find($sel['cityId']);
 
         $pol = collect($carinfo)->merge($sel);
-        $pol['img'] = explode(';', $carinfo['img'])[0];
+        $pol['img'] = $carinfo['img'][0];
         $pol['carRating'] = $car_rate;
         $pol['id'] = $carinfo['id'];
         $pol['bookId'] = $sel['id'];
@@ -197,7 +197,7 @@ class BookingController extends Controller
 
             $cityinfo = City::find($row['cityId']);
             $pol = collect($carinfo)->merge($row);
-            $pol['img'] = explode(';', $carinfo['img'])[0];
+            $pol['img'] = $carinfo['img'][0];
             $pol['carRating'] = $car_rate;
             $pol['id'] = $carinfo['id'];
             $pol['book_id'] = $row['id'];
@@ -246,7 +246,7 @@ class BookingController extends Controller
             $pol = collect($car)->merge($row->makeHidden(['car', 'city', 'user', 'paymentMethod']));
             $pol['carRating'] = $car_rate;
             $pol['bookId'] = $row->id;
-            $pol['img'] = explode(';', $car['img'])[0];
+            $pol['img'] = $car['img'][0];
             $pol['cityTitle'] = optional($city)->title;
             $c[] = $pol;
         }
@@ -283,8 +283,8 @@ class BookingController extends Controller
         $pol['customerName'] = $user['name'];
         $pol['customerContact'] = $user['countryCode'].$user['mobile'];
         $pol['customerImg'] = $user['profilePicture'];
-        $pol['exterPhoto'] = empty($bookings['exter_photo']) ? [] : explode(';',$bookings['exter_photo']);
-        $pol['interPhoto'] = empty($bookings['inter_photo']) ? [] : explode(';',$bookings['inter_photo']);
+        $pol['exterPhoto'] = empty($bookings['exterPhoto']) ? [] : $bookings['exterPhoto'];
+        $pol['interPhoto'] = empty($bookings['interPhoto']) ? [] : $bookings['interPhoto'];
 
         return response()->json([
             "book_details" => $pol,
@@ -378,11 +378,11 @@ class BookingController extends Controller
         $bookId = $request->input('book_id');
 
         if ($request->hasFile('inter_photo')) {
-            $image = uploadFile($request->file('inter_photo'), env('INTER_CAR_IMAGE_S3_PATH'));
+            $image = uploadFile($request->file('inter_photo'), env('CAR_IMAGE_S3_PATH') . 'inter-photo/');
         }
 
         if ($request->hasFile('outer_photos')) {
-            $images = $this->uploadFiles($request->file('outer_photos'), env('OUTER_CAR_IMAGES_S3_PATH'));
+            $images = uploadFiles($request->file('outer_photos'), env('CAR_IMAGE_S3_PATH') . 'outer-photos/');
         }
 
         $user = User::find($userId);
@@ -556,33 +556,5 @@ class BookingController extends Controller
     {
         $booking->delete();
         return response()->json(null, 204);
-    }
-
-    private function uploadFiles($files, $rootPath)
-    {
-        $images = [];
-        foreach ($files as $file) {
-            $filename = uniqid() . time() . mt_rand() . '.' . $file->getClientOriginalExtension();
-            $path = $rootPath . $filename;
-            $s3 = Storage::disk('s3')->put($path, file_get_contents($file), 'public');
-            if ($s3) {
-                $images[] = $path;
-            }
-        }
-
-        return $images;
-    }
-
-    private function uploadFile($file, $rootPath)
-    {
-        $url = '';
-        $filename = uniqid() . time() . mt_rand() . '.' . $file->getClientOriginalExtension();
-        $path = $rootPath . $filename;
-        $s3 = Storage::disk('s3')->put($path, file_get_contents($file), 'public');
-        if ($s3) {
-            $url = $path;
-        }
-
-        return $url;
     }
 }

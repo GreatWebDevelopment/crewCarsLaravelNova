@@ -13,7 +13,9 @@ use App\Models\Car;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use function Pest\Laravel\json;
 use function Symfony\Component\Translation\t;
 
 class CarController extends Controller
@@ -112,13 +114,12 @@ class CarController extends Controller
         }
 
         $update_data = $request->all();
-        $image = $request->file('img');
 
-        $url = uploadfile($image, env('PHOTO_S3_PATH'));
-        if (empty($url)) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+        if ($request->hasFile('img')) {
+            $images[] = uploadfiles($request->file('img'), env('CAR_IMAGE_S3_PATH') . 'photos/');
         }
-        $update_data['img'] = $url;
+
+        $update_data['img'] = $images;
         $item = Car::create($update_data);
         return response()->json($item, 201);
     }
@@ -128,15 +129,20 @@ class CarController extends Controller
         $item = Car::find($id);
         if ($item) {
             $update_data = $request->all();
-            if ($request->file('image')) {
-                $image = $request->file('image');
 
-                $url = uploadfile($image, env('PHOTO_S3_PATH'));
-                if (empty($url)) {
-                    return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
-                }
-                $update_data['img'] = $url;
+            if ($request->hasFile('images')) {
+                $images[] = uploadFiles($request->file('images'), env('CAR_IMAGE_S3_PATH') . 'photos/');
             }
+
+            $existingImages = json_decode($update_data['imlist']);
+            $imagesToDelete = array_diff($item->img, $existingImages);
+            if (count($imagesToDelete) > 0) {
+                foreach ($imagesToDelete as $image) {
+                    Storage::disk('s3')->delete($image);
+                }
+            }
+
+            $update_data['img'] = array_merge($existingImages, $images);
             $item->fill($update_data);
             $item->save();
             return response()->json($item);
@@ -149,6 +155,10 @@ class CarController extends Controller
     {
         $item = Car::find($id);
         if ($item) {
+            foreach ($item->img as $image) {
+                Storage::disk('s3')->delete($image);
+            }
+
             $item->delete();
             return response()->json(['message' => 'Item deleted']);
         } else {
@@ -179,7 +189,6 @@ class CarController extends Controller
         $t = CarTypes::where('id', $car['type'])->select('img', 'title')->first();
         $b = CarBrands::where('id', $car['brand'])->select('img', 'title')->first();
         Log::info($car);
-        $car["img"] = explode(';',$car["img"]);
         $car["facility"] = $facilityResult["facility"];
         $car["facilityImg"] = $facilityResult["facility_img"];
         $car['typeTitle'] = $t["title"];
@@ -191,7 +200,7 @@ class CarController extends Controller
         $gallery = Gallery::where('carId', $car_id)->select('img')->get();
         foreach ($gallery as $rk)
         {
-            $gal = explode(';',$rk->img);
+            $gal = $rk->img;
         }
         return response()->json(['carinfo'=> $car, 'Gallery_images'=>$gal, 'ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Car info get successfully!'], 200);
     }
@@ -241,8 +250,7 @@ class CarController extends Controller
 
             $car->rate = $car_rate;
             $car->distance = $car->calculateDistance($lats, $longs).' KM';
-            $im = explode(';',$car->img);
-            $car->img = $im[0];
+            $car->img = $car->img[0];
 
             return $car;
         })->sortBy('distance')->take(5);
@@ -296,7 +304,7 @@ class CarController extends Controller
             $car->rate = $car_rate;
             $car->distance = $car->calculateDistance($lats, $longs).' KM';
             $im = explode(';',$car->img);
-            $car->img = $im[0];
+            $car->img = $car->img[0];
 
             return $car;
         })->sortBy('distance')->take(5);
@@ -348,7 +356,7 @@ class CarController extends Controller
             $car->rate = $car_rate;
             $car->distance = $car->calculateDistance($lats, $longs).' KM';
             $im = explode(';',$car->img);
-            $car->img = $im[0];
+            $car->img = $car->img[0];
 
             return $car;
         })->sortBy('distance')->take(5);

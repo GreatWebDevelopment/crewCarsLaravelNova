@@ -33,6 +33,7 @@ Route::get('/decode-vin/{vin}', [VinDecoderController::class, 'decodeVin']);
 
 // Protected Routes
 Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user/refer-data', [UserController::class, 'referData']);
     Route::put('/user/{id}', [UserController::class, 'update']);
     Route::delete('/user/{id}', [UserController::class, 'destroy']);
     Route::post('/user/picture', [UserController::class, 'uploadPicture']);
@@ -101,7 +102,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/notification', [NotificationController::class, 'index']);
 
-    Route::post('/refer-data', [UserController::class, 'referData']);
     Route::post('/logout', [UserController::class, 'logout']);
     Route::post('/auth/logout', [UserController::class, 'logout']);
 });
