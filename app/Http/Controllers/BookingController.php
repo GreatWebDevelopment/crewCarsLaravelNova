@@ -26,47 +26,29 @@ class BookingController extends Controller
 
     public function bookNow(Request $request)
     {
-        if (!checkRequestParams($request, ['car_id', 'uid'])) {
+        if (!checkRequestParams($request, ['carId', 'uid'])) {
             return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
         }
-        $get_id = Car::find($request->input('car_id'));
-        $wall_amt = strip_tags($request->input('wall_amt'));
-        $uid = strip_tags($request->input('uid'));
-        $booking = Booking::create([
-            'carId' => strip_tags($request->input('car_id')),
-            'uid' => strip_tags($request->input('uid')),
-            'carPrice' => strip_tags($request->input('car_price')),
-            'pickupDate' => strip_tags($request->input('pickup_date')),
-            'pickupTime' => strip_tags($request->input('pickup_time')),
-            'priceType' => strip_tags($request->input('price_type')),
-            'returnDate' => strip_tags($request->input('return_date')),
-            'returnTime' => strip_tags($request->input('return_time')),
-            'couId' => strip_tags($request->input('cou_id')),
-            'couAmt' => strip_tags($request->input('cou_amt')),
-            'wallAmt' => $wall_amt,
-            'totalDayOrHr' => strip_tags($request->input('total_day_or_hr')),
-            'subtotal' => strip_tags($request->input('subtotal')),
-            'taxPer' => strip_tags($request->input('tax_per')),
-            'taxAmt' => strip_tags($request->input('tax_amt')),
-            'oTotal' => strip_tags($request->input('o_total')),
-            'pMethodId' => strip_tags($request->input('p_method_id')),
-            'transactionId' => strip_tags($request->input('transaction_id')),
-            'typeId' => strip_tags($request->input('type_id')),
-            'brandId' => strip_tags($request->input('brand_id')),
-            'bookingType' => strip_tags($request->input('book_type')),
-            'cityId' => strip_tags($request->input('city_id')),
-            'postId' => $get_id["postId"],
-            'pickOtp' => rand(1111,9999),
-            'dropOtp' => rand(1111,9999),
-            'commission' => app('set')->commissionRate
-        ]);
+        $input = $request->all();
+        array_walk_recursive($input, function (&$input) {
+            $input = strip_tags($input);
+        });
+        $get_id = Car::find($input['carId']);
+        $wall_amt = $input['wallAmt'];
+        $uid = $input['uid'];
+
+        $input['postId'] = $get_id["postId"];
+        $input['pickOtp'] = rand(1111,9999);
+        $input['dropOtp'] = rand(1111,9999);
+        $input['commission'] = app('set')->commissionRate;
+        $booking = Booking::create($input);
         $bookid = $booking->id;
 
         if($wall_amt != 0)
         {
             $vp = User::find($uid);
-            $mt = intval($vp['wallet'])-intval($wall_amt);
-            $check = User::where('id', $uid)->update(['wallet' => $mt]);
+            $mt = intval($vp['walletBalance'])-intval($wall_amt);
+            $check = User::where('id', $uid)->update(['walletBalance' => $mt]);
             $tdate = date("Y-m-d");
 
             $checks = WalletReport::create([
@@ -78,7 +60,7 @@ class BookingController extends Controller
             ]);
         }
 
-        $udata = User::find('id', $uid);
+        $udata = User::find($uid);
         $name = $udata['name'];
         $content = array(
             "en" => $name.', Your car Book #'.$bookid.' Has Been Received.'

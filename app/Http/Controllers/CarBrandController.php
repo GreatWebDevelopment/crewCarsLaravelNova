@@ -9,7 +9,12 @@ class CarBrandController extends Controller
     public function index()
     {
         $items = CarBrands::where('status', 1)->get();
-        return response()->json($items);
+        return response()->json([
+            "carbrandlist" => $items,
+            "ResponseCode" => "200",
+            "Result" => $items->isEmpty() ? "false" : "true",
+            "ResponseMsg" => !$items->isEmpty() ? "Car Brand List Founded!" : "Car Brand Not Founded!"
+        ]);
     }
 
     public function show($id)

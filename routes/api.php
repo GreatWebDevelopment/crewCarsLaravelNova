@@ -49,11 +49,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/car/features', [CarController::class, 'featureList']);
     Route::get('/car/popular', [CarController::class, 'popularList']);
 
-    Route::get('/carType', [CarTypeController::class, 'index']);
-    Route::get('/carType/{id}', [CarTypeController::class, 'show']);
+    Route::get('/car-type', [CarTypeController::class, 'index']);
+    Route::get('/car-type/{id}', [CarTypeController::class, 'show']);
 
-    Route::get('/carBrand', [CarBrandController::class, 'index']);
-    Route::get('/carBrand/{id}', [CarBrandController::class, 'show']);
+    Route::get('/car-brand', [CarBrandController::class, 'index']);
+    Route::get('/car-brand/{id}', [CarBrandController::class, 'show']);
 
     Route::get('/gallery', [GalleryController::class, 'index']);
     Route::post('/gallery', [GalleryController::class, 'store']);

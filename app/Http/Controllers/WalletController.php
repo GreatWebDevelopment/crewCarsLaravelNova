@@ -34,7 +34,7 @@ class WalletController extends Controller
             ]);
 
             $updatedWallet = User::find($uid);
-            return response()->json(['wallet' => $updatedWallet->walletBallance, 'ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Wallet Update Successfully!!!'], 200);
+            return response()->json(['wallet' => $updatedWallet->walletBalance, 'ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Wallet Update Successfully!!!'], 200);
         } else {
             return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'User Deactivate By Admin!!!'], 401);
         }

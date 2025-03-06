@@ -75,22 +75,22 @@ class FavController extends Controller
     public function update(Request $request)
     {
         $uid = $request->input('uid');
-        $car_id = $request->input('car_id');
+        $car_id = $request->input('carId');
         if($uid == '' or $car_id == '')
         {
             return response()->json(['ResponseCode' => '401', 'Result' => 'false',
                 'ResponseMsg' => 'Something Went wrong, try again!'], 401);
         }
-        $check = Fav::where('uid', $uid)->where('car_id', $car_id)->count();
+        $check = Fav::where('uid', $uid)->where('carId', $car_id)->count();
         if ($check != 0)
         {
-            Fav::where('uid', $uid)->where('car_id', $car_id)->delete();
+            Fav::where('uid', $uid)->where('carId', $car_id)->delete();
             return response()->json(['ResponseCode' => '200', 'Result' => 'true',
                 'ResponseMsg' => 'Car Successfully Removed In Favourite List!'], 200);
         } else {
-            DB::table('tbl_fav')->insert([
+            DB::table('favs')->insert([
                 'uid' => $uid,
-                'car_id' => $car_id,
+                'carId' => $car_id,
             ]);
             return response()->json(['ResponseCode' => '200', 'Result' => 'true',
                 'ResponseMsg' => 'Car Successfully Saved In Favourite List!'], 200);
