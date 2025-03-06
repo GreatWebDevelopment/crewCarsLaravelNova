@@ -31,7 +31,7 @@ class UserController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+            return response()->json(['ResponseCode' => '400', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 400);
         }
 
         $name = strip_tags($request->input('name'));
@@ -46,7 +46,7 @@ class UserController extends Controller
             ->get();
 
         if (count($users) > 0) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Mobile Number or Email Address Already Used!'], 401);
+            return response()->json(['ResponseCode' => '400', 'Result' => 'false', 'ResponseMsg' => 'Mobile Number or Email Address Already Used!'], 400);
         }
 
         if (!empty($referralCode)) {
@@ -61,7 +61,7 @@ class UserController extends Controller
                 $insurance = uploadfile($request->file('insurance'), env('DOCUMENT_S3_PATH') . 'insurance/');
 
                 if (empty($driverLicenseUrl) || empty($pilotCertificate) || empty($insurance)) {
-                    return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+                    return response()->json(['ResponseCode' => '500', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 500);
                 }
 
                 $documents = $this->extractDataFromDocuments([
@@ -96,7 +96,7 @@ class UserController extends Controller
 
                 return response()->json(['UserLogin' => $user, 'currency' => app('set')->currency, 'ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Sign Up Done Successfully!']);
             } else {
-                return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Refer Code Not Found Please Try Again!'], 401);
+                return response()->json(['ResponseCode' => '404', 'Result' => 'false', 'ResponseMsg' => 'Refer Code Not Found Please Try Again!'], 404);
             }
         } else {
             $nonce = $this->generateNonce();
@@ -125,7 +125,7 @@ class UserController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+            return response()->json(['ResponseCode' => '400', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 400);
         }
 
         $mobile = strip_tags($request->input('mobile'));
@@ -159,7 +159,7 @@ class UserController extends Controller
 
             return response()->json(['AdminLogin' => $admin, 'Token' => $token, 'ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Login successfully!', 'type' => 'ADMIN']);
         } else {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Account Not Found!!!'], 401);
+            return response()->json(['ResponseCode' => '404', 'Result' => 'false', 'ResponseMsg' => 'Account Not Found!!!'], 404);
         }
     }
 
@@ -172,7 +172,7 @@ class UserController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went wrong!'], 401);
+            return response()->json(['ResponseCode' => '400', 'Result' => 'false', 'ResponseMsg' => 'Something Went wrong!'], 400);
         }
 
         $mobile = strip_tags($request->input('mobile'));
@@ -189,7 +189,7 @@ class UserController extends Controller
 
             return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Password Changed Successfully!']);
         } else {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Mobile Not Matched!'], 401);
+            return response()->json(['ResponseCode' => '404', 'Result' => 'false', 'ResponseMsg' => 'Mobile Not Matched!'], 404);
         }
     }
 
@@ -209,7 +209,7 @@ class UserController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+            return response()->json(['ResponseCode' => '400', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 400);
         }
 
         $name = strip_tags($request->input('name'));
@@ -218,7 +218,7 @@ class UserController extends Controller
 
         $user = User::find($id);
         if (empty($user)) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'User Not Exist!'], 401);
+            return response()->json(['ResponseCode' => '404', 'Result' => 'false', 'ResponseMsg' => 'User Not Exist!'], 404);
         }
 
         $user->name = $name;
@@ -236,7 +236,7 @@ class UserController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+            return response()->json(['ResponseCode' => '400', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 400);
         }
 
         $userId = Auth::user()->id;
@@ -244,7 +244,7 @@ class UserController extends Controller
 
         $url = uploadfile($image, env('PHOTO_S3_PATH'));
         if (empty($url)) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+            return response()->json(['ResponseCode' => '500', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 500);
         }
 
         $user = User::find($userId);
@@ -258,7 +258,7 @@ class UserController extends Controller
     {
         $user = User::find($id);
         if (empty($user)) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'User Not Exist!'], 401);
+            return response()->json(['ResponseCode' => '404', 'Result' => 'false', 'ResponseMsg' => 'User Not Exist!'], 404);
         }
 
         $user->status = 0;
@@ -272,7 +272,7 @@ class UserController extends Controller
         $user = User::find(Auth::user()->id);
 
         if (empty($user)) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Not Exist User!'], 401);
+            return response()->json(['ResponseCode' => '404', 'Result' => 'false', 'ResponseMsg' => 'Not Exist User!'], 404);
         }
 
         return response()->json([

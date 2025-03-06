@@ -301,7 +301,7 @@ class BookingController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+            return response()->json(['ResponseCode' => '400', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 400);
         }
 
         $userId = Auth::user()->id;
@@ -348,7 +348,7 @@ class BookingController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+            return response()->json(['ResponseCode' => '400', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 400);
         }
 
         $userId = Auth::user()->id;
@@ -371,7 +371,7 @@ class BookingController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+            return response()->json(['ResponseCode' => '400', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 400);
         }
 
         $userId = Auth::user()->id;
@@ -431,7 +431,7 @@ class BookingController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+            return response()->json(['ResponseCode' => '400', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 400);
         }
 
         $userId = Auth::user()->id;
@@ -448,7 +448,7 @@ class BookingController extends Controller
             if (count($bookings) > 0) {
                 return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Otp Matched!']);
             } else {
-                return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Otp Not Matched!'], 401);
+                return response()->json(['ResponseCode' => '404', 'Result' => 'false', 'ResponseMsg' => 'Otp Not Matched!'], 404);
             }
         } else {
             $bookings = Booking::where('id', $bookId)
@@ -459,7 +459,7 @@ class BookingController extends Controller
             if (count($bookings) > 0) {
                 return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Otp Matched!']);
             } else {
-                return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Otp Not Matched!'], 401);
+                return response()->json(['ResponseCode' => '404', 'Result' => 'false', 'ResponseMsg' => 'Otp Not Matched!'], 404);
             }
         }
     }
@@ -493,7 +493,7 @@ class BookingController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+            return response()->json(['ResponseCode' => '400', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 400);
         }
 
         $totalRate = $request->input('total_rate');
@@ -510,7 +510,7 @@ class BookingController extends Controller
 
             return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Rate Updated Successfully!']);
         } else {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Car Not Drop Original Locations'], 401);
+            return response()->json(['ResponseCode' => '400', 'Result' => 'false', 'ResponseMsg' => 'Car Not Drop Original Locations'], 400);
         }
     }
 
