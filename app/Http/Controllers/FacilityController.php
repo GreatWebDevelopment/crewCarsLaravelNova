@@ -17,8 +17,8 @@ class FacilityController extends Controller
         return response()->json([
             "facilitylist" => $c,
             "ResponseCode" => "200",
-            "Result" => !empty($c) ? "true" : "false",
-            "ResponseMsg" => !empty($c) ? "Facility List Founded!" : "Facility Not Founded!"
+            "Result" => !$c->isEmpty() ? "true" : "false",
+            "ResponseMsg" => !$c->isEmpty() ? "Facility List Founded!" : "Facility Not Founded!"
         ]);
     }
 

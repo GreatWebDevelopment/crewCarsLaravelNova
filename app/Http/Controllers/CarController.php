@@ -104,7 +104,7 @@ class CarController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'image' => 'required|file|mimes:jpeg,png,jpg|max:10240',
+            'img' => 'required|file|mimes:jpeg,png,jpg|max:10240',
         ]);
 
         if ($validator->fails()) {
@@ -112,7 +112,7 @@ class CarController extends Controller
         }
 
         $update_data = $request->all();
-        $image = $request->file('image');
+        $image = $request->file('img');
 
         $url = uploadfile($image, env('PHOTO_S3_PATH'));
         if (empty($url)) {
@@ -231,7 +231,7 @@ class CarController extends Controller
             'engineHp',
             'fuelType',
             'type'
-        )->get()->map(function ($car) use ($lats, $longs) {
+        )->get()->makeHidden(['bookings'])->map(function ($car) use ($lats, $longs) {
             $bookCount = $car->bookings->count();
             $bookRateSum = $car->bookings->sum('totalRate');
 
@@ -285,7 +285,7 @@ class CarController extends Controller
             'engineHp',
             'fuelType',
             'type'
-        )->get()->map(function ($car) use ($lats, $longs) {
+        )->get()->makeHidden(['bookings'])->map(function ($car) use ($lats, $longs) {
             $bookCount = $car->bookings->count();
             $bookRateSum = $car->bookings->sum('totalRate');
 

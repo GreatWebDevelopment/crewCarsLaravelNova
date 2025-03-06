@@ -11,10 +11,10 @@ class Booking extends Model
     use HasFactory;
     protected $table = 'bookings';
     protected $fillable = [
-        'userId', 'carId', 'totalDayOrHr', 'subtotal',
-        'taxPer', 'taxAmt', 'oTotal', 'pMethodId',
+        'uid', 'carId', 'totalDayOrHr', 'subtotal', 'typeId', 'brandId', 'cityId',
+        'taxPer', 'taxAmt', 'oTotal', 'pMethodId', 'postId', 'pickOtp', 'dropOtp', 'commission',
         'transactionId', 'bookStatus', 'pickupDate',
-        'pickupTime', 'returnDate', 'returnTime'
+        'pickupTime', 'returnDate', 'returnTime', 'priceType', 'bookingType'
     ];
 
     public function user()

@@ -13,7 +13,7 @@ class Car extends Model
     protected $table = 'cars';
     protected $fillable = [
         'userId', 'title', 'number', 'img', 'status', 'rating', 'seats', 'ac', 'driverName', 'brand', 'rentPrice',
-        'location',
+        'location', 'type', 'brand', 'postId'
     ];
 
     public function user()
