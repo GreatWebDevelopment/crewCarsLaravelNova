@@ -32,11 +32,11 @@ abstract class Controller
                         case 'DL':
                             $body = collect($body)->collapse()->toArray();
                             $result = [
-                                'name' => $body['FIRST_NAME'] . ' ' . $body['MIDDLE_NAME'] . ' ' . $body['LAST_NAME'],
-                                'number' => $body['DOCUMENT_NUMBER'],
-                                'path' => $document['s3Key'],
-                                'issueDate' => empty($body['DATE_OF_ISSUE']) ? null : Carbon::parse($body['DATE_OF_ISSUE'])->format('Y-m-d'),
-                                'expireDate' => empty($body['EXPIRATION_DATE']) ? null : Carbon::parse($body['EXPIRATION_DATE'])->format('Y-m-d'),
+                                'name' => $body['FIRST_NAME'] ?? ' ' . $body['MIDDLE_NAME'] ?? ' ' . $body['LAST_NAME'] ?? '',
+                                'number' => $body['DOCUMENT_NUMBER'] ?? '',
+                                'path' => $document['s3Key'] ?? '',
+                                'issueDate' => empty($body['DATE_OF_ISSUE'] ?? '') ? null : Carbon::parse($body['DATE_OF_ISSUE'])->format('Y-m-d'),
+                                'expireDate' => empty($body['EXPIRATION_DATE'] ?? '') ? null : Carbon::parse($body['EXPIRATION_DATE'])->format('Y-m-d'),
                                 'type' => $document['type'],
                                 'data' => $body,
                             ];
