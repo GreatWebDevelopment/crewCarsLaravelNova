@@ -71,8 +71,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/booking/range', [BookingController::class, 'bookRange']);
     Route::post('/booking/details', [BookingController::class, 'bookDetails']);
     Route::post('/booking/history', [BookingController::class, 'bookHistory']);
-    Route::post('/booking/myHistory', [BookingController::class, 'myBookHistory']);
-    Route::post('/booking/myDetails', [BookingController::class, 'myBookDetails']);
+    Route::post('/booking/my-history', [BookingController::class, 'myBookHistory']);
+    Route::post('/booking/my-details', [BookingController::class, 'myBookDetails']);
     Route::post('/booking/complete', [BookingController::class, 'update']);
     Route::get('/booking/rate/{id}', [BookingController::class, 'rateList']);
     Route::put('/booking/rate/{id}', [BookingController::class, 'updateRate']);
