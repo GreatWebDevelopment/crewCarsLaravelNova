@@ -188,7 +188,6 @@ class DatabaseSeeder extends Seeder
                 'postId' => 1,
                 'minHrs' => 2,
                 'isApproved' => 1,
-                'rejectComment' => null,
                 'mileage' => 25000,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -223,7 +222,6 @@ class DatabaseSeeder extends Seeder
                 'postId' => 2,
                 'minHrs' => 3,
                 'isApproved' => 1,
-                'rejectComment' => null,
                 'mileage' => 30000,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -369,8 +367,8 @@ class DatabaseSeeder extends Seeder
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-        $this->call([
-            RoleSeeder::class, // ✅ Run RoleSeeder
-        ]);
+//        $this->call([
+//            RoleSeeder::class, // ✅ Run RoleSeeder
+//        ]);
     }
 }
