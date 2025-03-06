@@ -168,11 +168,11 @@ class CarController extends Controller
 
     public function info(Request $request)
     {
-        if (!$request->has('uid') or !$request->has('car_id') or $request->input('uid') == '' or $request->input('car_id') == '') {
+        if (!$request->has('car_id') or $request->input('car_id') == '') {
             return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
         }
         $car_id = $request->input('car_id');
-        $uid = $request->input('uid');
+        $uid = Auth::user()->id;
 
         $car = Car::with(['bookings' => function ($query) {
             $query->where('bookingStatus', 'Completed')
