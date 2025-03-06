@@ -16,7 +16,7 @@ class MobileController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+            return response()->json(['ResponseCode' => '400', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 400);
         }
 
         $mobile = strip_tags($request->post('mobile'));
@@ -32,7 +32,7 @@ class MobileController extends Controller
             })->get();
 
         if (count($users) > 0) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Already Exist Mobile Number!'], 401);
+            return response()->json(['ResponseCode' => '400', 'Result' => 'false', 'ResponseMsg' => 'Already Exist Mobile Number!'], 400);
         }
 
         return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'New Number!']);

@@ -20,7 +20,7 @@ class GalleryController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+            return response()->json(['ResponseCode' => '400', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 400);
         }
 
         $userId = Auth::user()->id;
@@ -55,7 +55,7 @@ class GalleryController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+            return response()->json(['ResponseCode' => '400', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 400);
         }
 
         $userId = Auth::user()->id;
@@ -105,7 +105,7 @@ class GalleryController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+            return response()->json(['ResponseCode' => '400', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 400);
         }
 
         $carId = $request->input('car_id');
