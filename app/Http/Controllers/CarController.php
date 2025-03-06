@@ -13,6 +13,7 @@ use App\Models\Car;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use function Symfony\Component\Translation\t;
 
 class CarController extends Controller
@@ -102,12 +103,22 @@ class CarController extends Controller
 
     public function store(Request $request)
     {
-//        $data = $this->parseRequestParams($request);
-        $update_data = $request->all();
-        if ($request->input('car_image')) {
-            $path = $request->car_image->store('/', 'public');
-            $update_data['img'] = $path;
+        $validator = Validator::make($request->all(), [
+            'image' => 'required|file|mimes:jpeg,png,jpg|max:10240',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
         }
+
+        $update_data = $request->all();
+        $image = $request->file('image');
+
+        $url = uploadfile($image, env('PHOTO_S3_PATH'));
+        if (empty($url)) {
+            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+        }
+        $update_data['img'] = $url;
         $item = Car::create($update_data);
         return response()->json($item, 201);
     }
@@ -116,11 +127,15 @@ class CarController extends Controller
     {
         $item = Car::find($id);
         if ($item) {
-//            $update_data = $this->parseRequestParams($request);
             $update_data = $request->all();
-            if ($request->input('car_image')) {
-                $path = $request->car_image->store('/', 'public');
-                $update_data['img'] = $path;
+            if ($request->file('image')) {
+                $image = $request->file('image');
+
+                $url = uploadfile($image, env('PHOTO_S3_PATH'));
+                if (empty($url)) {
+                    return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+                }
+                $update_data['img'] = $url;
             }
             $item->fill($update_data);
             $item->save();
