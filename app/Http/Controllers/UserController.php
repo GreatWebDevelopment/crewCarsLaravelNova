@@ -56,9 +56,9 @@ class UserController extends Controller
                 $nonce = $this->generateNonce();
                 $timestamps = date('Y-m-d H:i:s');
 
-                $driverLicenseUrl = $this->uploadFile($request->file('driverLicense'), env('DRIVER_LICESE_S3_PATH'));
-                $pilotCertificate = $this->uploadFile($request->file('pilotCertificate'), env('PILOT_CERTIFICATE_S3_PATH'));
-                $insurance = $this->uploadFile($request->file('insurance'), env('INSURANCE_S3_PATH'));
+                $driverLicenseUrl = uploadfile($request->file('driverLicense'), env('DRIVER_LICESE_S3_PATH'));
+                $pilotCertificate = uploadfile($request->file('pilotCertificate'), env('PILOT_CERTIFICATE_S3_PATH'));
+                $insurance = uploadfile($request->file('insurance'), env('INSURANCE_S3_PATH'));
 
                 if (empty($driverLicenseUrl) || empty($pilotCertificate) || empty($insurance)) {
                     return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
@@ -242,7 +242,7 @@ class UserController extends Controller
         $userId = Auth::user()->id;
         $image = $request->file('image');
 
-        $url = $this->uploadFile($image, env('PHOTO_S3_PATH'));
+        $url = uploadfile($image, env('PHOTO_S3_PATH'));
         if (empty($url)) {
             return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
         }
@@ -301,18 +301,5 @@ class UserController extends Controller
         } else {
             return $nonce;
         }
-    }
-
-    private function uploadFile($file, $rootPath)
-    {
-        $url = '';
-        $filename = uniqid() . time() . mt_rand() . '.' . $file->getClientOriginalExtension();
-        $path = $rootPath . $filename;
-        $s3 = Storage::disk('s3')->put($path, file_get_contents($file), 'public');
-        if ($s3) {
-            $url = $path;
-        }
-
-        return $url;
     }
 }

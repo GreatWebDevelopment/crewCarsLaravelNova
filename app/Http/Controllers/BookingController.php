@@ -396,7 +396,7 @@ class BookingController extends Controller
         $bookId = $request->input('book_id');
 
         if ($request->hasFile('inter_photo')) {
-            $image = $this->uploadFile($request->file('inter_photo'), env('INTER_CAR_IMAGE_S3_PATH'));
+            $image = uploadFile($request->file('inter_photo'), env('INTER_CAR_IMAGE_S3_PATH'));
         }
 
         if ($request->hasFile('outer_photos')) {

@@ -67,7 +67,7 @@ class GalleryController extends Controller
         }
 
         if ($request->hasFile('images')) {
-            $images = $this->uploadFile($request->file('images'));
+            $images[] = uploadFile($request->file('images'), env('GALLERY_S3_PATH'));
         }
 
         Gallery::create([
@@ -112,7 +112,7 @@ class GalleryController extends Controller
         $existingImages = json_decode($request->input('imlist'));
 
         if ($request->hasFile('images')) {
-            $images = $this->uploadFile($request->file('images'));
+            $images[] = uploadFile($request->file('images'), env('GALLERY_S3_PATH'));
         }
 
         $gallery = Gallery::find($id);
@@ -137,20 +137,5 @@ class GalleryController extends Controller
     public function destroy($id)
     {
         //
-    }
-
-    private function uploadFile($files)
-    {
-        $images = [];
-        foreach ($files as $file) {
-            $filename = uniqid() . time() . mt_rand() . '.' . $file->getClientOriginalExtension();
-            $path = env('GALLERY_S3_PATH') . $filename;
-            $s3 = Storage::disk('s3')->put($path, file_get_contents($file), 'public');
-            if ($s3) {
-                $images[] = $path;
-            }
-        }
-
-        return $images;
     }
 }

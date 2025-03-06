@@ -3,6 +3,7 @@
 
 use Illuminate\Support\Facades\Http;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 if (!function_exists('convertToCamelCase')) {
     function convertToCamelCase($string) {
@@ -159,5 +160,20 @@ if (!function_exists("getDataFromDocument")) {
         });
 
         return $result;
+    }
+}
+
+if (!function_exists('uploadFile')) {
+    function uploadFile($file, $rootPath)
+    {
+        $url = '';
+        $filename = uniqid() . time() . mt_rand() . '.' . $file->getClientOriginalExtension();
+        $path = $rootPath . $filename;
+        $s3 = Storage::disk('s3')->put($path, file_get_contents($file), 'public');
+        if ($s3) {
+            $url = $path;
+        }
+
+        return $url;
     }
 }
