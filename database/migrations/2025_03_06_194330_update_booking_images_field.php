@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('bookings', function (Blueprint $table) {
             $table->text('interPhoto')->nullable()->change();
-            $table->json('outerPhoto')->nullable()->change();
+            $table->json('exterPhoto')->nullable()->change();
         });
     }
 

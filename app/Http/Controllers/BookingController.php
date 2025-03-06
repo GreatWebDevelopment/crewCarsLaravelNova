@@ -381,15 +381,15 @@ class BookingController extends Controller
             $image = uploadFile($request->file('inter_photo'), env('CAR_IMAGE_S3_PATH') . 'inter-photo/');
         }
 
-        if ($request->hasFile('outer_photos')) {
-            $images = uploadFiles($request->file('outer_photos'), env('CAR_IMAGE_S3_PATH') . 'outer-photos/');
+        if ($request->hasFile('exter_photos')) {
+            $images = uploadFiles($request->file('exter_photos'), env('CAR_IMAGE_S3_PATH') . 'exter-photos/');
         }
 
         $user = User::find($userId);
         $booking = Booking::find($bookId);
         $booking->userId = $userId;
         $booking->interPhoto = $image;
-        $booking->outerPhoto = $images;
+        $booking->exterPhoto = $images;
         $booking->save();
 
         $fields = json_encode([
