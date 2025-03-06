@@ -56,9 +56,9 @@ class UserController extends Controller
                 $nonce = $this->generateNonce();
                 $timestamps = date('Y-m-d H:i:s');
 
-                $driverLicenseUrl = uploadfile($request->file('driverLicense'), env('DRIVER_LICESE_S3_PATH'));
-                $pilotCertificate = uploadfile($request->file('pilotCertificate'), env('PILOT_CERTIFICATE_S3_PATH'));
-                $insurance = uploadfile($request->file('insurance'), env('INSURANCE_S3_PATH'));
+                $driverLicenseUrl = uploadfile($request->file('driverLicense'), env('DOCUMENT_S3_PATH') . 'driver-license/');
+                $pilotCertificate = uploadfile($request->file('pilotCertificate'), env('DOCUMENT_S3_PATH') . 'pilot-certificate/');
+                $insurance = uploadfile($request->file('insurance'), env('DOCUMENT_S3_PATH') . 'insurance/');
 
                 if (empty($driverLicenseUrl) || empty($pilotCertificate) || empty($insurance)) {
                     return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
@@ -267,29 +267,22 @@ class UserController extends Controller
         return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Account Delete Successfully!']);
     }
 
-    public function referData(Request $request)
+    public function referData()
     {
-        if (!checkRequestParams($request, ['uid'])) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
-        }
-        $user = User::where('id', $request->input('uid'))->get();
+        $user = User::find(Auth::user()->id);
+
         if (empty($user)) {
-            return response()->json([
-                "ResponseCode" => "401",
-                "Result" => "false",
-                "ResponseMsg" => "Not Exist User!",
-            ]);
-        } else {
-            return response()->json([
-                "ResponseCode" => "200",
-                "Result" => "true",
-                "ResponseMsg" => "Wallet Balance Get Successfully!",
-                "code" => $user[0]->verificationCode,
-                "signupcredit" => app('set')->scredit,
-                "refercredit" => app('set')->rcredit,
-            ]);
+            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Not Exist User!'], 401);
         }
 
+        return response()->json([
+            'ResponseCode' => '200',
+            'Result' => 'true',
+            'ResponseMsg' => 'Wallet Balance Get Successfully!',
+            'code' => $user->verificationCode,
+            'signupcredit' => app('set')->scredit,
+            'refercredit' => app('set')->rcredit,
+        ]);
     }
 
     private function generateNonce()

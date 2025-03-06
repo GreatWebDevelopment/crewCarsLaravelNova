@@ -181,3 +181,20 @@ if (!function_exists('uploadFile')) {
         return $url;
     }
 }
+
+if (!function_exists('uploadFiles')) {
+    function uploadFiles($files, $rootPath)
+    {
+        $images = [];
+        foreach ($files as $file) {
+            $filename = uniqid() . time() . mt_rand() . '.' . $file->getClientOriginalExtension();
+            $path = $rootPath . $filename;
+            $s3 = Storage::disk('s3')->put($path, file_get_contents($file), 'public');
+            if ($s3) {
+                $images[] = $path;
+            }
+        }
+
+        return $images;
+    }
+}
