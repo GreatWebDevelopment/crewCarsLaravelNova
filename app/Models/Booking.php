@@ -14,7 +14,7 @@ class Booking extends Model
         'uid', 'carId', 'totalDayOrHr', 'subtotal', 'typeId', 'brandId', 'cityId',
         'taxPer', 'taxAmt', 'oTotal', 'pMethodId', 'postId', 'pickOtp', 'dropOtp', 'commission',
         'transactionId', 'bookStatus', 'pickupDate',
-        'pickupTime', 'returnDate', 'returnTime', 'priceType', 'bookingType'
+        'pickupTime', 'returnDate', 'returnTime', 'priceType', 'bookingType', 'exterPhoto', 'interPhoto',
     ];
 
     public function user()
@@ -41,4 +41,9 @@ class Booking extends Model
     {
         return $this->belongsTo(PaymentMethod::class, 'pMethodId');
     }
+
+    protected $casts = [
+        'interPhoto' => 'array',
+        'exterPhoto' => 'array',
+    ];
 }
