@@ -80,17 +80,13 @@ class CarController extends Controller
         return $update_data;
     }
 
-    public function index(Request $request)
+    public function index()
     {
-        if ($request->has('uid')) {
-            $items = Car::where('postId', $request->input('uid'))->select([
-                'cars.*',
-                DB::raw('(SELECT COUNT(*) FROM gallerys WHERE gallerys.carId = cars.id) AS totalGallery')
-            ])->get()->makeHidden(['bookings']);
-            return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Cars List Get Successfully!!!', 'mycarlist'=> $items], 200);
-        } else {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
-        }
+        $items = Car::where('postId', Auth::user()->id)->select([
+            'cars.*',
+            DB::raw('(SELECT COUNT(*) FROM gallerys WHERE gallerys.carId = cars.id) AS totalGallery')
+        ])->get()->makeHidden(['bookings']);
+        return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Cars List Get Successfully!!!', 'mycarlist'=> $items]);
     }
 
     public function show($id)

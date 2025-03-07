@@ -38,7 +38,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/user/{id}', [UserController::class, 'destroy']);
     Route::post('/user/picture', [UserController::class, 'uploadPicture']);
 
-    Route::post('/cars-list', [CarController::class, 'index']);
+    Route::get('/cars-list', [CarController::class, 'index']);
     Route::post('/cars', [CarController::class, 'store']);
     Route::get('/cars/{id}', [CarController::class, 'show']);
     Route::put('/cars/{id}', [CarController::class, 'update']);
