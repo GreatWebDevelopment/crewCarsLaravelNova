@@ -7,6 +7,7 @@ use App\Models\PaymentMethod;
 use App\Models\PayoutSettings;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -23,10 +24,10 @@ class PaymentController extends Controller
 
     public function requestWithdraw(Request $request)
     {
-        if (!checkRequestParams($request, ['uid', 'amt', 'r_type'])) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+        if (!checkRequestParams($request, ['amt', 'r_type'])) {
+            return response()->json(['ResponseCode' => '400', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 400);
         }
-        $uid = $request->uid;
+        $uid = Auth::user()->id;
         $amt = $request->amt;
         $r_type = $request->r_type;
 
@@ -43,18 +44,18 @@ class PaymentController extends Controller
 
         if ($amt < $minWithdrawLimit) {
             return response()->json([
-                "ResponseCode" => "401",
+                "ResponseCode" => "400",
                 "Result"       => "false",
                 "ResponseMsg"  => "Minimum Withdraw Amount is $minWithdrawLimit$currency"
-            ]);
+            ], 400);
         }
 
         if ($amt > $available_balance) {
             return response()->json([
-                "ResponseCode" => "401",
+                "ResponseCode" => "400",
                 "Result"       => "false",
                 "ResponseMsg"  => "You can't Withdraw Above Your Earning!"
-            ]);
+            ], 400);
         }
 
         try {
@@ -86,7 +87,7 @@ class PaymentController extends Controller
                 "ResponseCode" => "500",
                 "Result"       => "false",
                 "ResponseMsg"  => "An error occurred while processing your request."
-            ]);
+            ], 500);
         }
     }
 
@@ -95,9 +96,6 @@ class PaymentController extends Controller
      */
     public function payoutSettingsList(Request $request)
     {
-        if (!checkRequestParams($request, ['uid'])) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
-        }
         $ps = PayoutSettings::where('status', 1)->get();
         return response()->json([
             "Payoutlist"   => $ps,
