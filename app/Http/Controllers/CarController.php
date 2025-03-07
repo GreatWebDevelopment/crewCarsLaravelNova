@@ -102,49 +102,63 @@ class CarController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'img' => 'required|file|mimes:jpeg,png,jpg|max:10240',
+            'number' => 'required',
+            'status' => 'required',
+            'rating' => 'required',
+            'seats' => 'required',
+            'ac' => 'required',
+            'images' => 'required|file|mimes:jpeg,png,jpg|max:10240',
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+            return response()->json(['ResponseCode' => '400', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 400);
         }
 
         $update_data = $request->all();
 
-        if ($request->hasFile('img')) {
-            $images[] = uploadfiles($request->file('img'), env('CAR_IMAGE_S3_PATH') . 'photos/');
+        if ($request->hasFile('images')) {
+            $images[] = uploadfiles($request->file('images'), env('CAR_IMAGE_S3_PATH') . 'photos/');
         }
 
         $update_data['img'] = $images;
-        $item = Car::create($update_data);
-        return response()->json($item, 201);
+        Car::create($update_data);
+        return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Waiting For Approval Car Details']);
     }
 
     public function update(Request $request, $id)
     {
-        $item = Car::find($id);
-        if ($item) {
-            $update_data = $request->all();
+        $validator = Validator::make($request->all(), [
+            'number' => 'required',
+            'status' => 'required',
+            'rating' => 'required',
+            'seats' => 'required',
+            'ac' => 'required',
+            'images' => 'required|file|mimes:jpeg,png,jpg|max:10240',
+        ]);
 
-            if ($request->hasFile('images')) {
-                $images[] = uploadFiles($request->file('images'), env('CAR_IMAGE_S3_PATH') . 'photos/');
-            }
-
-            $existingImages = json_decode($update_data['imlist']);
-            $imagesToDelete = array_diff($item->img, $existingImages);
-            if (count($imagesToDelete) > 0) {
-                foreach ($imagesToDelete as $image) {
-                    Storage::disk('s3')->delete($image);
-                }
-            }
-
-            $update_data['img'] = array_merge($existingImages, $images);
-            $item->fill($update_data);
-            $item->save();
-            return response()->json($item);
-        } else {
-            return response()->json(['message' => 'Item not found'], 404);
+        if ($validator->fails()) {
+            return response()->json(['ResponseCode' => '400', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 400);
         }
+
+        $item = Car::find($id);
+        $update_data = $request->all();
+
+        if ($request->hasFile('images')) {
+            $images[] = uploadFiles($request->file('images'), env('CAR_IMAGE_S3_PATH') . 'photos/');
+        }
+
+        $existingImages = json_decode($update_data['imlist']);
+        $imagesToDelete = array_diff($item->img, $existingImages);
+        if (count($imagesToDelete) > 0) {
+            foreach ($imagesToDelete as $image) {
+                Storage::disk('s3')->delete($image);
+            }
+        }
+
+        $update_data['img'] = array_merge($existingImages, $images);
+        $item->fill($update_data);
+        $item->save();
+        return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Car Updated Successfully!']);
     }
 
     public function destroy($id)

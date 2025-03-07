@@ -216,7 +216,7 @@ class BookingController extends Controller
 
     public function myBookHistory(Request $request) {
         if (!checkRequestParams($request, ['status'])) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+            return response()->json(['ResponseCode' => '400', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 400);
         }
 
         $uid = Auth::user()->id;
@@ -260,7 +260,7 @@ class BookingController extends Controller
 
     public function myBookDetails(Request $request) {
         if (!checkRequestParams($request, ['book_id'])) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+            return response()->json(['ResponseCode' => '400', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 400);
         }
 
         $uid = Auth::user()->id;
@@ -275,7 +275,7 @@ class BookingController extends Controller
         $pol = collect($car)->merge($bookings);
         $pol['bookId'] = $bookings->id;
         $pol['carRating'] = $car_rate;
-        $pol['img'] = explode(';', $car['img'])[0];
+        $pol['img'] =$car['img'][0];
         $pol['cityTitle'] = optional($bookings->city)->title;
         $pol['paymentMethodName'] = optional($bookings->paymentMethod)->title;
         $pol['customerName'] = $user['name'];

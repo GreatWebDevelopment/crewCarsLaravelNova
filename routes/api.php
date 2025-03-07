@@ -99,7 +99,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/wallet-up', [WalletController::class, 'walletUp']);
     Route::post('/wallet-report', [WalletController::class, 'walletReport']);
 
-    Route::post('/notification', [NotificationController::class, 'index']);
+    Route::get('/notification', [NotificationController::class, 'index']);
 
     Route::post('/auth/refresh-token', [UserController::class, 'refreshToken']);
     Route::post('/auth/logout', [UserController::class, 'logout']);
