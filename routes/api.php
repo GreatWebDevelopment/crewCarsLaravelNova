@@ -94,7 +94,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/payments/gateway', [PaymentController::class, 'gateway']);
     Route::post('/payments', [PaymentController::class, 'processPayment']);
     Route::post('/request-withdraw', [PaymentController::class, 'requestWithdraw']);
-    Route::post('/payout/list', [PaymentController::class, 'payoutSettingsList']);
+    Route::get('/payout/list', [PaymentController::class, 'payoutSettingsList']);
 
     Route::post('/wallet-up', [WalletController::class, 'walletUp']);
     Route::get('/wallet-report', [WalletController::class, 'walletReport']);
