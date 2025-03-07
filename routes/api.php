@@ -90,7 +90,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/facility/list', [FacilityController::class, 'index']);
 
-    Route::post('/dashboard', [DashboardController::class, 'index']);
+    Route::get('/dashboard', [DashboardController::class, 'index']);
 
     Route::get('/payments/gateway', [PaymentController::class, 'gateway']);
     Route::post('/payments', [PaymentController::class, 'processPayment']);
