@@ -182,7 +182,7 @@ class BookingController extends Controller
         $c = array();
         $uid = Auth::user()->id;
         $status = $request->input('status');
-        $query = Booking::where('uid', $uid)->orderBy('id', 'desc');
+        $query = Booking::where('userId', $uid)->orderBy('id', 'desc');
         if ($status == 'Booked') {
             $query->whereNotIn('bookingStatus', ['Cancelled', 'Completed']);
         } else {
