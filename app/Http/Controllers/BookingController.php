@@ -123,15 +123,15 @@ class BookingController extends Controller
     }
 
     public function bookDetails(Request $request) {
-        if (!checkRequestParams($request, ['uid', 'book_id'])) {
+        if (!checkRequestParams($request, ['book_id'])) {
             return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
         }
         $pol = array();
         $c = array();
-        $uid = $request->input('uid');
+        $uid = Auth::user()->id;
         $book_id = $request->input('book_id');
 
-        $sel = Booking::where('uid', $uid)->where('id', $book_id)->first()->makeHidden(['car']);
+        $sel = Booking::where('userId', $uid)->where('id', $book_id)->first()->makeHidden(['car']);
 
         $car_rate = $sel->car->car_rate;
         $carinfo = $sel->car->only(['title', 'number', 'img', 'id', 'pickLat', 'pickLng', 'pickAddress', 'engineHp', 'fuelType', 'totalSeats', 'transmission']);
