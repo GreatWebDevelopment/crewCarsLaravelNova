@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
-    public function index(Request $request) {
+    public function index() {
         $uid = Auth::user()->id;
         // Get total number of cars for the user
         $total_car = Car::where('postId', $uid)->count();
