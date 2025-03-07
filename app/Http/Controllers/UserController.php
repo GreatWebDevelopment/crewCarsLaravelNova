@@ -169,8 +169,9 @@ class UserController extends Controller
         if (!empty($user) && Hash::check($password, $user->password)) {
             if ($user->status === 1) {
                 $token = $user->createToken(env('APP_NAME'))->plainTextToken;
+                $expiresAt = now()->addHours(2);
 
-                return response()->json(['UserLogin' => $user, 'Token' => $token, 'ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Login successfully!', 'type' => 'USER']);
+                return response()->json(['UserLogin' => $user, 'Token' => $token, 'ExpiresAt' => $expiresAt->toDateTimeString(), 'ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Login successfully!', 'type' => 'USER']);
             } else {
                 return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Your profile has been blocked by the administrator, preventing you from using our app as a regular user.'], 401);
             }
@@ -182,8 +183,9 @@ class UserController extends Controller
 
         if (!empty($admin) && Hash::check($password, $admin->password)) {
             $token = $admin->createToken(env('APP_NAME'))->plainTextToken;
+            $expiresAt = now()->addHours(2);
 
-            return response()->json(['AdminLogin' => $admin, 'Token' => $token, 'ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Login successfully!', 'type' => 'ADMIN']);
+            return response()->json(['AdminLogin' => $admin, 'Token' => $token, 'ExpiresAt' => $expiresAt->toDateTimeString(), 'ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Login successfully!', 'type' => 'ADMIN']);
         } else {
             return response()->json(['ResponseCode' => '404', 'Result' => 'false', 'ResponseMsg' => 'Account Not Found!!!'], 404);
         }
@@ -291,6 +293,19 @@ class UserController extends Controller
         $user->save();
 
         return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Account Delete Successfully!']);
+    }
+
+    public function refreshToken(Request $request)
+    {
+        $user = $request->user();
+
+        $user->currentAccessToken()->delete();
+
+        $token = $user->createToken(env('APP_NAME'))->plainTextToken;
+
+        $expiresAt = now()->addHours(2);
+
+        return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'Token' => $token, 'ExpiresAt' => $expiresAt]);
     }
 
     public function referData()
