@@ -19,7 +19,7 @@ class PaymentController extends Controller
     public function gateway()
     {
         $paymentMethods = PaymentMethod::where('status', 1)->get();
-        return response()->json(["paymentdata"=>$paymentMethods, 'ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Payment Gateway List Founded!'], 200);
+        return response()->json(["paymentdata"=>$paymentMethods, 'ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Payment Gateway List Founded!']);
     }
 
     public function requestWithdraw(Request $request)

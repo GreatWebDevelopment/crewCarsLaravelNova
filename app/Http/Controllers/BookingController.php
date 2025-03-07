@@ -26,8 +26,8 @@ class BookingController extends Controller
 
     public function bookNow(Request $request)
     {
-        if (!checkRequestParams($request, ['carId', 'uid'])) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+        if (!checkRequestParams($request, ['carId'])) {
+            return response()->json(['ResponseCode' => '400', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 400);
         }
         $input = $request->all();
         array_walk_recursive($input, function (&$input) {
@@ -35,7 +35,7 @@ class BookingController extends Controller
         });
         $get_id = Car::find($input['carId']);
         $wall_amt = $input['wallAmt'];
-        $uid = $input['uid'];
+        $uid = Auth::user()->id;
 
         $input['postId'] = $get_id["postId"];
         $input['pickOtp'] = rand(1111,9999);
