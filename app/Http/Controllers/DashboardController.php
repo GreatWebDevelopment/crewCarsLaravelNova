@@ -6,15 +6,13 @@ use App\Models\Booking;
 use App\Models\Car;
 use App\Models\PayoutSettings;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
     public function index(Request $request) {
-        if (!checkRequestParams($request, ['uid'])) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
-        }
-        $uid = $request->input('uid');
+        $uid = Auth::user()->id;
         // Get total number of cars for the user
         $total_car = Car::where('postId', $uid)->count();
 
