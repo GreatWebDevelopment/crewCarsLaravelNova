@@ -27,7 +27,6 @@ use App\Http\Controllers\GalleryController;
 Route::post('/auth/register', [UserController::class, 'register']);
 Route::post('/auth/login', [UserController::class, 'login']);
 Route::post('/auth/forgot-password', [UserController::class, 'forgotPassword']);
-Route::post('/api/login', [LoginController::class, 'login']);
 Route::post('/mobile/check', [MobileController::class, 'checkMobile']);
 Route::get('/decode-vin/{vin}', [VinDecoderController::class, 'decodeVin']);
 
@@ -102,6 +101,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/notification', [NotificationController::class, 'index']);
 
-    Route::post('/logout', [UserController::class, 'logout']);
+    Route::post('/auth/refresh-token', [UserController::class, 'refreshToken']);
     Route::post('/auth/logout', [UserController::class, 'logout']);
 });
