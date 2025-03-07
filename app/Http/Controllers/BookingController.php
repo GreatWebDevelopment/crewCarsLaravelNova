@@ -134,7 +134,7 @@ class BookingController extends Controller
         $sel = Booking::where('userId', $uid)->where('id', $book_id)->first()->makeHidden(['car']);
 
         $car_rate = $sel->car->car_rate;
-        $carinfo = $sel->car->only(['title', 'number', 'img', 'id', 'pickLat', 'pickLng', 'pickAddress', 'engineHp', 'fuelType', 'totalSeats', 'transmission']);
+        $carinfo = $sel->car->only(['title', 'number', 'img', 'id', 'pickLat', 'pickLng', 'pickAddress', 'engineHp', 'fuelType', 'seats', 'transmission']);
 
         $paymentinfo = PaymentMethod::find($sel['pMethodId']);
         $cityinfo = City::find($sel['cityId']);
@@ -193,7 +193,7 @@ class BookingController extends Controller
         foreach ($sel as $row)
         {
             $car_rate = $row->car->car_rate;
-            $carinfo = $row->car->only(['title', 'number', 'img', 'id', 'engineHp', 'fuelType', 'totalSeats', 'transmission']);
+            $carinfo = $row->car->only(['title', 'number', 'img', 'id', 'engineHp', 'fuelType', 'seats', 'transmission']);
 
             $cityinfo = City::find($row['cityId']);
             $pol = collect($carinfo)->merge($row);
@@ -239,7 +239,7 @@ class BookingController extends Controller
             if (!$row->car) continue;
 
             $car_rate = $row->car->car_rate;
-            $car = $row->car->only(['title', 'number', 'img', 'id', 'engineHp', 'fuelType', 'totalSeats', 'transmission']);
+            $car = $row->car->only(['title', 'number', 'img', 'id', 'engineHp', 'fuelType', 'seats', 'transmission']);
             $city = $row->city;
 
             $pol = collect($car)->merge($row->makeHidden(['car', 'city', 'user', 'paymentMethod']));
@@ -269,7 +269,7 @@ class BookingController extends Controller
         $bookings = Booking::where('postId', $uid)->where('id', $book_id)
             ->orderBy('id', 'desc')->first()->makeHidden(['car', 'city', 'user', 'paymentMethod']);
         $car_rate = $bookings->car->car_rate;
-        $car = $bookings->car->only(['title', 'number', 'img', 'id', 'pickLat', 'pickLng', 'pickAddress', 'engineHp', 'fuelType', 'totalSeats', 'transmission']);
+        $car = $bookings->car->only(['title', 'number', 'img', 'id', 'pickLat', 'pickLng', 'pickAddress', 'engineHp', 'fuelType', 'seats', 'transmission']);
         $user = $bookings->user;
 
         $pol = collect($car)->merge($bookings);

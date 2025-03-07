@@ -7,16 +7,17 @@ use App\Models\User;
 use App\Models\WalletReport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class WalletController extends Controller
 {
 
     public function walletUp(Request $request) {
-        if (!checkRequestParams($request, ['uid', 'wallet'])) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+        if (!checkRequestParams($request, ['wallet'])) {
+            return response()->json(['ResponseCode' => '400', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 400);
         }
         $wallet = strip_tags($request->input('wallet'));
-        $uid = strip_tags($request->input('uid'));
+        $uid = Auth::user()->id;
 
         $userExists = User::where('id', $uid)->exists();
         if ($userExists) {
@@ -40,11 +41,8 @@ class WalletController extends Controller
         }
     }
 
-    public function walletReport(Request $request) {
-        if (!checkRequestParams($request, ['uid'])) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
-        }
-        $uid = strip_tags($request->input('uid'));
+    public function walletReport() {
+        $uid = Auth::user()->id;
         $userExists = User::where('id', $uid)->exists();
 
         if ($userExists) {
