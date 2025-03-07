@@ -84,10 +84,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/bookings/{id}', [BookingController::class, 'show']);
     Route::delete('/bookings/{id}', [BookingController::class, 'destroy']);
 
-    Route::post('/coupon/list', [CouponController::class, 'index']);
+    Route::get('/coupon/list', [CouponController::class, 'index']);
     Route::post('/coupon/check', [CouponController::class, 'check']);
 
-    Route::post('/facility/list', [FacilityController::class, 'index']);
+    Route::get('/facility/list', [FacilityController::class, 'index']);
 
     Route::get('/dashboard', [DashboardController::class, 'index']);
 
@@ -97,7 +97,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/payout/list', [PaymentController::class, 'payoutSettingsList']);
 
     Route::post('/wallet-up', [WalletController::class, 'walletUp']);
-    Route::post('/wallet-report', [WalletController::class, 'walletReport']);
+    Route::get('/wallet-report', [WalletController::class, 'walletReport']);
 
     Route::get('/notification', [NotificationController::class, 'index']);
 

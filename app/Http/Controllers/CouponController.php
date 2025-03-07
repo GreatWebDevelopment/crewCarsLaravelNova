@@ -28,7 +28,7 @@ class CouponController extends Controller
     public function check(Request $request)
     {
         if (!checkRequestParams($request, ['cid'])) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+            return response()->json(['ResponseCode' => '400', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 400);
         }
         $coupon_exists = Coupon::where('id', $request->input('cid'))->exists();
 
