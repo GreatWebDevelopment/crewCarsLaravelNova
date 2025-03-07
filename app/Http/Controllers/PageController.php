@@ -12,11 +12,9 @@ class PageController extends Controller
         $items = Page::where('status', 1)->select('title', 'description')->get();
 
         if ($items->isEmpty()) {
-            return response()->json(['pagelist'=> $items, 'ResponseCode' => '200', 'Result' => 'false',
-                'ResponseMsg' => 'Page Not Founded!'], 200);
+            return response()->json(['pagelist' => $items, 'ResponseCode' => '404', 'Result' => 'false', 'ResponseMsg' => 'Page Not Founded!'], 404);
         } else {
-            return response()->json(['pagelist'=> $items, 'ResponseCode' => '200', 'Result' => 'true',
-                'ResponseMsg' => 'Page List Founded!'], 200);
+            return response()->json(['pagelist' => $items, 'ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Page List Founded!']);
         }
     }
 
