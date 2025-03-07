@@ -175,12 +175,12 @@ class BookingController extends Controller
 
     public function bookHistory(Request $request)
     {
-        if (!checkRequestParams($request, ['uid', 'status'])) {
+        if (!checkRequestParams($request, ['status'])) {
             return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
         }
         $pol = array();
         $c = array();
-        $uid = $request->input('uid');
+        $uid = Auth::user()->id;
         $status = $request->input('status');
         $query = Booking::where('uid', $uid)->orderBy('id', 'desc');
         if ($status == 'Booked') {
@@ -215,12 +215,11 @@ class BookingController extends Controller
     }
 
     public function myBookHistory(Request $request) {
-        Log::info($request->all());
-        if (!checkRequestParams($request, ['uid', 'status'])) {
+        if (!checkRequestParams($request, ['status'])) {
             return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
         }
 
-        $uid = $request->input('uid');
+        $uid = Auth::user()->id;
         $status = $request->input('status');
 
         $query = Booking::with(['car', 'city'])
@@ -257,15 +256,14 @@ class BookingController extends Controller
             "Result" => !empty($c) ? "true" : "false",
             "ResponseMsg" => !empty($c) ? "Book History List Founded!" : "Book History Not Founded!"
         ]);
-
     }
 
     public function myBookDetails(Request $request) {
-        if (!checkRequestParams($request, ['uid', 'book_id'])) {
+        if (!checkRequestParams($request, ['book_id'])) {
             return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
         }
 
-        $uid = $request->input('uid');
+        $uid = Auth::user()->id;
         $book_id = $request->input('book_id');
 
         $bookings = Booking::where('postId', $uid)->where('id', $book_id)
