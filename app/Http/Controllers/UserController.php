@@ -70,6 +70,10 @@ class UserController extends Controller
                    ['type' => 'Certificate', 's3Key' => $pilotCertificate],
                 ]);
 
+                if (empty($documents)) {
+                    return response()->json(['ResponseCode' => '500', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 500);
+                }
+
                 $user = User::create([
                     'name' => $name,
                     'email' => $email,
@@ -102,6 +106,24 @@ class UserController extends Controller
             $nonce = $this->generateNonce();
             $timestamps = date('Y-m-d H:i:s');
 
+            $driverLicenseUrl = uploadfile($request->file('driverLicense'), env('DOCUMENT_S3_PATH') . 'driver-license/');
+            $pilotCertificate = uploadfile($request->file('pilotCertificate'), env('DOCUMENT_S3_PATH') . 'pilot-certificate/');
+            $insurance = uploadfile($request->file('insurance'), env('DOCUMENT_S3_PATH') . 'insurance/');
+
+            if (empty($driverLicenseUrl) || empty($pilotCertificate) || empty($insurance)) {
+                return response()->json(['ResponseCode' => '500', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 500);
+            }
+
+            $documents = $this->extractDataFromDocuments([
+                ['type' => 'DL', 's3Key' => $driverLicenseUrl],
+                ['type' => 'Insurance', 's3Key' => $insurance],
+                ['type' => 'Certificate', 's3Key' => $pilotCertificate],
+            ]);
+
+            if (empty($documents)) {
+                return response()->json(['ResponseCode' => '500', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 500);
+            }
+
             $user = User::create([
                 'name' => $name,
                 'email' => $email,
@@ -111,6 +133,10 @@ class UserController extends Controller
                 'verificationCode' => $nonce,
                 'registeredAt' => $timestamps,
             ]);
+
+            foreach ($documents as $document) {
+                $user->documents()->create($document);
+            }
 
             return response()->json(['UserLogin' => $user, 'currency' => app('set')->currency, 'ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Sign Up Done Successfully!']);
         }
