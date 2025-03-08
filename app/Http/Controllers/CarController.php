@@ -120,6 +120,7 @@ class CarController extends Controller
             $images[] = uploadfiles($request->file('images'), env('CAR_IMAGE_S3_PATH') . 'photos/');
         }
 
+        $update_data['userId'] = Auth::user()->id;
         $update_data['img'] = $images;
         Car::create($update_data);
         return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Waiting For Approval Car Details']);
