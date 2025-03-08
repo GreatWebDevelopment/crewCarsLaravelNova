@@ -13,7 +13,8 @@ class Car extends Model
     protected $table = 'cars';
     protected $fillable = [
         'userId', 'title', 'number', 'img', 'status', 'rating', 'seats', 'ac', 'driverName', 'brand', 'rentPrice',
-        'location', 'type', 'brand', 'postId'
+        'location', 'type', 'brand', 'postId', 'description', 'driverName', 'driverMobile', 'transmission', 'facility', 'available', 'rentPriceDriver',
+        'engineHp', 'priceType', 'fuelType', 'pickAddress', 'pickLat', 'pickLng', 'totalMiles', 'minHrs'
     ];
 
     public function user()
