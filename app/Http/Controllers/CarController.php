@@ -107,7 +107,7 @@ class CarController extends Controller
             'rating' => 'required',
             'seats' => 'required',
             'ac' => 'required',
-            'images' => 'required|file|mimes:jpeg,png,jpg|max:10240',
+            'images.*' => 'required|file|mimes:jpeg,png,jpg|max:10240',
         ]);
 
         if ($validator->fails()) {
@@ -134,7 +134,7 @@ class CarController extends Controller
             'rating' => 'required',
             'seats' => 'required',
             'ac' => 'required',
-            'images' => 'required|file|mimes:jpeg,png,jpg|max:10240',
+            'images.*' => 'required|file|mimes:jpeg,png,jpg|max:10240',
         ]);
 
         if ($validator->fails()) {
