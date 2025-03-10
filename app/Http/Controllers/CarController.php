@@ -121,6 +121,7 @@ class CarController extends Controller
         }
 
         $update_data['userId'] = Auth::user()->id;
+        $update_data['postId'] = Auth::user()->id;
         $update_data['img'] = $images;
         Car::create($update_data);
         return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Waiting For Approval Car Details']);
