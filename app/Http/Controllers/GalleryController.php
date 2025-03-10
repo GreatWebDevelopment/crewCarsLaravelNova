@@ -67,7 +67,7 @@ class GalleryController extends Controller
         }
 
         if ($request->hasFile('images')) {
-            $images[] = uploadFiles($request->file('images'), env('CAR_IMAGE_S3_PATH') . 'gallery/');
+            $images = uploadFiles($request->file('images'), env('CAR_IMAGE_S3_PATH') . 'gallery/');
         }
 
         Gallery::create([
@@ -112,7 +112,7 @@ class GalleryController extends Controller
         $existingImages = json_decode($request->input('imlist'));
 
         if ($request->hasFile('images')) {
-            $images[] = uploadFiles($request->file('images'), env('CAR_IMAGE_S3_PATH') . 'gallery/');
+            $images = uploadFiles($request->file('images'), env('CAR_IMAGE_S3_PATH') . 'gallery/');
         }
 
         $gallery = Gallery::find($id);
