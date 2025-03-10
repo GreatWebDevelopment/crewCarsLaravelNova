@@ -20,7 +20,7 @@ class HomeController extends Controller
         $uid = Auth::user()->id;
         $lats = $request->input('lats');
         $longs = $request->input('longs');
-        $cityid = $request->input('cityid');
+        $location = $request->input('location');
 
         $check_user_verify = User::find($uid);
         $is_block = empty($check_user_verify["status"]) ? "1" : ($check_user_verify["status"] == 1 ? "0" : "1");
@@ -37,8 +37,8 @@ class HomeController extends Controller
         $carlists = Car::with(['bookings' => function ($query) {
             $query->where('bookingStatus', 'Completed')
                 ->where('isRate', 1);
-        }])->when($cityid, function ($query) use ($cityid) {
-            return $query->where('available', $cityid);
+        }])->when($location, function ($query) use ($location) {
+            return $query->where('location', $location);
         })->where([
             ['status', 1],
             ['postId', '!=', $uid],

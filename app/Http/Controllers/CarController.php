@@ -220,14 +220,14 @@ class CarController extends Controller
         $lats = $request->input('lats');
         $longs = $request->input('longs');
         $brand_id = $request->input('brand_id');
-        $cityid = $request->input('cityid');
+        $location = $request->input('location');
         $uid = Auth::user()->id;
 
         $carlists = Car::with(['bookings' => function ($query) {
             $query->where('bookingStatus', 'Completed')
                 ->where('isRate', 1);
-        }])->when($cityid, function ($query) use ($cityid) {
-            return $query->where('available', $cityid);
+        }])->when($location, function ($query) use ($location) {
+            return $query->where('location', $location);
         })->where([
             ['status', 1],
             ['brand', $brand_id],
@@ -270,14 +270,14 @@ class CarController extends Controller
         $lats = $request->input('lats');
         $longs = $request->input('longs');
         $type_id = $request->input('type_id');
-        $cityid = $request->input('cityid');
+        $location = $request->input('location');
         $uid = Auth::user()->id;
 
         $carlists = Car::with(['bookings' => function ($query) {
             $query->where('bookingStatus', 'Completed')
                 ->where('isRate', 1);
-        }])->when($cityid, function ($query) use ($cityid) {
-            return $query->where('available', $cityid);
+        }])->when($location, function ($query) use ($location) {
+            return $query->where('location', $location);
         })->where([
             ['status', 1],
             ['type', $type_id],
@@ -320,14 +320,14 @@ class CarController extends Controller
     public function cityWise(Request $request) {
         $lats = $request->input('lats');
         $longs = $request->input('longs');
-        $cityid = $request->input('cityid');
+        $location = $request->input('location');
         $uid = Auth::user()->id;
 
         $carlists = Car::with(['bookings' => function ($query) {
             $query->where('bookingStatus', 'Completed')
                 ->where('isRate', 1);
-        }])->when($cityid, function ($query) use ($cityid) {
-            return $query->where('available', $cityid);
+        }])->when($location, function ($query) use ($location) {
+            return $query->where('location', $location);
         })->where([
             ['status', 1],
             ['postId', '!=', $uid],
@@ -371,7 +371,7 @@ class CarController extends Controller
         $userId = Auth::user()->id;
         $lats = $request->input('lats');
         $longs = $request->input('longs');
-        $cityId = $request->input('city_id');
+        $location = $request->input('location');
 
         $user = User::find($userId);
         $isBlock = empty($user->status) ? '1' : ($user->status == 1 ? '0' : '1');
@@ -379,8 +379,8 @@ class CarController extends Controller
         $cars = Car::with(['bookings' => function ($query) {
             $query->where('bookingStatus', 'Completed')
                 ->where('isRate', 1);
-        }])->when($cityId, function ($query) use ($cityId) {
-            return $query->where('available', $cityId);
+        }])->when($location, function ($query) use ($location) {
+            return $query->where('location', $location);
         })->where([
             ['status', 1],
             ['postId', '!=', $userId],
@@ -423,7 +423,7 @@ class CarController extends Controller
         $userId = Auth::user()->id;
         $lats = $request->input('lats');
         $longs = $request->input('longs');
-        $cityId = $request->input('city_id');
+        $location = $request->input('location');
 
         $user = User::find($userId);
         $isBlock = empty($user->status) ? '1' : ($user->status == 1 ? '0' : '1');
@@ -431,8 +431,8 @@ class CarController extends Controller
         $cars = Car::with(['bookings' => function ($query) {
             $query->where('bookingStatus', 'Completed')
                 ->where('isRate', 1);
-        }])->when($cityId, function ($query) use ($cityId) {
-            return $query->where('available', $cityId);
+        }])->when($location, function ($query) use ($location) {
+            return $query->where('location', $location);
         })->where([
             ['status', 1],
             ['postId', '!=', $userId],
