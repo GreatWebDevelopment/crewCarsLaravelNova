@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::table('cars', function (Blueprint $table) {
             $table->dropColumn('available');
-            $table->text('location');
             $table->text('city');
         });
     }
