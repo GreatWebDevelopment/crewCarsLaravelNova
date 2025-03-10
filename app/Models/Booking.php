@@ -32,11 +32,6 @@ class Booking extends Model
         return $this->hasOne(Payment::class, 'bookingId');
     }
 
-    public function city()
-    {
-        return $this->belongsTo(City::class, 'cityId');
-    }
-
     public function paymentMethod()
     {
         return $this->belongsTo(PaymentMethod::class, 'pMethodId');

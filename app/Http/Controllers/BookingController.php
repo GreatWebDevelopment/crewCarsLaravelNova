@@ -133,11 +133,11 @@ class BookingController extends Controller
 
         $sel = Booking::where('userId', $uid)->where('id', $book_id)->first()->makeHidden(['car']);
 
-        $car_rate = $sel->car->car_rate;
-        $carinfo = $sel->car->only(['title', 'number', 'img', 'id', 'pickLat', 'pickLng', 'pickAddress', 'engineHp', 'fuelType', 'seats', 'transmission']);
+        $car_rate = $sel->car->rating;
+        $carinfo = $sel->car->only(['title', 'number', 'img', 'id', 'pickLat', 'pickLng', 'pickAddress', 'engineHp', 'fuelType', 'seats', 'transmission', 'city']);
 
         $paymentinfo = PaymentMethod::find($sel['pMethodId']);
-        $cityinfo = City::find($sel['cityId']);
+//        $cityinfo = City::find($sel['cityId']);
 
         $pol = collect($carinfo)->merge($sel);
         $pol['img'] = $carinfo['img'][0];
@@ -157,10 +157,10 @@ class BookingController extends Controller
             $pol['ownerContact'] = $userdata['countryCode'].$userdata['mobile'];
             $pol['ownerImg'] = $userdata['profilePicture'];
         }
-        $pol['cityTitle'] = $cityinfo['title'];
+        $pol['cityTitle'] = $carinfo['city'];
         $pol['paymentMethodName'] = $paymentinfo['title'];
-        $pol['exterPhoto'] = empty($sel['exterPhoto']) ? [] : explode(';',$sel['exterPhoto']);
-        $pol['interPhoto'] = empty($sel['interPhoto']) ? [] : explode(';',$sel['interPhoto']);
+        $pol['exterPhoto'] = empty($sel['exterPhoto']) ? [] : $sel['exterPhoto'];
+        $pol['interPhoto'] = empty($sel['interPhoto']) ? [] : $sel['interPhoto'];
         $c[] = $pol;
 
         if(empty($c))
@@ -192,16 +192,16 @@ class BookingController extends Controller
 
         foreach ($sel as $row)
         {
-            $car_rate = $row->car->car_rate;
-            $carinfo = $row->car->only(['title', 'number', 'img', 'id', 'engineHp', 'fuelType', 'seats', 'transmission']);
+            $car_rate = $row->car->rating;
+            $carinfo = $row->car->only(['title', 'number', 'img', 'id', 'engineHp', 'fuelType', 'seats', 'transmission', 'city']);
 
-            $cityinfo = City::find($row['cityId']);
+//            $cityinfo = City::find($row['cityId']);
             $pol = collect($carinfo)->merge($row);
             $pol['img'] = $carinfo['img'][0];
             $pol['carRating'] = $car_rate;
             $pol['id'] = $carinfo['id'];
             $pol['book_id'] = $row['id'];
-            $pol['cityTitle'] = $cityinfo['title'];
+            $pol['cityTitle'] = $carinfo['city'];
             $c[] = $pol;
         }
         if(empty($c))
@@ -222,7 +222,7 @@ class BookingController extends Controller
         $uid = Auth::user()->id;
         $status = $request->input('status');
 
-        $query = Booking::with(['car', 'city'])
+        $query = Booking::with(['car'])
             ->where('postId', $uid)
             ->orderBy('id', 'desc');
 
@@ -238,15 +238,15 @@ class BookingController extends Controller
         foreach ($bookings as $row) {
             if (!$row->car) continue;
 
-            $car_rate = $row->car->car_rate;
+            $car_rate = $row->car->rating;
             $car = $row->car->only(['title', 'number', 'img', 'id', 'engineHp', 'fuelType', 'seats', 'transmission']);
-            $city = $row->city;
+//            $city = $row->city;
 
             $pol = collect($car)->merge($row->makeHidden(['car', 'city', 'user', 'paymentMethod']));
             $pol['carRating'] = $car_rate;
             $pol['bookId'] = $row->id;
             $pol['img'] = $car['img'][0];
-            $pol['cityTitle'] = optional($city)->title;
+            $pol['cityTitle'] = $row->city;
             $c[] = $pol;
         }
 
@@ -267,7 +267,7 @@ class BookingController extends Controller
         $book_id = $request->input('book_id');
 
         $bookings = Booking::where('postId', $uid)->where('id', $book_id)
-            ->orderBy('id', 'desc')->first()->makeHidden(['car', 'city', 'user', 'paymentMethod']);
+            ->orderBy('id', 'desc')->first()->makeHidden(['car', 'user', 'paymentMethod']);
         $car_rate = $bookings->car->car_rate;
         $car = $bookings->car->only(['title', 'number', 'img', 'id', 'pickLat', 'pickLng', 'pickAddress', 'engineHp', 'fuelType', 'seats', 'transmission']);
         $user = $bookings->user;
@@ -276,7 +276,7 @@ class BookingController extends Controller
         $pol['bookId'] = $bookings->id;
         $pol['carRating'] = $car_rate;
         $pol['img'] =$car['img'][0];
-        $pol['cityTitle'] = optional($bookings->city)->title;
+        $pol['cityTitle'] = $bookings->city;
         $pol['paymentMethodName'] = optional($bookings->paymentMethod)->title;
         $pol['customerName'] = $user['name'];
         $pol['customerContact'] = $user['countryCode'].$user['mobile'];
