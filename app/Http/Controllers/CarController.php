@@ -117,7 +117,7 @@ class CarController extends Controller
         $update_data = $request->all();
 
         if ($request->hasFile('images')) {
-            $images[] = uploadfiles($request->file('images'), env('CAR_IMAGE_S3_PATH') . 'photos/');
+            $images = uploadfiles($request->file('images'), env('CAR_IMAGE_S3_PATH') . 'photos/');
         }
 
         $update_data['userId'] = Auth::user()->id;
@@ -146,7 +146,7 @@ class CarController extends Controller
         $update_data = $request->all();
 
         if ($request->hasFile('images')) {
-            $images[] = uploadFiles($request->file('images'), env('CAR_IMAGE_S3_PATH') . 'photos/');
+            $images = uploadFiles($request->file('images'), env('CAR_IMAGE_S3_PATH') . 'photos/');
         }
 
         $existingImages = json_decode($update_data['imlist']);
