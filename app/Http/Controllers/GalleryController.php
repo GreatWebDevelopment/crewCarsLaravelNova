@@ -66,6 +66,7 @@ class GalleryController extends Controller
             return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Car Gallery Already Added!']);
         }
 
+        $images = [];
         if ($request->hasFile('images')) {
             $images = uploadFiles($request->file('images'), env('CAR_IMAGE_S3_PATH') . 'gallery/');
         }
@@ -111,6 +112,7 @@ class GalleryController extends Controller
         $carId = $request->input('car_id');
         $existingImages = json_decode($request->input('imlist'));
 
+        $images = [];
         if ($request->hasFile('images')) {
             $images = uploadFiles($request->file('images'), env('CAR_IMAGE_S3_PATH') . 'gallery/');
         }
