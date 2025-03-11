@@ -199,8 +199,8 @@ class CarController extends Controller
         $facilityResult = Facility::selectRaw('GROUP_CONCAT(title) as facility, GROUP_CONCAT(img) as facility_img')
             ->whereRaw('FIND_IN_SET(id, ?) > 0', [$car["facility"]])->first();
 
-        $t = CarTypes::where('id', $car['type'])->select('img', 'title')->first();
-        $b = CarBrands::where('id', $car['brand'])->select('img', 'title')->first();
+        $t = CarTypes::where('id', $car['typeId'])->select('img', 'title')->first();
+        $b = CarBrands::where('id', $car['brandId'])->select('img', 'title')->first();
         Log::info($car);
         $car["facility"] = $facilityResult["facility"];
         $car["facilityImg"] = $facilityResult["facility_img"];
