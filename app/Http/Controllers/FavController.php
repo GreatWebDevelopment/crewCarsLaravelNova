@@ -58,7 +58,7 @@ class FavController extends Controller
                 return $car;
             })->sortBy('distance');
 
-            $navs[] = $carlists;
+            $navs[] = $carlists[0];
         }
         return response()->json(['FeatureCar'=> $navs, 'ResponseCode' => '200', 'Result' => 'true',
             'ResponseMsg' => 'Favourite Car Get Successfully!'], 200);
