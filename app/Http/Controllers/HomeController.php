@@ -54,7 +54,7 @@ class HomeController extends Controller
             'priceType',
             'engineHp',
             'fuelType',
-            'type'
+            'typeId'
         )->get()->map(function ($car) use ($lats, $longs) {
             $bookCount = $car->bookings->count();
             $bookRateSum = $car->bookings->sum('totalRate');

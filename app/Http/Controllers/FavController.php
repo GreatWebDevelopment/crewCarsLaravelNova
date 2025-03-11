@@ -21,7 +21,7 @@ class FavController extends Controller
         $navs = array();
         foreach ($getfavlist as $row)
         {
-            $carlists = Car::with(['bookings' => function ($query) {
+            $carlists = Car::with(['type', 'bookings' => function ($query) {
                 $query->where('bookingStatus', 'Completed')
                     ->where('isRate', 1);
             }])->where([
@@ -42,7 +42,7 @@ class FavController extends Controller
                 'priceType',
                 'engineHp',
                 'fuelType',
-                'type'
+                'typeId'
             )->get()->map(function ($car) use ($lats, $longs) {
                 $bookCount = $car->bookings->count();
                 $bookRateSum = $car->bookings->sum('totalRate');
@@ -53,8 +53,7 @@ class FavController extends Controller
 
                 $car->rate = $car_rate;
                 $car->distance = $car->calculateDistance($lats, $longs).' KM';
-                $im = explode(';',$car->img);
-                $car->img = $im[0];
+                $car->img = $car->img[0];
 
                 return $car;
             })->sortBy('distance');

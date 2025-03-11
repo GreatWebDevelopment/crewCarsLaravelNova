@@ -223,7 +223,7 @@ class CarController extends Controller
         $location = $request->input('location');
         $uid = Auth::user()->id;
 
-        $carlists = Car::with(['bookings' => function ($query) {
+        $carlists = Car::with(['type', 'bookings' => function ($query) {
             $query->where('bookingStatus', 'Completed')
                 ->where('isRate', 1);
         }])->when($location, function ($query) use ($location) {
@@ -247,7 +247,7 @@ class CarController extends Controller
             'priceType',
             'engineHp',
             'fuelType',
-            'type'
+            'typeId'
         )->get()->makeHidden(['bookings'])->map(function ($car) use ($lats, $longs) {
             $bookCount = $car->bookings->count();
             $bookRateSum = $car->bookings->sum('totalRate');
@@ -273,7 +273,7 @@ class CarController extends Controller
         $location = $request->input('location');
         $uid = Auth::user()->id;
 
-        $carlists = Car::with(['bookings' => function ($query) {
+        $carlists = Car::with(['type', 'bookings' => function ($query) {
             $query->where('bookingStatus', 'Completed')
                 ->where('isRate', 1);
         }])->when($location, function ($query) use ($location) {
@@ -297,7 +297,7 @@ class CarController extends Controller
             'priceType',
             'engineHp',
             'fuelType',
-            'type'
+            'typeId'
         )->get()->makeHidden(['bookings'])->map(function ($car) use ($lats, $longs) {
             $bookCount = $car->bookings->count();
             $bookRateSum = $car->bookings->sum('totalRate');
@@ -322,7 +322,7 @@ class CarController extends Controller
         $location = $request->input('location');
         $uid = Auth::user()->id;
 
-        $carlists = Car::with(['bookings' => function ($query) {
+        $carlists = Car::with(['type', 'bookings' => function ($query) {
             $query->where('bookingStatus', 'Completed')
                 ->where('isRate', 1);
         }])->when($location, function ($query) use ($location) {
@@ -345,7 +345,7 @@ class CarController extends Controller
             'priceType',
             'engineHp',
             'fuelType',
-            'type'
+            'typeId'
         )->get()->map(function ($car) use ($lats, $longs) {
             $bookCount = $car->bookings->count();
             $bookRateSum = $car->bookings->sum('totalRate');
@@ -374,7 +374,7 @@ class CarController extends Controller
         $user = User::find($userId);
         $isBlock = empty($user->status) ? '1' : ($user->status == 1 ? '0' : '1');
 
-        $cars = Car::with(['bookings' => function ($query) {
+        $cars = Car::with(['type', 'bookings' => function ($query) {
             $query->where('bookingStatus', 'Completed')
                 ->where('isRate', 1);
         }])->when($location, function ($query) use ($location) {
@@ -397,7 +397,7 @@ class CarController extends Controller
             'priceType',
             'engineHp',
             'fuelType',
-            'type'
+            'typeId'
         ])->get()->map(function ($car) use ($lats, $longs) {
             $bookCount = $car->bookings->count();
             $bookRateSum = $car->bookings->sum('totalRate');
@@ -426,7 +426,7 @@ class CarController extends Controller
         $user = User::find($userId);
         $isBlock = empty($user->status) ? '1' : ($user->status == 1 ? '0' : '1');
 
-        $cars = Car::with(['bookings' => function ($query) {
+        $cars = Car::with(['type', 'bookings' => function ($query) {
             $query->where('bookingStatus', 'Completed')
                 ->where('isRate', 1);
         }])->when($location, function ($query) use ($location) {
@@ -449,7 +449,7 @@ class CarController extends Controller
             'priceType',
             'engineHp',
             'fuelType',
-            'type'
+            'typeId'
         ])->get()->map(function ($car) use ($lats, $longs) {
             $bookCount = $car->bookings->count();
             $bookRateSum = $car->bookings->sum('totalRate');
