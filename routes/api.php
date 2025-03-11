@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Payments\TwoCheckoutController;
 use App\Http\Controllers\WalletController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -39,29 +40,31 @@ Route::get('/decode-vin/{vin}', [VinDecoderController::class, 'decodeVin']);
 
 // Protected Routes
 Route::middleware('auth:sanctum')->group(function () {
-    Route::group(['prefix' => 'payment'], function () {
-        Route::post('/flutterwave/index', [FlutterwaveController::class, 'index']);
+    Route::group(['prefix' => 'payment', 'namespace' => 'Payments'], function () {
+        Route::post('/2checkout/pay', [TwoCheckoutController::class, 'pay']);
+
+        Route::post('/flutterwave/pay', [FlutterwaveController::class, 'index']);
         Route::get('/flutterwave/success', [FlutterwaveController::class, 'success']);
 
-        Route::post('/khalti/index', [KhaltiController::class, 'index']);
+        Route::post('/khalti/pay', [KhaltiController::class, 'index']);
         Route::get('/khalti/success', [FlutterwaveController::class, 'success']);
 
-        Route::post('/merpago/index', [MerpagoController::class, 'index']);
+        Route::post('/merpago/pay', [MerpagoController::class, 'index']);
         Route::get('/merpago/success', [MerpagoController::class, 'success']);
         Route::get('/merpago/fail', [MerpagoController::class, 'fail']);
         Route::get('/merpago/pending', [MerpagoController::class, 'pending']);
 
-        Route::post('/midtrans/index', [MidtransController::class, 'index']);
+        Route::post('/midtrans/pay', [MidtransController::class, 'index']);
         Route::get('/midtrans/success', [MidtransController::class, 'success']);
 
-        Route::post('/payfast/index', [PayfastController::class, 'index']);
-        Route::get('/khalti/success', [PayfastController::class, 'success']);
-        Route::get('/khalti/cancel', [PayfastController::class, 'cancel']);
+        Route::post('/payfast/pay', [PayfastController::class, 'index']);
+        Route::get('/payfast/success', [PayfastController::class, 'success']);
+        Route::get('/payfast/cancel', [PayfastController::class, 'cancel']);
 
         Route::get('/paypal/success', [PaypalController::class, 'success']);
         Route::get('/paypal/cancel', [PaypalController::class, 'cancel']);
 
-        Route::post('/paytm/index', [PaytmController::class, 'index']);
+        Route::post('/paytm/pay', [PaytmController::class, 'index']);
         Route::get('/paytm/success', [PaytmController::class, 'success']);
     });
 
