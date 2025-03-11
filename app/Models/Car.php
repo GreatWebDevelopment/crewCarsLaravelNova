@@ -27,6 +27,15 @@ class Car extends Model
         return $this->hasMany(Booking::class, 'carId', 'id');
     }
 
+    public function type()
+    {
+        return $this->hasOne(CarTypes::class, 'id', 'type');
+    }
+
+    public function brand() {
+        return $this->hasOne(CarBrands::class, 'id', 'brand');
+    }
+
     public function getCarRateAttribute()
     {
         $rating = $this->bookings()

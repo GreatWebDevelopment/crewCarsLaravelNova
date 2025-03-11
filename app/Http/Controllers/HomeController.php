@@ -9,9 +9,6 @@ use App\Models\CarTypes;
 use App\Models\CarBrands;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\App;
 
 class HomeController extends Controller
 {
@@ -34,7 +31,7 @@ class HomeController extends Controller
 
         $cs = CarBrands::where('status', 1)->select('id', 'title', 'img')->get();
 
-        $carlists = Car::with(['bookings' => function ($query) {
+        $carlists = Car::with(['type', 'bookings' => function ($query) {
             $query->where('bookingStatus', 'Completed')
                 ->where('isRate', 1);
         }])->when($location, function ($query) use ($location) {
@@ -69,7 +66,7 @@ class HomeController extends Controller
             $car->rate = $car_rate;
             $car->distance = $car->calculateDistance($lats, $longs).' KM';
             $car->img = $car->img[0];
-            $car->typeTitle = $car->typeData->title;
+            $car->typeTitle = $car->type->title;
 
             return $car;
         });
