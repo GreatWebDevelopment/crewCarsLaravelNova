@@ -308,7 +308,6 @@ class CarController extends Controller
 
             $car->rate = $car_rate;
             $car->distance = $car->calculateDistance($lats, $longs).' KM';
-            $im = explode(';',$car->img);
             $car->img = $car->img[0];
 
             return $car;
@@ -357,7 +356,6 @@ class CarController extends Controller
 
             $car->rate = $car_rate;
             $car->distance = $car->calculateDistance($lats, $longs).' KM';
-            $im = explode(';',$car->img);
             $car->img = $car->img[0];
 
             return $car;
