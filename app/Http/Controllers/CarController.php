@@ -116,6 +116,7 @@ class CarController extends Controller
 
         $update_data = $request->all();
 
+        $images = [];
         if ($request->hasFile('images')) {
             $images = uploadfiles($request->file('images'), env('CAR_IMAGE_S3_PATH') . 'photos/');
         }
@@ -144,6 +145,7 @@ class CarController extends Controller
         $item = Car::find($id);
         $update_data = $request->all();
 
+        $images = [];
         if ($request->hasFile('images')) {
             $images = uploadFiles($request->file('images'), env('CAR_IMAGE_S3_PATH') . 'photos/');
         }
