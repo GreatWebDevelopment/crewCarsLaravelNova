@@ -12,8 +12,8 @@ class Car extends Model
     use Searchable;
     protected $table = 'cars';
     protected $fillable = [
-        'userId', 'title', 'number', 'img', 'status', 'rating', 'seats', 'ac', 'driverName', 'brand', 'rentPrice',
-        'location', 'type', 'brand', 'postId', 'description', 'driverName', 'driverMobile', 'transmission', 'facility', 'available', 'rentPriceDriver',
+        'userId', 'title', 'number', 'img', 'status', 'rating', 'seats', 'ac', 'driverName', 'brandId', 'rentPrice',
+        'location', 'typeId', 'brand', 'postId', 'description', 'driverName', 'driverMobile', 'transmission', 'facility', 'available', 'rentPriceDriver',
         'engineHp', 'priceType', 'fuelType', 'pickAddress', 'pickLat', 'pickLng', 'totalMiles', 'minHrs', 'city'
     ];
 
@@ -29,11 +29,11 @@ class Car extends Model
 
     public function type()
     {
-        return $this->hasOne(CarTypes::class, 'id', 'type');
+        return $this->hasOne(CarTypes::class, 'id', 'typeId');
     }
 
     public function brand() {
-        return $this->hasOne(CarBrands::class, 'id', 'brand');
+        return $this->hasOne(CarBrands::class, 'id', 'brandId');
     }
 
     public function getCarRateAttribute()
