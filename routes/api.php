@@ -73,7 +73,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/cars-list', [CarController::class, 'index']);
     Route::post('/cars', [CarController::class, 'store']);
     Route::get('/cars/{id}', [CarController::class, 'show']);
-    Route::put('/cars/{id}', [CarController::class, 'update']);
+    Route::post('/cars/{id}', [CarController::class, 'update']);
     Route::delete('/cars/{id}', [CarController::class, 'destroy']);
     Route::post('/car/info', [CarController::class, 'info']);
     Route::post('/car/brandwise', [CarController::class, 'brandWise']);
@@ -90,7 +90,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/gallery', [GalleryController::class, 'index']);
     Route::post('/gallery', [GalleryController::class, 'store']);
-    Route::put('/gallery/{id}', [GalleryController::class, 'update']);
+    Route::post('/gallery/{id}', [GalleryController::class, 'update']);
 
     Route::post('/home', [HomeController::class, 'get']);
     Route::get('/city', [CityController::class, 'index']);
