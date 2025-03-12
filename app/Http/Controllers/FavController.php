@@ -74,7 +74,7 @@ class FavController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went wrong, try again!'], 401);
+            return response()->json(['ResponseCode' => '400', 'Result' => 'false', 'ResponseMsg' => 'Something Went wrong, try again!'], 400);
         }
 
         $uid = Auth::user()->id;

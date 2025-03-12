@@ -101,7 +101,7 @@ class BookingController extends Controller
 
     public function bookRange(Request $request) {
         if (!checkRequestParams($request, ['car_id'])) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+            return response()->json(['ResponseCode' => '400', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 400);
         }
         $bookings = Booking::where('carId', $request->input('car_id'))->get();
         $pol = array();
@@ -124,7 +124,7 @@ class BookingController extends Controller
 
     public function bookDetails(Request $request) {
         if (!checkRequestParams($request, ['book_id'])) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+            return response()->json(['ResponseCode' => '400', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 400);
         }
         $pol = array();
         $c = array();
@@ -176,7 +176,7 @@ class BookingController extends Controller
     public function bookHistory(Request $request)
     {
         if (!checkRequestParams($request, ['status'])) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+            return response()->json(['ResponseCode' => '400', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 400);
         }
         $pol = array();
         $c = array();
@@ -520,7 +520,7 @@ class BookingController extends Controller
     public function update(Request $request)
     {
         if (!checkRequestParams($request, ['book_id'])) {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+            return response()->json(['ResponseCode' => '400', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 400);
         }
 
         $book_id = $request->input('book_id');

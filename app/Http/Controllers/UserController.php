@@ -173,7 +173,7 @@ class UserController extends Controller
 
                 return response()->json(['UserLogin' => $user, 'Token' => $token, 'ExpiresAt' => $expiresAt->toDateTimeString(), 'ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Login successfully!', 'type' => 'USER']);
             } else {
-                return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Your profile has been blocked by the administrator, preventing you from using our app as a regular user.'], 401);
+                return response()->json(['ResponseCode' => '400', 'Result' => 'false', 'ResponseMsg' => 'Your profile has been blocked by the administrator, preventing you from using our app as a regular user.'], 400);
             }
         }
 

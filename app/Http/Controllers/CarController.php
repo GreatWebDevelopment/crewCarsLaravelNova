@@ -182,7 +182,7 @@ class CarController extends Controller
     public function info(Request $request)
     {
         if (!$request->has('car_id') or $request->input('car_id') == '') {
-            return response()->json(['ResponseCode' => '401', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 401);
+            return response()->json(['ResponseCode' => '400', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 400);
         }
         $car_id = $request->input('car_id');
         $uid = Auth::user()->id;
