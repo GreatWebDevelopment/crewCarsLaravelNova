@@ -13,7 +13,7 @@ class Booking extends Model
     protected $fillable = [
         'uid', 'carId', 'totalDayOrHr', 'subtotal', 'typeId', 'brandId', 'cityId',
         'taxPer', 'taxAmt', 'oTotal', 'pMethodId', 'postId', 'pickOtp', 'dropOtp', 'commission',
-        'transactionId', 'bookStatus', 'pickupDate', 'city',
+        'transactionId', 'bookStatus', 'pickupDate', 'city', 'location',
         'pickupTime', 'returnDate', 'returnTime', 'priceType', 'bookingType', 'exterPhoto', 'interPhoto',
     ];
 
