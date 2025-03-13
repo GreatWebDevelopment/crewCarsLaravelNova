@@ -62,7 +62,6 @@ class HomeController extends Controller
             $car->rate = $car_rate;
             $car->distance = $car->calculateDistance($lats, $longs).' KM';
             $car->img = $car->img[0];
-            $car->typeTitle = $car->type->title;
 
             return $car;
         });
