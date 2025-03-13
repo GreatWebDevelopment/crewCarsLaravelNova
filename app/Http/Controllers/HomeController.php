@@ -27,11 +27,7 @@ class HomeController extends Controller
 
         $ban = Banner::where('status', 1)->select('id', 'img')->get();
 
-        $c = CarTypes::where('status', 1)->select('id', 'title', 'img')->get();
-
-        $cs = CarBrands::where('status', 1)->select('id', 'title', 'img')->get();
-
-        $carlists = Car::with(['type', 'bookings' => function ($query) {
+        $carlists = Car::with(['bookings' => function ($query) {
             $query->where('bookingStatus', 'Completed')
                 ->where('isRate', 1);
         }])->when($location, function ($query) use ($location) {
@@ -54,7 +50,7 @@ class HomeController extends Controller
             'priceType',
             'engineHp',
             'fuelType',
-            'typeId'
+            'type'
         )->get()->map(function ($car) use ($lats, $longs) {
             $bookCount = $car->bookings->count();
             $bookRateSum = $car->bookings->sum('totalRate');
@@ -75,8 +71,7 @@ class HomeController extends Controller
 
         return response()->json([
             'ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Home Data Get Successfully!!!',
-            'banner'=>$ban, 'is_block'=>$is_block, 'tax'=>app('set')->tax, "currency"=>app('set')->currency,
-            "cartypelist"=>$c, "carbrandlist"=>$cs, "FeatureCar"=>$navs, "Recommend_car"=>$navsp,
+            'banner'=>$ban, 'is_block'=>$is_block, 'tax'=>app('set')->tax, "currency"=>app('set')->currency, "FeatureCar"=>$navs, "Recommend_car"=>$navsp,
             "show_add_car"=>app('set')->showAddCar], 200);
     }
 }
