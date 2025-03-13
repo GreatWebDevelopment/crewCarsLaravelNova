@@ -11,7 +11,7 @@ class Booking extends Model
     use HasFactory;
     protected $table = 'bookings';
     protected $fillable = [
-        'uid', 'carId', 'totalDayOrHr', 'subtotal', 'typeId', 'brandId', 'cityId',
+        'uid', 'carId', 'totalDayOrHr', 'subtotal', 'type', 'brand', 'cityId',
         'taxPer', 'taxAmt', 'oTotal', 'pMethodId', 'postId', 'pickOtp', 'dropOtp', 'commission',
         'transactionId', 'bookStatus', 'pickupDate', 'city', 'location',
         'pickupTime', 'returnDate', 'returnTime', 'priceType', 'bookingType', 'exterPhoto', 'interPhoto',
