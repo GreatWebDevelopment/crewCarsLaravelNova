@@ -132,8 +132,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/request-withdraw', [PaymentController::class, 'requestWithdraw']);
     Route::get('/payout/list', [PaymentController::class, 'payoutSettingsList']);
 
-    Route::post('/wallet-up', [WalletController::class, 'walletUp']);
-    Route::get('/wallet-report', [WalletController::class, 'walletReport']);
+//    Route::post('/wallet-up', [WalletController::class, 'walletUp']);
+//    Route::get('/wallet-report', [WalletController::class, 'walletReport']);
 
     Route::get('/notification', [NotificationController::class, 'index']);
 
