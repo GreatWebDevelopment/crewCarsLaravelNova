@@ -41,6 +41,7 @@ class BookingController extends Controller
         $input['pickOtp'] = rand(1111,9999);
         $input['dropOtp'] = rand(1111,9999);
         $input['commission'] = app('set')->commissionRate;
+        $input['userId'] = $uid;
         $booking = Booking::create($input);
         $bookid = $booking->id;
 
