@@ -195,19 +195,6 @@ class CarController extends Controller
             ? $car->bookings->avg('totalRate')
             : $car->car_rating;
         $car->car_rate = number_format($averageRating, 2);
-
-        $facilityResult = Facility::selectRaw('GROUP_CONCAT(title) as facility, GROUP_CONCAT(img) as facility_img')
-            ->whereRaw('FIND_IN_SET(id, ?) > 0', [$car["facility"]])->first();
-
-        $t = CarTypes::where('id', $car['typeId'])->select('img', 'title')->first();
-        $b = CarBrands::where('id', $car['brandId'])->select('img', 'title')->first();
-        Log::info($car);
-        $car["facility"] = $facilityResult["facility"];
-        $car["facilityImg"] = $facilityResult["facility_img"];
-        $car['typeTitle'] = $t["title"];
-        $car['typeImg'] = $t["img"];
-        $car['brandTitle'] = $b["title"];
-        $car['brandImg'] = $b["img"];
         $car['IS_FAVOURITE'] = Fav::where('uid', $uid)->where('carId', $car['id'])->count();
         $gal = array();
         $gallery = Gallery::where('carId', $car_id)->select('img')->get();
@@ -221,18 +208,18 @@ class CarController extends Controller
     public function brandWise(Request $request) {
         $lats = $request->input('lats');
         $longs = $request->input('longs');
-        $brand_id = $request->input('brand_id');
+        $brand = $request->input('brand');
         $location = $request->input('location');
         $uid = Auth::user()->id;
 
-        $carlists = Car::with(['type', 'bookings' => function ($query) {
+        $carlists = Car::with(['bookings' => function ($query) {
             $query->where('bookingStatus', 'Completed')
                 ->where('isRate', 1);
         }])->when($location, function ($query) use ($location) {
             return $query->where('location', $location);
         })->where([
             ['status', 1],
-            ['brand', $brand_id],
+            ['brand', $brand],
             ['postId', '!=', $uid],
             ['isApproved', 1]
         ])->select(
@@ -249,7 +236,7 @@ class CarController extends Controller
             'priceType',
             'engineHp',
             'fuelType',
-            'typeId'
+            'type'
         )->get()->makeHidden(['bookings'])->map(function ($car) use ($lats, $longs) {
             $bookCount = $car->bookings->count();
             $bookRateSum = $car->bookings->sum('totalRate');
@@ -271,18 +258,18 @@ class CarController extends Controller
     public function typeWise(Request $request) {
         $lats = $request->input('lats');
         $longs = $request->input('longs');
-        $type_id = $request->input('type_id');
+        $type = $request->input('type');
         $location = $request->input('location');
         $uid = Auth::user()->id;
 
-        $carlists = Car::with(['type', 'bookings' => function ($query) {
+        $carlists = Car::with(['bookings' => function ($query) {
             $query->where('bookingStatus', 'Completed')
                 ->where('isRate', 1);
         }])->when($location, function ($query) use ($location) {
             return $query->where('location', $location);
         })->where([
             ['status', 1],
-            ['type', $type_id],
+            ['type', $type],
             ['postId', '!=', $uid],
             ['isApproved', 1]
         ])->select(
@@ -299,7 +286,7 @@ class CarController extends Controller
             'priceType',
             'engineHp',
             'fuelType',
-            'typeId'
+            'type'
         )->get()->makeHidden(['bookings'])->map(function ($car) use ($lats, $longs) {
             $bookCount = $car->bookings->count();
             $bookRateSum = $car->bookings->sum('totalRate');
@@ -324,7 +311,7 @@ class CarController extends Controller
         $location = $request->input('location');
         $uid = Auth::user()->id;
 
-        $carlists = Car::with(['type', 'bookings' => function ($query) {
+        $carlists = Car::with(['bookings' => function ($query) {
             $query->where('bookingStatus', 'Completed')
                 ->where('isRate', 1);
         }])->when($location, function ($query) use ($location) {
@@ -347,7 +334,7 @@ class CarController extends Controller
             'priceType',
             'engineHp',
             'fuelType',
-            'typeId'
+            'type'
         )->get()->map(function ($car) use ($lats, $longs) {
             $bookCount = $car->bookings->count();
             $bookRateSum = $car->bookings->sum('totalRate');
@@ -376,7 +363,7 @@ class CarController extends Controller
         $user = User::find($userId);
         $isBlock = empty($user->status) ? '1' : ($user->status == 1 ? '0' : '1');
 
-        $cars = Car::with(['type', 'bookings' => function ($query) {
+        $cars = Car::with(['bookings' => function ($query) {
             $query->where('bookingStatus', 'Completed')
                 ->where('isRate', 1);
         }])->when($location, function ($query) use ($location) {
@@ -399,7 +386,7 @@ class CarController extends Controller
             'priceType',
             'engineHp',
             'fuelType',
-            'typeId'
+            'type'
         ])->get()->map(function ($car) use ($lats, $longs) {
             $bookCount = $car->bookings->count();
             $bookRateSum = $car->bookings->sum('totalRate');
@@ -428,7 +415,7 @@ class CarController extends Controller
         $user = User::find($userId);
         $isBlock = empty($user->status) ? '1' : ($user->status == 1 ? '0' : '1');
 
-        $cars = Car::with(['type', 'bookings' => function ($query) {
+        $cars = Car::with(['bookings' => function ($query) {
             $query->where('bookingStatus', 'Completed')
                 ->where('isRate', 1);
         }])->when($location, function ($query) use ($location) {
@@ -451,7 +438,7 @@ class CarController extends Controller
             'priceType',
             'engineHp',
             'fuelType',
-            'typeId'
+            'type'
         ])->get()->map(function ($car) use ($lats, $longs) {
             $bookCount = $car->bookings->count();
             $bookRateSum = $car->bookings->sum('totalRate');
