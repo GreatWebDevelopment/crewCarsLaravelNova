@@ -7,5 +7,8 @@ use Illuminate\Http\Request;
 
 class StripeController extends Controller
 {
+    public function createPaymentIntent(Request $request)
+    {
 
+    }
 }
