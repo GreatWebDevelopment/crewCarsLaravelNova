@@ -475,7 +475,7 @@ class BookingController extends Controller
                 $user = User::find($booking->userId);
                 return [
                     'user_img' => $user->profilePicture,
-                    'user_title' => $booking->name,
+                    'user_title' => $user->name,
                     'user_rate' => $booking->totalRate,
                     'review_date' => $booking->reviewDate,
                     'user_desc' => $booking->rateText,
