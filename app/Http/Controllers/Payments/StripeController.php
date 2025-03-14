@@ -23,8 +23,10 @@ class StripeController extends Controller
 
         Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
 
+        $amount = $request->input('amount');
+
         $paymentIntent = PaymentIntent::create([
-            'amount' => $request->input('amount'),
+            'amount' => $amount * 100,
             'currency' => app('set')->currency,
         ]);
 
@@ -44,8 +46,10 @@ class StripeController extends Controller
 
         Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
 
+        $amount = $request->input('amount');
+
         $charge = Charge::create([
-            'amount' => $request->input('amount'),
+            'amount' => $amount * 100,
             'currency' => app('set')->currency,
             'source' => $request->input('token'),
             'description' => 'Payment for wallet charge',
