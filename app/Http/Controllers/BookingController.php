@@ -267,8 +267,8 @@ class BookingController extends Controller
         $uid = Auth::user()->id;
         $book_id = $request->input('book_id');
 
-        $bookings = Booking::where('postId', $uid)->where('id', $book_id)
-            ->orderBy('id', 'desc')->first()->makeHidden(['car', 'user', 'paymentMethod']);
+        $bookings = Booking::with('user', 'car', 'paymentMethod')->where('postId', $uid)->where('id', $book_id)
+            ->orderBy('id', 'desc')->first();
         $car_rate = $bookings->car->car_rate;
         $car = $bookings->car->only(['title', 'number', 'img', 'id', 'pickLat', 'pickLng', 'pickAddress', 'engineHp', 'fuelType', 'seats', 'transmission']);
         $user = $bookings->user;
