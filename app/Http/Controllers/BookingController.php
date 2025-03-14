@@ -141,7 +141,7 @@ class BookingController extends Controller
 //        $cityinfo = City::find($sel['cityId']);
 
         $pol = collect($carinfo)->merge($sel);
-        $pol['img'] = $carinfo['img'][0];
+        $pol['img'] = $carinfo['img'];
         $pol['carRating'] = $car_rate;
         $pol['id'] = $carinfo['id'];
         $pol['bookId'] = $sel['id'];
@@ -201,7 +201,7 @@ class BookingController extends Controller
             $pol['img'] = $carinfo['img'][0];
             $pol['carRating'] = $car_rate;
             $pol['id'] = $carinfo['id'];
-            $pol['book_id'] = $row['id'];
+            $pol['bookId'] = $row['id'];
             $pol['cityTitle'] = $carinfo['city'];
             $c[] = $pol;
         }
@@ -276,7 +276,7 @@ class BookingController extends Controller
         $pol = collect($car)->merge($bookings);
         $pol['bookId'] = $bookings->id;
         $pol['carRating'] = $car_rate;
-        $pol['img'] =$car['img'][0];
+        $pol['img'] =$car['img'];
         $pol['cityTitle'] = $bookings->city;
         $pol['paymentMethodName'] = optional($bookings->paymentMethod)->title;
         $pol['customerName'] = $user['name'];
@@ -377,11 +377,11 @@ class BookingController extends Controller
         $bookId = $request->input('book_id');
 
         if ($request->hasFile('inter_photo')) {
-            $image = uploadFile($request->file('inter_photo'), env('CAR_IMAGE_S3_PATH') . 'inter-photo/');
+            $image = uploadFiles($request->file('inter_photo'), env('CAR_IMAGE_S3_PATH') . 'inter-photo/');
         }
 
-        if ($request->hasFile('exter_photos')) {
-            $images = uploadFiles($request->file('exter_photos'), env('CAR_IMAGE_S3_PATH') . 'exter-photos/');
+        if ($request->hasFile('exter_photo')) {
+            $images = uploadFiles($request->file('exter_photo'), env('CAR_IMAGE_S3_PATH') . 'exter-photo/');
         }
 
         $user = User::find($userId);
