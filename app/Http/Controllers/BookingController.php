@@ -288,8 +288,8 @@ class BookingController extends Controller
         return response()->json([
             "book_details" => $pol,
             "ResponseCode" => "200",
-            "Result" => !empty($p) ? "true" : "false",
-            "ResponseMsg" => !empty($p) ? "Book Details Founded!" : "Book Details Not Founded!"
+            "Result" => !empty($pol) ? "true" : "false",
+            "ResponseMsg" => !empty($pol) ? "Book Details Founded!" : "Book Details Not Founded!"
         ]);
     }
 
