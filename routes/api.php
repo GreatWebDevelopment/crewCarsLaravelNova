@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Payments\StripeController;
 use App\Http\Controllers\Payments\TwoCheckoutController;
 use App\Http\Controllers\WalletController;
 use Illuminate\Http\Request;
@@ -40,7 +41,7 @@ Route::get('/decode-vin/{vin}', [VinDecoderController::class, 'decodeVin']);
 
 // Protected Routes
 Route::middleware('auth:sanctum')->group(function () {
-//    Route::group(['prefix' => 'payment', 'namespace' => 'Payments'], function () {
+    Route::group(['prefix' => 'payment', 'namespace' => 'Payments'], function () {
 //        Route::post('/2checkout/pay', [TwoCheckoutController::class, 'pay']);
 //
 //        Route::post('/flutterwave/pay', [FlutterwaveController::class, 'index']);
@@ -66,7 +67,9 @@ Route::middleware('auth:sanctum')->group(function () {
 //
 //        Route::post('/paytm/pay', [PaytmController::class, 'index']);
 //        Route::get('/paytm/success', [PaytmController::class, 'success']);
-//    });
+
+        Route::post('/stripe/charge', [StripeController::class, 'charge']);
+    });
 
     Route::get('/user/refer-data', [UserController::class, 'referData']);
     Route::put('/user/{id}', [UserController::class, 'update']);

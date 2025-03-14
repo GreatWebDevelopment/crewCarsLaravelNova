@@ -104,7 +104,7 @@ class BookingController extends Controller
         if (!checkRequestParams($request, ['car_id'])) {
             return response()->json(['ResponseCode' => '400', 'Result' => 'false', 'ResponseMsg' => 'Something Went Wrong!'], 400);
         }
-        $bookings = Booking::where('carId', $request->input('car_id'))->get();
+        $bookings = Booking::where('carId', $request->input('car_id'))->where('bookingStatus', '!=', 'Cancelled')->get();
         $pol = array();
         $c = array();
         foreach ($bookings as $row)
