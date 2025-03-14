@@ -12,8 +12,8 @@ class Booking extends Model
     protected $table = 'bookings';
     protected $fillable = [
         'userId', 'carId', 'totalDayOrHr', 'subtotal', 'type', 'brand', 'rateText', 'cancelReason',
-        'taxPer', 'taxAmt', 'oTotal', 'pMethodId', 'postId', 'pickOtp', 'dropOtp', 'commission',
-        'transactionId', 'bookStatus', 'pickupDate', 'city', 'location', 'carPrice', 'wallAmt',
+        'taxPer', 'taxAmt', 'oTotal', 'pMethodId', 'postId', 'pickOtp', 'dropOtp', 'commission', 'totalRate',
+        'transactionId', 'bookStatus', 'pickupDate', 'city', 'location', 'carPrice', 'wallAmt', 'isRate',
         'pickupTime', 'returnDate', 'returnTime', 'priceType', 'bookingType', 'exterPhoto', 'interPhoto',
     ];
 
