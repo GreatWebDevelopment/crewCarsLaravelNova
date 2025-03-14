@@ -387,7 +387,7 @@ class BookingController extends Controller
 
         $user = User::find($userId);
         $booking = Booking::find($bookId);
-        $booking->userId = $userId;
+        $booking->bookingStatus = 'Pickup';
         $booking->interPhoto = $image;
         $booking->exterPhoto = $images;
         $booking->save();
