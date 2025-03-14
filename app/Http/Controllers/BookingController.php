@@ -284,9 +284,10 @@ class BookingController extends Controller
         $pol['customerImg'] = $user['profilePicture'];
         $pol['exterPhoto'] = empty($bookings['exterPhoto']) ? [] : $bookings['exterPhoto'];
         $pol['interPhoto'] = empty($bookings['interPhoto']) ? [] : $bookings['interPhoto'];
+        $c[] = $pol;
 
         return response()->json([
-            "book_details" => $pol,
+            "book_details" => $c,
             "ResponseCode" => "200",
             "Result" => !empty($pol) ? "true" : "false",
             "ResponseMsg" => !empty($pol) ? "Book Details Founded!" : "Book Details Not Founded!"
