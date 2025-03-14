@@ -448,7 +448,7 @@ class BookingController extends Controller
             if (count($bookings) > 0) {
                 return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Otp Matched!']);
             } else {
-                return response()->json(['ResponseCode' => '404', 'Result' => 'false', 'ResponseMsg' => 'Otp Not Matched!'], 404);
+                return response()->json(['ResponseCode' => '404', 'Result' => 'false', 'ResponseMsg' => 'Otp Not Matched!']);
             }
         } else {
             $bookings = Booking::where('id', $bookId)
@@ -459,7 +459,7 @@ class BookingController extends Controller
             if (count($bookings) > 0) {
                 return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Otp Matched!']);
             } else {
-                return response()->json(['ResponseCode' => '404', 'Result' => 'false', 'ResponseMsg' => 'Otp Not Matched!'], 404);
+                return response()->json(['ResponseCode' => '404', 'Result' => 'false', 'ResponseMsg' => 'Otp Not Matched!']);
             }
         }
     }
