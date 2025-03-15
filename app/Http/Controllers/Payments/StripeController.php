@@ -27,7 +27,7 @@ class StripeController extends Controller
 
         $paymentIntent = PaymentIntent::create([
             'amount' => $amount * 100,
-            'currency' => app('set')->currency,
+            'currency' => app('set')->currency_format,
         ]);
 
         return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Payment Intent Created Successfully!', 'client_secret' => $paymentIntent->client_secret]);
@@ -50,7 +50,7 @@ class StripeController extends Controller
 
         $charge = Charge::create([
             'amount' => $amount * 100,
-            'currency' => app('set')->currency,
+            'currency' => app('set')->currency_format,
             'source' => $request->input('token'),
             'description' => 'Payment for wallet charge',
         ]);
