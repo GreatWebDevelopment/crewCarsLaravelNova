@@ -28,6 +28,7 @@ class StripeController extends Controller
         $paymentIntent = PaymentIntent::create([
             'amount' => $amount * 100,
             'currency' => app('set')->currency_format,
+            'payment_method_types' => ['card'],
         ]);
 
         return response()->json(['ResponseCode' => '200', 'Result' => 'true', 'ResponseMsg' => 'Payment Intent Created Successfully!', 'client_secret' => $paymentIntent->client_secret]);
