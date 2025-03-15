@@ -69,7 +69,6 @@ Route::middleware('auth:sanctum')->group(function () {
 //        Route::get('/paytm/success', [PaytmController::class, 'success']);
 
         Route::post('/stripe/create-payment-intent', [StripeController::class, 'createPaymentIntent']);
-        Route::post('/stripe/charge', [StripeController::class, 'charge']);
     });
 
     Route::get('/user/refer-data', [UserController::class, 'referData']);
